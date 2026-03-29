@@ -1,0 +1,284 @@
+# =============================================================================
+# vercel.json — Vercel deployment config
+# =============================================================================
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci",
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 30
+    },
+    "app/api/payments/webhook/**/*.ts": {
+      "maxDuration": 60
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options",        "value": "DENY" }
+      ]
+    }
+  ],
+  "redirects": [
+    { "source": "/admin", "destination": "/admin/", "permanent": false }
+  ]
+}
+
+# =============================================================================
+# Dockerfile — for VPS / Docker deployment
+# =============================================================================
+FROM node:20-alpine AS base
+WORKDIR /app
+
+# Dependencies
+FROM base AS deps
+COPY package.json package-lock.json ./
+RUN npm ci --only=production
+
+# Builder
+FROM base AS builder
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+# Runner
+FROM base AS runner
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser  --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static    ./.next/static
+
+USER nextjs
+EXPOSE 3000
+ENV PORT=3000
+
+CMD ["node", "server.js"]
+
+# =============================================================================
+# nginx.conf — Production Nginx config for VPS
+# =============================================================================
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com www.yourdomain.com;
+
+    ssl_certificate     /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384;
+    ssl_session_cache   shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    # Security headers
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload" always;
+    add_header X-Frame-Options           "DENY"    always;
+    add_header X-Content-Type-Options    "nosniff" always;
+    add_header Referrer-Policy           "strict-origin-when-cross-origin" always;
+
+    # Gzip
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
+    gzip_min_length 1000;
+
+    # Static assets cache
+    location /_next/static/ {
+        proxy_pass         http://localhost:3000;
+        proxy_cache_valid  200 1y;
+        add_header         Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # Next.js app
+    location / {
+        proxy_pass         http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection 'upgrade';
+        proxy_set_header   Host $host;
+        proxy_set_header   X-Real-IP $remote_addr;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 90s;
+        client_max_body_size 20M;
+    }
+}
+
+# =============================================================================
+# .github/workflows/deploy.yml — CI/CD with GitHub Actions
+# =============================================================================
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+      - run: npm ci
+      - run: npm run type-check
+      - run: npm run lint
+
+  deploy-vercel:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+      - run: npm ci
+      - run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID:     ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+# =============================================================================
+# ecosystem.config.js — PM2 config for VPS (non-Docker)
+# =============================================================================
+module.exports = {
+  apps: [{
+    name:         'edupro',
+    script:       'node_modules/.bin/next',
+    args:         'start',
+    instances:    'max',       // Use all CPU cores
+    exec_mode:    'cluster',
+    watch:        false,
+    max_memory_restart: '1G',
+    env_production: {
+      NODE_ENV: 'production',
+      PORT:     3000,
+    },
+    error_file: './logs/pm2-error.log',
+    out_file:   './logs/pm2-out.log',
+    log_date_format: 'YYYY-MM-DD HH:mm:ss',
+  }],
+};
+
+# =============================================================================
+# scripts/seed.ts — Database seeder for development
+# =============================================================================
+import { connectDB } from '../lib/db/mongoose';
+import { User }       from '../lib/db/models/User';
+import { University } from '../lib/db/models/University';
+import { Program }    from '../lib/db/models/models';
+
+async function seed() {
+  await connectDB();
+  console.log('🌱 Seeding database...');
+
+  // Admin user
+  const existing = await User.findOne({ email: 'admin@edupro.com' });
+  if (!existing) {
+    await User.create({
+      firstName: 'Admin', lastName: 'EduPro',
+      email: 'admin@edupro.com',
+      password: 'Admin@1234',           // hashed automatically by pre-save hook
+      role: 'admin',
+      isEmailVerified: true,
+    });
+    console.log('✓ Admin user created: admin@edupro.com / Admin@1234');
+  }
+
+  // Sample university
+  const uni = await University.findOneAndUpdate(
+    { slug: 'beijing-normal-university' },
+    {
+      name:        'Beijing Normal University',
+      slug:        'beijing-normal-university',
+      description: 'A prestigious research university in Beijing, ranked among China top institutions.',
+      logo:        'https://placehold.co/80x80/2563eb/white?text=BNU',
+      bannerImage: 'https://placehold.co/800x400/1e3a8a/white?text=Beijing+Normal+University',
+      worldRank:   '100-150',
+      location:    { city: 'Beijing', province: 'Beijing', country: 'China' },
+      badges:      { is211: true, is985: true, isDoubleFirstClass: true, cscaRequired: false },
+      studentsEnrolled: 2500,
+      website:     'https://english.bnu.edu.cn',
+      intakes: [
+        { season: 'september', year: 2026, deadline: new Date('2026-05-31') },
+        { season: 'march',     year: 2026, deadline: new Date('2025-12-31') },
+      ],
+      isActive: true,
+    },
+    { upsert: true, new: true }
+  );
+
+  // Sample program
+  await Program.findOneAndUpdate(
+    { slug: 'bnu-computer-science-bachelor' },
+    {
+      universityId:      uni._id,
+      name:              'Computer Science and Technology',
+      slug:              'bnu-computer-science-bachelor',
+      degreeLevel:       'bachelor',
+      medium:            'english',
+      majorCategory:     'Engineering & Technology',
+      duration:          4,
+      tuitionFeeUSD:     6000,
+      applicationFeeUSD: 50,
+      scholarshipAvailable: true,
+      description:       'A rigorous 4-year English-medium Computer Science program at one of China top research universities.',
+      requirements:      ['High school diploma', 'English proficiency (IELTS 5.5+)', 'Math background'],
+      isActive:          true,
+    },
+    { upsert: true, new: true }
+  );
+
+  console.log('✓ Sample university and program created');
+  console.log('🎉 Seeding complete!');
+  process.exit(0);
+}
+
+seed().catch(e => { console.error(e); process.exit(1); });
+
+# =============================================================================
+# QUICK START COMMANDS
+# =============================================================================
+# 1. Clone / init project
+npx create-next-app@latest edupro --typescript --tailwind --app --eslint --no-src-dir
+cd edupro
+
+# 2. Install all dependencies
+npm install next-auth@beta mongoose bcryptjs stripe @aws-sdk/client-s3 @aws-sdk/s3-request-presigner \
+  zod resend nanoid slugify react-hook-form @hookform/resolvers recharts clsx tailwind-merge
+
+npm install -D @types/bcryptjs tsx
+
+# 3. Copy all source files from the zip to their respective paths
+
+# 4. Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your real values
+
+# 5. Seed the database
+npm run seed
+
+# 6. Run development server
+npm run dev
+# → http://localhost:3000
+# → Admin: http://localhost:3000/admin  (admin@edupro.com / Admin@1234)
+
+# 7. Build for production
+npm run build && npm start
+
+# 8. Deploy to Vercel
+vercel --prod

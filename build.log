@@ -1,0 +1,155 @@
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+  - Experiments (use with caution):
+    · optimizeCss
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./components/all-components.tsx
+Error: 
+  [31mx[0m the name `useState` is defined multiple times
+    ,-[[36;1;4md:\Reract Projects\edupro-src\components\all-components.tsx[0m:2:1]
+ [2m 2[0m | // ============================================================
+ [2m 3[0m | // components/ui/FileUpload.tsx
+ [2m 4[0m | // ============================================================
+ [2m 5[0m | import { useState, useCallback, useRef } from 'react';
+    : [31;1m         ^^^^|^^^[0m
+    :              [31;1m`-- [31;1mprevious definition of `useState` here[0m[0m
+ [2m 6[0m | 
+ [2m 7[0m | interface FileUploadProps {
+ [2m 8[0m |   applicationId: string;
+ [2m 9[0m |   docType: string;
+ [2m10[0m |   label: string;
+ [2m11[0m |   accept?: string;
+ [2m12[0m |   onUploadComplete: (fileUrl: string, key: string) => void;
+ [2m13[0m | }
+ [2m14[0m | 
+ [2m15[0m | export function FileUpload({ applicationId, docType, label, accept, onUploadComplete }: FileUploadProps) {
+ [2m16[0m |   const [uploading, setUploading] = useState(false);
+ [2m17[0m |   const [progress, setProgress]   = useState(0);
+ [2m18[0m |   const [error, setError]         = useState('');
+ [2m19[0m |   const [done, setDone]           = useState(false);
+ [2m20[0m |   const inputRef = useRef<HTMLInputElement>(null);
+ [2m21[0m | 
+ [2m22[0m |   const handleFile = useCallback(async (file: File) => {
+ [2m23[0m |     setUploading(true); setError(''); setProgress(0); setDone(false);
+ [2m24[0m | 
+ [2m25[0m |     try {
+ [2m26[0m |       const res = await fetch('/api/upload', {
+ [2m27[0m |         method: 'POST',
+ [2m28[0m |         headers: { 'Content-Type': 'application/json' },
+ [2m29[0m |         body: JSON.stringify({
+ [2m30[0m |           fileName: file.name, fileType: file.type,
+ [2m31[0m |           fileSize: file.size, applicationId, docType,
+ [2m32[0m |         }),
+ [2m33[0m |       });
+ [2m34[0m |       const json = await res.json();
+ [2m35[0m |       if (!res.ok) throw new Error(json.error || 'Upload failed');
+ [2m36[0m | 
+ [2m37[0m |       const { presignedUrl, fileUrl, key } = json.data;
+ [2m38[0m | 
+ [2m39[0m |       await new Promise<void>((resolve, reject) => {
+ [2m40[0m |         const xhr = new XMLHttpRequest();
+ [2m41[0m |         xhr.upload.onprogress = (e) => setProgress(Math.round((e.loaded / e.total) * 100));
+ [2m42[0m |         xhr.open('PUT', presignedUrl);
+ [2m43[0m |         xhr.setRequestHeader('Content-Type', file.type);
+ [2m44[0m |         xhr.onload  = () => (xhr.status === 200 ? resolve() : reject(new Error('S3 upload failed')));
+ [2m45[0m |         xhr.onerror = () => reject(new Error('Network error'));
+ [2m46[0m |         xhr.send(file);
+ [2m47[0m |       });
+ [2m48[0m | 
+ [2m49[0m |       setDone(true);
+ [2m50[0m |       onUploadComplete(fileUrl, key);
+ [2m51[0m |     } catch (e: any) {
+ [2m52[0m |       setError(e.message);
+ [2m53[0m |     } finally {
+ [2m54[0m |       setUploading(false);
+ [2m55[0m |     }
+ [2m56[0m |   }, [applicationId, docType, onUploadComplete]);
+ [2m57[0m | 
+ [2m58[0m |   return (
+ [2m59[0m |     <div className="space-y-2">
+ [2m60[0m |       <label className="block text-sm font-medium text-slate-700">{label}</label>
+ [2m61[0m |       <div
+ [2m62[0m |         className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors
+ [2m63[0m |           ${done ? 'border-green-400 bg-green-50' : 'border-slate-300 hover:border-blue-400 hover:bg-blue-50'}`}
+ [2m64[0m |         onClick={() => inputRef.current?.click()}
+ [2m65[0m |       >
+ [2m66[0m |         <input
+ [2m67[0m |           ref={inputRef} type="file" accept={accept} className="hidden"
+ [2m68[0m |           onChange={e => e.target.files?.[0] && handleFile(e.target.files[0])}
+ [2m69[0m |         />
+ [2m70[0m |         {uploading ? (
+ [2m71[0m |           <div className="space-y-2">
+ [2m72[0m |             <p className="text-sm text-slate-500">Uploading... {progress}%</p>
+ [2m73[0m |             <div className="w-full bg-slate-200 rounded-full h-2">
+ [2m74[0m |               <div className="bg-blue-600 h-2 rounded-full transition-all" style={{ width: `${progress}%` }} />
+ [2m75[0m |             </div>
+ [2m76[0m |           </div>
+ [2m77[0m |         ) : done ? (
+ [2m78[0m |           <p className="text-green-600 font-medium">✓ Uploaded successfully</p>
+ [2m79[0m |         ) : (
+ [2m80[0m |           <div>
+ [2m81[0m |             <p className="text-blue-600 font-medium">Click to upload {label}</p>
+ [2m82[0m |             <p className="text-xs text-slate-400 mt-1">PDF, JPG, PNG, DOC — max 10MB</p>
+ [2m83[0m |           </div>
+ [2m84[0m |         )}
+ [2m85[0m |       </div>
+ [2m86[0m |       {error && <p className="text-red-500 text-sm">{error}</p>}
+ [2m87[0m |     </div>
+ [2m88[0m |   );
+ [2m89[0m | }
+ [2m90[0m | 
+ [2m91[0m | // ============================================================
+ [2m92[0m | // components/forms/ApplicationForm/index.tsx
+ [2m93[0m | // ============================================================
+ [2m94[0m | import { useState, useRouter } from 'react';
+    : [33;1m         ^^^^|^^^[0m
+    :              [33;1m`-- [33;1m`useState` redefined here[0m[0m
+ [2m95[0m | 
+ [2m96[0m | const STEPS = ['Personal Info', 'Education & Language', 'Documents', 'Review & Submit'];
+    `----
+
+Import trace for requested module:
+./components/all-components.tsx
+./app/student/dashboard/applications/new/page.tsx
+
+./components/layout/Footer.tsx
+Error: 
+  [31mx[0m You're importing a component that needs useState. It only works in a Client Component but none of its parents are marked with "use client", so they're Server Components by default.
+  [31m|[0m Learn more: https://nextjs.org/docs/getting-started/react-essentials
+  [31m|[0m 
+  [31m|[0m 
+   ,-[[36;1;4md:\Reract Projects\edupro-src\components\layout\Footer.tsx[0m:4:1]
+ [2m4[0m | // =============================================================================
+ [2m5[0m | 
+ [2m6[0m | import Link from 'next/link';
+ [2m7[0m | import { useState, useEffect } from 'react';
+   : [31;1m         ^^^^^^^^[0m
+ [2m8[0m | 
+ [2m9[0m | // Quick Links Data (exact from original)
+ [2m9[0m | const QUICK_LINKS = [
+   `----
+
+  [31mx[0m You're importing a component that needs useEffect. It only works in a Client Component but none of its parents are marked with "use client", so they're Server Components by default.
+  [31m|[0m Learn more: https://nextjs.org/docs/getting-started/react-essentials
+  [31m|[0m 
+  [31m|[0m 
+   ,-[[36;1;4md:\Reract Projects\edupro-src\components\layout\Footer.tsx[0m:4:1]
+ [2m4[0m | // =============================================================================
+ [2m5[0m | 
+ [2m6[0m | import Link from 'next/link';
+ [2m7[0m | import { useState, useEffect } from 'react';
+   : [31;1m                   ^^^^^^^^^[0m
+ [2m8[0m | 
+ [2m9[0m | // Quick Links Data (exact from original)
+ [2m9[0m | const QUICK_LINKS = [
+   `----
+
+Import trace for requested module:
+./components/layout/Footer.tsx
+./app/layout.tsx
+
+
+> Build failed because of webpack errors
