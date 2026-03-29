@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth/config';
 import { redirect } from 'next/navigation';
 import { connectDB } from '@/lib/db/mongoose';
 import { Inquiry } from '@/lib/db/models/models';
+import { formatDate } from '@/lib/utils';
 import { InquiriesList } from './InquiriesList';
 
 export const metadata = { title: 'Inquiries — Admin' };
@@ -57,7 +58,7 @@ export default async function AdminInquiriesPage({ searchParams }: PageProps) {
           </div>
           <div className="bg-white bg-opacity-25 rounded-3 px-3 py-2" style={{ fontSize: '0.75rem', color: 'white' }}>
             <span className="me-2">●</span>
-            Live data · {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+            Live data · {formatDate()}
           </div>
         </div>
       </div>

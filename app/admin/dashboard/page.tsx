@@ -9,38 +9,50 @@ import { Application } from '@/lib/db/models/models';
 import { Payment } from '@/lib/db/models/models';
 import { Inquiry } from '@/lib/db/models/models';
 import Link from 'next/link';
+import { formatDate } from '@/lib/utils';
 
 export const metadata = { title: 'Admin Dashboard — EduPro' };
 export const dynamic = 'force-dynamic';
 export const revalidate = 60; // Cache for 60 seconds
 
 const STATUS_COLORS: Record<string, string> = {
-  draft: '#94a3b8',   submitted: '#3b82f6',
-  under_review: '#f59e0b', approved: '#22c55e', rejected: '#dc2626',
+  draft: '#94a3b8',
+  submitted: '#3b82f6',
+  under_review: '#f59e0b',
+  approved: '#22c55e',
+  rejected: '#dc2626',
 };
 
 async function getAnalytics() {
   await connectDB();
   const [
-    totalStudents, totalApplications, totalInquiries,
-    statusData, recentApps, revenueData, monthlyData
+    totalStudents,
+    totalApplications,
+    totalInquiries,
+    statusData,
+    recentApps,
+    revenueData,
+    monthlyData,
   ] = await Promise.all([
-    User.count({ role: 'student' }),
-    Application.countDocuments().exec(),
+    User.countDocuments({ role: 'student' }),
+    Application.countDocuments(),
     Inquiry.countDocuments({ status: 'new' }),
-    Application.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
+    Application.aggregate([
+      { $group: { _id: '$status', count: { $sum: 1 } } },
+    ]),
     Application.find()
-      .sort({ createdAt: -1 }).limit(8)
-      .populate('studentId',    'firstName lastName email')
+      .sort({ createdAt: -1 })
+      .limit(8)
+      .populate('studentId', 'firstName lastName email')
       .populate('universityId', 'name')
-      .populate('programId',    'name degreeLevel')
+      .populate('programId', 'name degreeLevel')
       .lean(),
     Payment.aggregate([
       { $match: { status: 'succeeded' } },
       { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
     ]),
     Application.aggregate([
-      { $match: { createdAt: { $gte: new Date(Date.now() - 7 * 86400000) } } },
+      { $match: { createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } } },
       { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
       { $sort: { '_id': 1 } },
     ]),
@@ -53,18 +65,18 @@ async function getAnalytics() {
     totalInquiries,
     statusMap,
     recentApps,
-    totalRevenue:   revenueData[0]?.total || 0,
-    paymentCount:   revenueData[0]?.count || 0,
+    totalRevenue: revenueData[0]?.total || 0,
+    paymentCount: revenueData[0]?.count || 0,
     monthlyData,
   };
 }
 
 const statusCards = [
-  { label: 'Draft',        key: 'draft',        icon: 'bi-pencil' },
-  { label: 'Submitted',    key: 'submitted',     icon: 'bi-upload' },
-  { label: 'Under Review', key: 'under_review',  icon: 'bi-search' },
-  { label: 'Approved',     key: 'approved',      icon: 'bi-check-circle' },
-  { label: 'Rejected',     key: 'rejected',      icon: 'bi-x-circle' },
+  { label: 'Draft', key: 'draft', icon: 'bi-pencil' },
+  { label: 'Submitted', key: 'submitted', icon: 'bi-upload' },
+  { label: 'Under Review', key: 'under_review', icon: 'bi-search' },
+  { label: 'Approved', key: 'approved', icon: 'bi-check-circle' },
+  { label: 'Rejected', key: 'rejected', icon: 'bi-x-circle' },
 ];
 
 export default async function AdminDashboardPage() {
@@ -74,77 +86,125 @@ export default async function AdminDashboardPage() {
     redirect('/student/dashboard');
   }
 
-  const d = await getAnalytics();
+  const data = await getAnalytics();
 
   const topStats = [
-    { label: 'Total Students',   value: d.totalStudents.toLocaleString(),       icon: 'bi-people', delta: '+12 this week', color: '#dc2626',   bg: 'rgba(220, 38, 38, 0.1)' },
-    { label: 'Applications',     value: d.totalApplications.toLocaleString(),   icon: 'bi-file-earmark-text', delta: `${d.statusMap['submitted'] || 0} pending`, color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
-    { label: 'Revenue (USD)',    value: `${d.totalRevenue.toLocaleString()}`,  icon: 'bi-currency-dollar', delta: `${d.paymentCount} payments`,  color: '#22c55e',  bg: 'rgba(34, 197, 94, 0.1)' },
-    { label: 'New Inquiries',    value: d.totalInquiries.toLocaleString(),      icon: 'bi-chat-dots', delta: 'Unread',                       color: '#f59e0b',  bg: 'rgba(245, 158, 11, 0.1)' },
+    {
+      label: 'Total Students',
+      value: data.totalStudents.toLocaleString(),
+      icon: 'bi-people',
+      delta: '+12 this week',
+      color: '#dc2626',
+      bg: 'rgba(220, 38, 38, 0.1)',
+    },
+    {
+      label: 'Applications',
+      value: data.totalApplications.toLocaleString(),
+      icon: 'bi-file-earmark-text',
+      delta: `${data.statusMap['submitted'] || 0} pending`,
+      color: '#3b82f6',
+      bg: 'rgba(59, 130, 246, 0.1)',
+    },
+    {
+      label: 'Revenue (USD)',
+      value: `$${data.totalRevenue.toLocaleString()}`,
+      icon: 'bi-currency-dollar',
+      delta: `${data.paymentCount} payments`,
+      color: '#22c55e',
+      bg: 'rgba(34, 197, 94, 0.1)',
+    },
+    {
+      label: 'New Inquiries',
+      value: data.totalInquiries.toLocaleString(),
+      icon: 'bi-chat-dots',
+      delta: 'Unread',
+      color: '#f59e0b',
+      bg: 'rgba(245, 158, 11, 0.1)',
+    },
   ];
 
   const quickActions = [
-    { label: 'Add University', href: '/admin/universities/new',   icon: 'bi bi-building', color: '#dc2626' },
-    { label: 'View Inquiries', href: '/admin/inquiries',          icon: 'bi bi-chat-dots', color: '#f59e0b' },
-    { label: 'All Students',   href: '/admin/students',           icon: 'bi bi-people', color: '#3b82f6' },
-    { label: 'Payments Log',   href: '/admin/payments',           icon: 'bi bi-credit-card', color: '#22c55e' },
+    { label: 'Add University', href: '/admin/universities/new', icon: 'bi-building', color: '#dc2626' },
+    { label: 'View Inquiries', href: '/admin/inquiries', icon: 'bi-chat-dots', color: '#f59e0b' },
+    { label: 'All Students', href: '/admin/students', icon: 'bi-people', color: '#3b82f6' },
+    { label: 'Payments Log', href: '/admin/payments', icon: 'bi-credit-card', color: '#22c55e' },
   ];
 
   return (
-    <div className="p-4">
+    <div className="p-4 md:p-6 lg:p-8 min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="admin-page-header mb-4" style={{ background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)' }}>
-        <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div className="bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl p-8 mb-8 shadow-2xl">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           <div>
-            <h1 className="display-font fw-bold mb-1" style={{ fontSize: '2rem', color: 'white' }}>Analytics Dashboard</h1>
-            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.875rem' }}>Real-time overview of platform activity</p>
+            <h1 className="text-3xl lg:text-4xl font-bold mb-2">Analytics Dashboard</h1>
+            <p className="text-white/80 text-lg">Real-time overview of platform activity</p>
           </div>
-          <div className="bg-white bg-opacity-25 rounded-3 px-3 py-2" style={{ fontSize: '0.75rem', color: 'white' }}>
-            <span className="me-2">●</span>
-            Live data · {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+          <div className="bg-white/20 backdrop-blur-md rounded-xl px-4 py-2 text-sm flex items-center gap-2">
+            <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+            Live data · {formatDate()}
           </div>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="row g-4 mb-5">
-        {topStats.map(s => (
-          <div key={s.label} className="col-6 col-lg-3">
-            <div className="admin-stat-card" style={{ background: 'white' }}>
-              <div className="stat-icon" style={{ backgroundColor: s.bg, color: s.color }}>
-                <i className={s.icon} style={{ fontSize: '1.25rem' }}></i>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {topStats.map((stat) => (
+          <div key={stat.label} className="bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-3 rounded-xl" style={{ backgroundColor: stat.bg, color: stat.color }}>
+                <i className={stat.icon} style={{ fontSize: '1.25rem' }}></i>
               </div>
-              <p className="fw-bold mb-1" style={{ fontSize: '1.5rem', color: s.color }}>{s.value}</p>
-              <p className="mb-0" style={{ fontSize: '0.75rem', color: '#64748b' }}>{s.label}</p>
-              <p className="mb-0" style={{ fontSize: '0.75rem', color: '#f59e0b' }}>{s.delta}</p>
             </div>
+            <p className="text-2xl lg:text-3xl font-bold text-gray-900 mb-1" style={{ color: stat.color }}>
+              {stat.value}
+            </p>
+            <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
+            <p className="text-sm font-semibold text-amber-600">{stat.delta}</p>
           </div>
         ))}
       </div>
 
       {/* Application Pipeline */}
-      <div className="admin-card mb-5">
-        <div className="card-header">
-          <h2 className="mb-0" style={{ fontSize: '1.25rem' }}>Application Pipeline</h2>
+      <div className="bg-white rounded-2xl shadow-lg mb-8 overflow-hidden">
+        <div className="p-6 border-b border-gray-100">
+          <h2 className="text-xl font-bold text-gray-900 mb-0">Application Pipeline</h2>
         </div>
-        <div className="card-body">
-          <div className="row g-3 mb-4">
-            {statusCards.map(({ label, key, icon }) => (
-              <div key={key} className="col-6 col-md">
-                <Link href={`/admin/applications?status=${key}`} className="d-block text-center p-3 rounded-3 text-decoration-none" style={{ backgroundColor: '#f8fafc' }}>
-                  <i className={`${icon} mb-2 d-block`} style={{ fontSize: '1.25rem', color: STATUS_COLORS[key] }}></i>
-                  <div className="fw-bold" style={{ fontSize: '1.25rem', color: '#dc2626' }}>{d.statusMap[key] || 0}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{label}</div>
+        <div className="p-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+            {statusCards.map(({ label, key, icon }) => {
+              const count = data.statusMap[key] || 0;
+              return (
+                <Link
+                  key={key}
+                  href={`/admin/applications?status=${key}`}
+                  className="flex flex-col items-center p-6 rounded-xl hover:bg-gray-50 transition-colors text-center text-decoration-none border-2 border-gray-100 hover:border-gray-200 hover:shadow-md"
+                  style={{ backgroundColor: '#f8fafc' }}
+                >
+                  <i
+                    className={`${icon} mb-3`}
+                    style={{ fontSize: '1.25rem', color: STATUS_COLORS[key] }}
+                  ></i>
+                  <div className="text-2xl font-bold" style={{ color: '#dc2626' }}>
+                    {count}
+                  </div>
+                  <div className="text-xs text-gray-600 mt-1">{label}</div>
                 </Link>
-              </div>
-            ))}
+              );
+            })}
           </div>
-          <div className="d-flex rounded-pill overflow-hidden" style={{ height: '0.75rem' }}>
+          <div className="flex rounded-3xl h-3 bg-gray-200 overflow-hidden">
             {statusCards.map(({ key }) => {
-              const count = d.statusMap[key] || 0;
-              const pct   = d.totalApplications ? (count / d.totalApplications) * 100 : 0;
+              const count = data.statusMap[key] || 0;
+              const pct = data.totalApplications ? (count / data.totalApplications) * 100 : 0;
               return pct > 0 ? (
-                <div key={key} style={{ width: `${pct}%`, backgroundColor: STATUS_COLORS[key] }}></div>
+                <div
+                  key={key}
+                  className="h-full flex-shrink-0"
+                  style={{
+                    width: `${pct}%`,
+                    backgroundColor: STATUS_COLORS[key],
+                  }}
+                />
               ) : null;
             })}
           </div>
@@ -152,32 +212,73 @@ export default async function AdminDashboardPage() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="row g-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Recent Applications */}
-        <div className="col-lg-8">
-          <div className="admin-card">
-            <div className="card-header d-flex align-items-center justify-content-between">
-              <h2 className="mb-0" style={{ fontSize: '1.1rem' }}>Recent Applications</h2>
-              <Link href="/admin/applications" className="text-decoration-none fw-medium" style={{ color: '#dc2626', fontSize: '0.875rem' }}>View all →</Link>
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900">Recent Applications</h2>
+              <Link
+                href="/admin/applications"
+                className="text-red-600 hover:text-red-700 font-semibold text-sm transition-colors"
+              >
+                View all →
+              </Link>
             </div>
-            <div className="card-body p-0">
-              {d.recentApps.map((app: any) => (
-                <Link key={app._id.toString()} href={`/admin/applications/${app._id}`} className="d-flex align-items-center gap-3 px-4 py-3 text-decoration-none" style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0" style={{ width: '2.5rem', height: '2.5rem', background: 'linear-gradient(135deg, #dc2626, #b91c1c)', fontSize: '0.875rem' }}>
-                    {(app.studentId as any)?.firstName?.[0] || '?'}
+            <div className="divide-y divide-gray-100">
+              {data.recentApps.map((app: any) => (
+                <Link
+                  key={app._id.toString()}
+                  href={`/admin/applications/${app._id}`}
+                  className="flex items-center gap-4 p-6 hover:bg-gray-50 transition-colors text-decoration-none"
+                >
+                  <div
+                    className="flex items-center justify-center text-white font-bold rounded-full flex-shrink-0"
+                    style={{
+                      width: '2.5rem',
+                      height: '2.5rem',
+                      background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+                      fontSize: '0.875rem',
+                    }}
+                  >
+                    {((app.studentId as any)?.firstName?.[0] || '?').toUpperCase()}
                   </div>
-                  <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                    <p className="fw-medium mb-0" style={{ color: '#1e293b', fontSize: '0.9rem' }}>{(app.studentId as any)?.firstName} {(app.studentId as any)?.lastName}</p>
-                    <p className="mb-0" style={{ color: '#64748b', fontSize: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{(app.universityId as any)?.name} · {(app.programId as any)?.name}</p>
+                  <div className="flex-grow min-w-0">
+                    <p className="font-semibold text-gray-900 text-sm mb-1">
+                      {(app.studentId as any)?.firstName} {(app.studentId as any)?.lastName}
+                    </p>
+                    <p className="text-xs text-gray-600 truncate">
+                      {(app.universityId as any)?.name} · {(app.programId as any)?.name}
+                    </p>
                   </div>
-                  <div className="rounded-pill px-3 py-1 flex-shrink-0" style={{ 
-                    backgroundColor: app.status === 'approved' ? '#dcfce7' : app.status === 'rejected' ? '#fee2e2' : app.status === 'under_review' ? '#fef3c7' : app.status === 'submitted' ? '#dbeafe' : '#f1f5f9',
-                    color: app.status === 'approved' ? '#15803d' : app.status === 'rejected' ? '#b91c1c' : app.status === 'under_review' ? '#b45309' : app.status === 'submitted' ? '#1d4ed8' : '#475569',
-                    fontSize: '0.75rem', fontWeight: 600
-                  }}>
+                  <div
+                    className="px-3 py-1 rounded-full text-xs font-semibold flex-shrink-0"
+                    style={{
+                      backgroundColor:
+                        app.status === 'approved'
+                          ? '#dcfce7'
+                          : app.status === 'rejected'
+                          ? '#fee2e2'
+                          : app.status === 'under_review'
+                          ? '#fef3c7'
+                          : app.status === 'submitted'
+                          ? '#dbeafe'
+                          : '#f1f5f9',
+                      color:
+                        app.status === 'approved'
+                          ? '#15803d'
+                          : app.status === 'rejected'
+                          ? '#b91c1c'
+                          : app.status === 'under_review'
+                          ? '#b45309'
+                          : app.status === 'submitted'
+                          ? '#1d4ed8'
+                          : '#475569',
+                    }}
+                  >
                     {app.status?.replace('_', ' ')}
                   </div>
-                  <span className="flex-shrink-0" style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                  <span className="text-xs text-gray-500 flex-shrink-0">
                     {new Date(app.createdAt).toLocaleDateString()}
                   </span>
                 </Link>
@@ -187,22 +288,21 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="col-lg-4">
-          <div className="admin-card">
-            <div className="card-header">
-              <h3 className="mb-0" style={{ fontSize: '1.1rem' }}>Quick Actions</h3>
-            </div>
-            <div className="card-body">
-              <div className="row g-3">
-                {quickActions.map(action => (
-                  <div key={action.label} className="col-6">
-                    <Link href={action.href} className="d-flex flex-column align-items-center justify-content-center p-4 rounded-4 text-white text-decoration-none h-100" style={{ backgroundColor: action.color, transition: 'all 0.3s ease' }}>
-                      <i className={action.icon} style={{ fontSize: '1.5rem', marginBottom: '8px' }}></i>
-                      <span className="fw-semibold" style={{ fontSize: '0.8rem' }}>{action.label}</span>
-                    </Link>
-                  </div>
-                ))}
-              </div>
+        <div>
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <h3 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {quickActions.map((action) => (
+                <Link
+                  key={action.label}
+                  href={action.href}
+                  className="flex flex-col items-center justify-center p-6 rounded-xl text-white text-decoration-none h-32 hover:scale-105 transition-all duration-300 shadow-lg"
+                  style={{ backgroundColor: action.color }}
+                >
+                  <i className={action.icon} style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}></i>
+                  <span className="font-semibold text-sm">{action.label}</span>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
@@ -210,3 +310,4 @@ export default async function AdminDashboardPage() {
     </div>
   );
 }
+

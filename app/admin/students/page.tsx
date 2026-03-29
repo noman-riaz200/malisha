@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { connectDB } from '@/lib/db/mongoose';
 import { User } from '@/lib/db/models/User';
 import { StudentsList } from './StudentsList';
+import { formatDate } from '@/lib/utils';
 
 export const metadata = { title: 'Students — Admin' };
 export const dynamic = 'force-dynamic';
@@ -62,7 +63,7 @@ export default async function AdminStudentsPage({ searchParams }: PageProps) {
           </div>
           <div className="bg-white bg-opacity-25 rounded-3 px-3 py-2" style={{ fontSize: '0.75rem', color: 'white' }}>
             <span className="me-2">●</span>
-            Live data · {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+            Live data · {formatDate()}
           </div>
         </div>
       </div>

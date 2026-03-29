@@ -37,13 +37,8 @@ const nextConfig = {
   },
   
   // Enable stale-while-revalidate for faster page loads
-  experimental: {
-    serverComponentsExternalPackages: ['mysql2', 'mongoose'],
-    // Optimize package imports
-    optimizePackageImports: ['clsx'],
-  },
-  
-  // Enable React strict mode for better development
+  serverExternalPackages: ['mongoose'],
+//  swcMinify: true, // Removed for Next.js 15 compatibility
   reactStrictMode: true,
   
   // Reduce bundle size by eliminating moment.js

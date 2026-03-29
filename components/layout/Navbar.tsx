@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface NavLink {
@@ -171,9 +171,9 @@ function NavDropdown({
   onClose: () => void;
 }) {
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
+  const pathname: string = '/'; // Default for server-side
 
-// Removed direct DOM listeners for hydration safety
+  // Removed direct DOM listeners for hydration safety
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
       onClose();
@@ -181,10 +181,10 @@ function NavDropdown({
   }, [onClose]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      document.addEventListener('mousedown', handleClickOutside as any);
+    if (typeof document !== 'undefined') {
+      document.addEventListener('click', handleClickOutside as any, true);
       return () => {
-        (document as any).removeEventListener('mousedown', handleClickOutside as any);
+        document.removeEventListener('click', handleClickOutside as any, true);
       };
     }
   }, [handleClickOutside]);
@@ -227,14 +227,30 @@ function NavDropdown({
 }
 
 export function Navbar() {
-  const pathname = usePathname();
+  const [pathname, setPathname] = useState('');
+  const [isClient, setIsClient] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  // Close mobile menu when route changes
+
+  // Set client state and pathname on mount
   useEffect(() => {
-    setMobileMenuOpen(false);
-    setOpenDropdown(null);
-  }, [pathname]);
+    setIsClient(true);
+    if (typeof window !== 'undefined') {
+      setPathname(window.location.pathname || '');
+    }
+  }, []);
+
+  // Close mobile menu when route changes (client-side)
+  useEffect(() => {
+    if (isClient && typeof window !== 'undefined') {
+      const handleRouteChange = () => {
+        setMobileMenuOpen(false);
+        setOpenDropdown(null);
+      };
+      window.addEventListener('popstate', handleRouteChange);
+      return () => window.removeEventListener('popstate', handleRouteChange);
+    }
+  }, [isClient]);
 
   const handleDropdownToggle = (label: string) => {
     setOpenDropdown(openDropdown === label ? null : label);
@@ -243,6 +259,26 @@ export function Navbar() {
   const handleDropdownClose = () => {
     setOpenDropdown(null);
   };
+
+  if (!isClient) {
+    return (
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm" suppressHydrationWarning>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" suppressHydrationWarning>
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gray-200 rounded-lg animate-pulse" />
+              <div className="flex flex-col space-y-0.5">
+                <div className="h-4 bg-gray-200 rounded w-24 animate-pulse" />
+                <div className="h-3 bg-gray-200 rounded w-20 animate-pulse" />
+              </div>
+            </div>
+            <div className="hidden lg:block w-24 h-10 bg-gray-200 rounded animate-pulse" />
+            <div className="lg:hidden w-6 h-6 bg-gray-200 rounded animate-pulse" />
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm" suppressHydrationWarning>
@@ -313,8 +349,8 @@ export function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`lg:hidden border-t border-gray-100 py-4 ${mobileMenuOpen ? '' : 'hidden'}`}>
-          <nav className="flex flex-col gap-2" suppressHydrationWarning>
+        <div className={`lg:hidden border-t border-gray-100 py-4 ${mobileMenuOpen ? '' : 'hidden'}`} suppressHydrationWarning>
+          <nav className="flex flex-col gap-2">
               {NAV_LINKS.map((link) => {
                 const isActive = isPathActive(pathname, link.href);
 

@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth/config';
 import { redirect } from 'next/navigation';
 import { connectDB } from '@/lib/db/mongoose';
 import { Payment } from '@/lib/db/models/models';
+import { formatDate } from '@/lib/utils';
 import { PaymentsList } from './PaymentsList';
 
 export const metadata = { title: 'Payments — Admin' };
@@ -62,7 +63,7 @@ export default async function AdminPaymentsPage({ searchParams }: PageProps) {
           </div>
           <div className="bg-white bg-opacity-25 rounded-3 px-3 py-2" style={{ fontSize: '0.75rem', color: 'white' }}>
             <span className="me-2">●</span>
-            Live data · {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+            Live data · {formatDate()}
           </div>
         </div>
       </div>

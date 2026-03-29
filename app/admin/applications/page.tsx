@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth/config';
 import { connectDB } from '@/lib/db/mongoose';
 import { Application } from '@/lib/db/models/models';
 import Link from 'next/link';
+import { formatDate } from '@/lib/utils';
 import { ApplicationReviewPanel } from '@/components/admin/ApplicationReviewPanel';
 
 export const metadata = { title: 'Applications — Admin' };
@@ -70,7 +71,7 @@ export default async function AdminApplicationsPage({ searchParams }: PageProps)
           </div>
           <div className="bg-white bg-opacity-25 rounded-3 px-3 py-2" style={{ fontSize: '0.75rem', color: 'white' }}>
             <span className="me-2">●</span>
-            Live data · {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+            Live data · {formatDate()}
           </div>
         </div>
       </div>

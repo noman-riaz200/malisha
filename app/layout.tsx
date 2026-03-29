@@ -3,8 +3,21 @@
 // =============================================================================
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
+import dynamic from 'next/dynamic';
+
+const Navbar = dynamic(
+  () => import('@/components/layout/Navbar').then((mod) => mod.Navbar),
+  { 
+    loading: () => (
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm h-16" />
+    )
+  }
+);
+
+const Footer = dynamic(
+  () => import('@/components/layout/Footer').then((mod) => mod.Footer),
+  { loading: () => <footer className="bg-gray-900 py-12" /> }
+);
 import './globals.css';
 
 const inter = Inter({
@@ -50,6 +63,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <Footer />
       </body>
-    </html>
+      </html>
   );
 }
