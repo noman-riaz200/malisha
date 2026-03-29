@@ -110,8 +110,6 @@ const SCHOLARSHIPS = [
 
 const SCHOLARSHIP_TYPES = ['All', 'Government', 'University', 'Local Government', 'Language', 'International'];
 
-export const dynamic = 'force-dynamic';
-
 export default function ScholarshipsPage() {
   const [selectedType, setSelectedType] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');

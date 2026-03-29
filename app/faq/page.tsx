@@ -87,8 +87,6 @@ const FAQ_CATEGORIES = [
   }
 ];
 
-export const dynamic = 'force-dynamic';
-
 export default function FAQPage() {
   const [openFaqs, setOpenFaqs] = useState<{ [key: string]: boolean }>({});
 

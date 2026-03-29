@@ -1,84 +1,300 @@
 'use client';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-const NAV_LINKS = [
+interface NavLink {
+  label: string;
+  href: string;
+  hasDropdown?: boolean;
+  dropdown?: { label: string; href: string }[];
+}
+
+// Helper function to check if a pathname is active
+function isPathActive(pathname: string, href: string): boolean {
+  if (href === '/') {
+    return pathname === '/';
+  }
+  return pathname === href || pathname.startsWith(href + '/');
+}
+
+const NAV_LINKS: NavLink[] = [
   { label: 'Home', href: '/' },
-  { label: 'Partner Univ', href: '/universities' },
-  { label: 'Find University', href: '/universities' },
-  { label: 'Scholarship Services', href: '/scholarships' },
-  { label: 'Expo', href: '/expo', hasDropdown: true, dropdown: [
-    { label: 'Education Expo in China', href: '/services/education-expo-china' },
-    { label: 'Education Expo in Overseas', href: '/services/education-expo-overseas' },
-    { label: 'Education Expo in America', href: '/services/education-expo-america' },
-  ]},
-  { label: 'Services', href: '/services', hasDropdown: true, dropdown: [
-    { label: 'Service Charges', href: '/services/service-charges' },
-    { label: 'Admission Service', href: '/services/admission-service' },
-    { label: 'Chinese Language and Foundation Course', href: '/services/chinese-language-foundation-course' },
-    { label: 'Airport Pickup Service', href: '/services/airport-pickup' },
-    { label: 'Accommodation Service', href: '/services/accommodation' },
-    { label: 'Visa Service', href: '/services/visa' },
-    { label: 'On Campus Service', href: '/services/on-campus-service' },
-    { label: 'Job & Business in China', href: '/services/job-business-china' },
-  ]},
-  { label: 'Contact', href: '/contact' },
-  { label: 'About', href: '/about' },
+  { label: 'Partner Universities', href: '/universities' },
+  { label: 'Scholarship', href: '/scholarships' },
+  {
+    label: 'Services',
+    href: '/services',
+    hasDropdown: true,
+    dropdown: [
+      { label: 'Service Charges', href: '/services/service-charges' },
+      { label: 'Admission Service', href: '/services/admission-service' },
+      { label: 'Chinese Language and Foundation Course', href: '/services/chinese-language-foundation-course' },
+      { label: 'Airport Pickup Service', href: '/services/airport-pickup' },
+      { label: 'Accommodation Service', href: '/services/accommodation' },
+      { label: 'Visa Service', href: '/services/visa' },
+      { label: 'On Campus Service', href: '/services/on-campus-service' },
+      { label: 'Job & Business in China', href: '/services/job-business-china' },
+    ],
+  },
+  {
+    label: 'Expo',
+    href: '/expo',
+    hasDropdown: true,
+    dropdown: [
+      { label: 'Education Expo in China', href: '/services/education-expo-china' },
+      { label: 'Education Expo in Overseas', href: '/services/education-expo-overseas' },
+      { label: 'Education Expo in America', href: '/services/education-expo-america' },
+    ],
+  },
+  {
+    label: 'About',
+    href: '/about',
+    hasDropdown: true,
+    dropdown: [
+      { label: 'About Us', href: '/about' },
+      { label: 'Our Team', href: '/about#team' },
+      { label: 'Gallery', href: '/gallery' },
+    ],
+  },
+  {
+    label: 'More',
+    href: '#',
+    hasDropdown: true,
+    dropdown: [
+      { label: 'Blogs', href: '/blogs' },
+      { label: 'FAQ', href: '/faq' },
+      { label: 'Guide', href: '/guide' },
+      { label: 'Programs', href: '/programs' },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms of Service', href: '/terms' },
+    ],
+  },
+  {
+    label: 'Contact',
+    href: '/contact',
+    hasDropdown: true,
+    dropdown: [
+      { label: 'Contact Us', href: '/contact' },
+      { label: 'Get Free Consultation', href: '/get-free-consultation' },
+    ],
+  },
 ];
+
+// ChevronDown icon component
+function ChevronDown({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+// Logo component matching the design
+function Logo() {
+  return (
+    <Link href="/" className="flex items-center gap-3 no-underline">
+      <div className="flex flex-col items-start">
+        {/* Logo Icon */}
+        <div className="flex items-center gap-2">
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 100 100"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* Stylized person/graduate figure */}
+            <circle cx="50" cy="25" r="12" fill="#0d9488" />
+            <path
+              d="M35 45 Q50 35 65 45 L65 55 Q50 45 35 55 Z"
+              fill="#0d9488"
+            />
+            {/* Arms raised in success */}
+            <path
+              d="M35 45 L20 25 L25 20 L38 38"
+              fill="#0d9488"
+            />
+            <path
+              d="M65 45 L80 25 L75 20 L62 38"
+              fill="#0d9488"
+            />
+            {/* Body */}
+            <path
+              d="M38 50 L38 85 L45 85 L45 60 L55 60 L55 85 L62 85 L62 50 Q50 45 38 50"
+              fill="#0d9488"
+            />
+            {/* Graduation cap */}
+            <path
+              d="M30 18 L50 8 L70 18 L50 28 Z"
+              fill="#0d9488"
+            />
+            <path
+              d="M70 18 L70 25 L65 22"
+              fill="#0d9488"
+            />
+          </svg>
+          <div className="flex flex-col">
+            <span className="text-lg font-bold text-gray-800 leading-tight">
+              Malisha<span className="text-[#0d9488]">Edu</span>
+            </span>
+            <span className="text-xs text-gray-600">马丽莎教育</span>
+          </div>
+        </div>
+        <span className="text-[10px] text-gray-500 mt-0.5">The China Education Expert</span>
+      </div>
+    </Link>
+  );
+}
+
+// Dropdown component
+function NavDropdown({
+  link,
+  isOpen,
+  onToggle,
+  onClose,
+}: {
+  link: NavLink;
+  isOpen: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+}) {
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [onClose]);
+
+  const isActive = isPathActive(pathname, link.href);
+
+  return (
+    <div ref={dropdownRef} className="relative" suppressHydrationWarning>
+      <button
+        onClick={onToggle}
+        onMouseEnter={() => onToggle()}
+        className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+          isActive ? 'text-[#0d9488]' : 'text-gray-600 hover:text-[#0d9488]'
+        }`}
+      >
+        {link.label}
+        <ChevronDown
+          className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+        />
+      </button>
+      {isOpen && link.dropdown && (
+        <div
+          className="absolute top-full left-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-100 py-2 z-50"
+          onMouseLeave={onClose}
+        >
+          {link.dropdown.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="block px-4 py-2 text-sm text-gray-600 hover:text-[#0d9488] hover:bg-gray-50 transition-colors"
+              onClick={onClose}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function Navbar() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
-  const [expoOpen, setExpoOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  // Close mobile menu when route changes
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
-    setMobileOpen(false);
+    setMobileMenuOpen(false);
+    setOpenDropdown(null);
   }, [pathname]);
 
-  const isActive = (href: string) => pathname === href;
-  const isServicesActive = (href: string) => pathname.startsWith('/services') || pathname.startsWith(expoOpen ? '/expo' : '');
+  const handleDropdownToggle = (label: string) => {
+    setOpenDropdown(openDropdown === label ? null : label);
+  };
 
-  // Prevent hydration mismatch by not rendering mobile menu until mounted
-  const displayMobileOpen = mounted ? mobileOpen : false;
+  const handleDropdownClose = () => {
+    setOpenDropdown(null);
+  };
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-[#0d2137] shadow-lg' : 'bg-[#0d2137]/98'
-      }`}
-      suppressHydrationWarning
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav className="flex items-center justify-between py-3">
-          {/* Logo - MalishaEdu */}
-          <Link href="/" className="flex items-center gap-2 text-decoration-none ml-2">
-            <span className="font-bold text-xl text-white tracking-tight">
-              Malisha<span style={{ color: '#C62828' }}>Edu</span>
-            </span>
-          </Link>
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm" suppressHydrationWarning>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" suppressHydrationWarning>
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Logo />
 
-          {/* Mobile toggle */}
+          {/* Desktop Navigation */}
+          <nav suppressHydrationWarning className="hidden lg:flex items-center gap-1">
+            {NAV_LINKS.map((link) => {
+              const isActive = isPathActive(pathname, link.href);
+
+              if (link.hasDropdown) {
+                return (
+                  <NavDropdown
+                    key={link.label}
+                    link={link}
+                    isOpen={openDropdown === link.label}
+                    onToggle={() => handleDropdownToggle(link.label)}
+                    onClose={handleDropdownClose}
+                  />
+                );
+              }
+
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className={`px-3 py-2 text-sm font-medium transition-colors duration-200 ${
+                    isActive
+                      ? 'text-[#0d9488]'
+                      : 'text-gray-600 hover:text-[#0d9488]'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Login Button */}
+          <div className="hidden lg:block">
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center px-6 py-2 text-sm font-medium text-white bg-[#0f766e] rounded hover:bg-[#0d9488] transition-colors duration-200"
+            >
+              Login
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 text-white border-0 bg-transparent"
-            type="button"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle navigation"
+            className="lg:hidden p-2 text-gray-600 hover:text-[#0d9488]"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
           >
-            {displayMobileOpen ? (
+            {mobileMenuOpen ? (
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -88,166 +304,72 @@ export function Navbar() {
               </svg>
             )}
           </button>
+        </div>
 
-          {/* Desktop nav */}
-          <div className={`hidden lg:flex lg:items-center lg:w-full lg:justify-between ${displayMobileOpen ? 'flex' : ''}`}>
-            <ul className="flex items-center w-full justify-between">
-              {NAV_LINKS.map((link) => (
-                <li key={link.label} className="relative" style={{ position: 'relative' }}>
-                  {link.hasDropdown && link.dropdown ? (
-                    <>
-                      <button 
-                        className={`px-3 py-2 rounded text-decoration-none transition-all duration-200 whitespace-nowrap flex items-center gap-1 ${
-                          isServicesActive(link.href) 
-                            ? 'text-[#C62828] bg-[#C62828]/10' 
-                            : 'text-white/90 hover:text-[#C62828]'
+        {/* Mobile Menu */}
+        <div className={`lg:hidden border-t border-gray-100 py-4 ${mobileMenuOpen ? '' : 'hidden'}`}>
+          <nav className="flex flex-col gap-2" suppressHydrationWarning>
+              {NAV_LINKS.map((link) => {
+                const isActive = isPathActive(pathname, link.href);
+
+                if (link.hasDropdown) {
+                  const isDropdownOpen = openDropdown === link.label;
+                  return (
+                    <div key={link.label}>
+                      <button
+                        onClick={() => handleDropdownToggle(link.label)}
+                        className={`flex items-center justify-between w-full px-3 py-2 text-sm font-medium ${
+                          isActive ? 'text-[#0d9488]' : 'text-gray-600'
                         }`}
-                        style={{ 
-                          fontSize: '0.85rem',
-                          fontWeight: 500,
-                        }}
-                        onClick={() => link.label === 'Expo' ? setExpoOpen(!expoOpen) : setServicesOpen(!servicesOpen)}
-                        onMouseEnter={() => link.label === 'Expo' ? setExpoOpen(true) : setServicesOpen(true)}
                       >
                         {link.label}
-                        <svg className={`w-3 h-3 transition-transform ${servicesOpen || expoOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                      {/* Dropdown Menu */}
-                      <div 
-                        className={`absolute top-full left-1/2 -translate-x-1/2 min-w-[280px] rounded-lg shadow-xl p-2 transition-all duration-200 ${
-                          servicesOpen || expoOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-                        }`}
-                        style={{ 
-                          backgroundColor: 'rgba(13, 33, 55, 0.98)',
-                          zIndex: 9999,
-                        }}
-                        onMouseEnter={() => link.label === 'Expo' ? setExpoOpen(true) : setServicesOpen(true)}
-                        onMouseLeave={() => {
-                          setServicesOpen(false);
-                          setExpoOpen(false);
-                        }}
-                      >
-                        {link.dropdown.map((item) => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            className="block px-3 py-2 rounded text-white/90 text-sm transition-colors duration-200 hover:bg-[#C62828]/20 hover:text-[#C62828]"
-                            onClick={() => {
-                              setServicesOpen(false);
-                              setExpoOpen(false);
-                            }}
-                          >
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </>
-                  ) : (
-                    <Link 
-                      href={link.href}
-                      className={`px-3 py-2 rounded text-decoration-none transition-all duration-200 whitespace-nowrap relative ${
-                        isActive(link.href) 
-                          ? 'text-[#C62828]' 
-                          : 'text-white/90 hover:text-[#C62828]'
-                      }`}
-                      style={{ 
-                        fontSize: '0.85rem',
-                        fontWeight: 500,
-                      }}
-                    >
-                      {link.label}
-                      {isActive(link.href) && (
-                        <span 
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-0.5"
-                          style={{ backgroundColor: '#C62828' }}
+                        <ChevronDown
+                          className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
                         />
+                      </button>
+                      {isDropdownOpen && link.dropdown && (
+                        <div className="ml-4 mt-1 border-l-2 border-gray-100">
+                          {link.dropdown.map((item) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              className="block px-3 py-2 text-sm text-gray-600 hover:text-[#0d9488]"
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              {item.label}
+                            </Link>
+                          ))}
+                        </div>
                       )}
-                    </Link>
-                  )}
-                </li>
-              ))}
-            </ul>
+                    </div>
+                  );
+                }
 
-            {/* Contact Button */}
-            <div className="flex gap-2 ml-3">
-              <Link 
-                href="/contact"
-                className="px-4 py-2 rounded font-medium transition-colors duration-200"
-                style={{ 
-                  backgroundColor: '#C62828', 
-                  color: '#ffffff',
-                }}
-              >
-                Contact
-              </Link>
-            </div>
-          </div>
-        </nav>
-      </div>
-
-      {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="lg:hidden bg-[#0d2137]/98 border-t border-white/10">
-          <ul className="py-2 px-4">
-            {NAV_LINKS.map((link) => (
-              <li key={link.label} className="py-2">
-                {link.hasDropdown && link.dropdown ? (
-                  <div>
-                    <button 
-                      className="flex items-center justify-between w-full px-3 py-2 text-white/90 text-sm font-medium"
-                      onClick={() => link.label === 'Expo' ? setExpoOpen(!expoOpen) : setServicesOpen(!servicesOpen)}
-                    >
-                      {link.label}
-                      <svg className={`w-4 h-4 ${servicesOpen || expoOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    {(servicesOpen || expoOpen) && (
-                      <div className="ml-4 mt-1">
-                        {link.dropdown.map((item) => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            className="block px-3 py-2 text-white/70 text-sm hover:text-[#C62828]"
-                            onClick={() => setMobileOpen(false)}
-                          >
-                            {item.label}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <Link 
+                return (
+                  <Link
+                    key={link.label}
                     href={link.href}
-                    className={`block px-3 py-2 text-sm font-medium ${
-                      isActive(link.href) ? 'text-[#C62828]' : 'text-white/90'
+                    className={`px-3 py-2 text-sm font-medium ${
+                      isActive ? 'text-[#0d9488]' : 'text-gray-600 hover:text-[#0d9488]'
                     }`}
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() => setMobileMenuOpen(false)}
                   >
                     {link.label}
                   </Link>
-                )}
-              </li>
-            ))}
-            <div className="flex gap-2 mt-4 px-3 pb-4">
-              <Link 
-                href="/contact"
-                className="flex-1 px-3 py-2 rounded text-center text-sm font-medium"
-                style={{ 
-                  backgroundColor: '#C62828', 
-                  color: '#ffffff',
-                }}
-                onClick={() => setMobileOpen(false)}
-              >
-                Contact
-              </Link>
-            </div>
-          </ul>
-        </div>
-      )}
+                );
+              })}
+              <div className="mt-4 px-3">
+                <Link
+                  href="/login"
+                  className="flex items-center justify-center w-full px-6 py-2 text-sm font-medium text-white bg-[#0f766e] rounded hover:bg-[#0d9488] transition-colors duration-200"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              </div>
+            </nav>
+          </div>
+      </div>
     </header>
   );
 }

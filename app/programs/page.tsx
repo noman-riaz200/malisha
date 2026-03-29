@@ -146,8 +146,6 @@ const PROGRAMS = [
 
 const CATEGORIES = ['All', 'Engineering', 'Business', 'Medicine', 'Humanities', 'Design', 'Law', 'Social Sciences'];
 
-export const dynamic = 'force-dynamic';
-
 export default function ProgramsPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');

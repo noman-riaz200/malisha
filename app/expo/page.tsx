@@ -63,8 +63,6 @@ const PAST_EXPOS = [
   { year: '2023', location: 'Shanghai, China', attendees: '4,500+', universities: '120+' }
 ];
 
-export const dynamic = 'force-dynamic';
-
 export default function ExpoPage() {
   return (
     <>

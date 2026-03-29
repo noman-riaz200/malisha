@@ -119,8 +119,6 @@ const GALLERY_ITEMS: GalleryItem[] = [
 
 const CATEGORIES = ['All', 'Universities', 'Cities', 'Nature', 'Events', 'Campus', 'Students'];
 
-export const dynamic = 'force-dynamic';
-
 export default function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [selectedImage, setSelectedImage] = useState<GalleryItem | null>(null);

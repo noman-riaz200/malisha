@@ -50,8 +50,6 @@ const SERVICES = [
   }
 ];
 
-export const dynamic = 'force-dynamic';
-
 export default function VisaPage() {
   return (
     <div className="min-vh-100" style={{ backgroundColor: '#0d2137', paddingTop: '80px' }}>
