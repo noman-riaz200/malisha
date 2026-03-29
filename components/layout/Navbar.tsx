@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface NavLink {
   label: string;
@@ -173,20 +173,26 @@ function NavDropdown({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        onClose();
-      }
+// Removed direct DOM listeners for hydration safety
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      onClose();
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [onClose]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.addEventListener('mousedown', handleClickOutside as any);
+      return () => {
+        (document as any).removeEventListener('mousedown', handleClickOutside as any);
+      };
+    }
+  }, [handleClickOutside]);
 
   const isActive = isPathActive(pathname, link.href);
 
   return (
-    <div ref={dropdownRef} className="relative" suppressHydrationWarning>
+<div ref={dropdownRef} className="relative" suppressHydrationWarning={true}>
       <button
         onClick={onToggle}
         onMouseEnter={() => onToggle()}

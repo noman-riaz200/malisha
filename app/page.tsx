@@ -1,5 +1,3 @@
-import { redirect } from 'next/navigation';
+import Homepage from '../app/(public)/page';
 
-export default function RootPage() {
-  redirect('/(public)');
-}
+export default Homepage;

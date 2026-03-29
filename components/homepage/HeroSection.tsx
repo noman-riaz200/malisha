@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const STATISTICS = [
   { value: '+13', label: 'Years of experience', color: 'bg-[#e53935]' },
@@ -12,12 +13,14 @@ const STATISTICS = [
 
 export function HeroSection() {
   const [searchQuery, setSearchQuery] = useState('');
+
   const [selectedIntake, setSelectedIntake] = useState<'march' | 'september'>('march');
+  const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/universities?search=${encodeURIComponent(searchQuery)}`;
+      router.push(`/universities?search=${encodeURIComponent(searchQuery)}`);
     }
   };
 
@@ -110,21 +113,7 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* Right Side - Action Buttons */}
-            <div className="hidden lg:flex flex-col gap-0 lg:mt-16">
-              <Link
-                href="/apply"
-                className="px-5 py-2.5 bg-[#e53935] text-white text-center rounded font-semibold hover:bg-[#c62828] transition-colors shadow-lg whitespace-nowrap text-sm"
-              >
-                Apply Now
-              </Link>
-              <Link
-                href="/get-free-consultation"
-                className="px-5 py-2.5 bg-[#0f4c3a] text-white text-center rounded font-semibold hover:bg-[#0d3d2e] transition-colors shadow-lg whitespace-nowrap text-xs leading-tight mt-2"
-              >
-                Get A Free<br />Consultation
-              </Link>
-            </div>
+
           </div>
         </div>
       </div>

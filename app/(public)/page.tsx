@@ -8,6 +8,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Award, Users, Globe, Building, Calendar, MapPin, Clock, ChevronRight, Star, Quote } from 'lucide-react';
 import { HeroSection } from '@/components/homepage/HeroSection';
 
@@ -270,11 +271,12 @@ const GALLERY_ITEMS = [
 export default function Homepage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'partners' | 'learners'>('partners');
+  const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/universities?search=${encodeURIComponent(searchQuery)}`;
+      router.push(`/universities?search=${encodeURIComponent(searchQuery)}`);
     }
   };
 
