@@ -260,25 +260,8 @@ export function Navbar() {
     setOpenDropdown(null);
   };
 
-  if (!isClient) {
-    return (
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm" suppressHydrationWarning>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" suppressHydrationWarning>
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-200 rounded-lg animate-pulse" />
-              <div className="flex flex-col space-y-0.5">
-                <div className="h-4 bg-gray-200 rounded w-24 animate-pulse" />
-                <div className="h-3 bg-gray-200 rounded w-20 animate-pulse" />
-              </div>
-            </div>
-            <div className="hidden lg:block w-24 h-10 bg-gray-200 rounded animate-pulse" />
-            <div className="lg:hidden w-6 h-6 bg-gray-200 rounded animate-pulse" />
-          </div>
-        </div>
-      </header>
-    );
-  }
+  // Always render the same structure to avoid hydration mismatch
+  // Use suppressHydrationWarning to handle client-only state
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm" suppressHydrationWarning>

@@ -120,7 +120,7 @@ export function HeroSection() {
 
 {/* Statistics Cards - Bottom Section */}
       {/* <div className="absolute mt-50 bottom-0 left-0 right-0 z-20 pb-20 mt-[2000px]"> */}
-      <div className=" mt-8  z-20 pb-20 mt-[2000px]">
+      <div className="mt-1 left-0 right-0 z-20 pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 w-full">
             {STATISTICS.map((stat, index) => (

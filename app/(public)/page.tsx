@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Award, Users, Globe, Building, Calendar, MapPin, Clock, ChevronRight, Star, Quote } from 'lucide-react';
 import { HeroSection } from '@/components/homepage/HeroSection';
+import { UniversityCardHomepage } from '@/components/homepage/UniversityCardHomepage';
 
 const STATISTICS = [
   { value: '+13', label: 'Years of experience', icon: 'award' },
@@ -132,26 +133,17 @@ export default function Homepage() {
               Find University
             </button>
           </form>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div suppressHydrationWarning className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {UNIVERSITIES.slice(0, 6).map((uni, index) => (
-              <div key={index} className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border">
-                <div className="h-32 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-3xl font-bold text-gray-400">{uni.name.charAt(0)}</span>
-                </div>
-                <h3 className="font-bold text-lg mb-2 text-gray-900">{uni.name}</h3>
-                <p className="text-sm text-gray-600 mb-2">World Rank: {uni.rank}</p>
-                <p className="text-sm text-gray-600 mb-4">{uni.location}</p>
-                {uni.countdown && (
-                  <div className="bg-red-50 p-3 rounded-lg mb-4">
-                    <span className="text-sm font-medium text-red-700">
-                      {uni.countdown.days}d {uni.countdown.hours}h {uni.countdown.min}m left
-                    </span>
-                  </div>
-                )}
-                <Link href="/universities" className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center gap-1">
-                  View Details <ChevronRight className="w-4 h-4" />
-                </Link>
-              </div>
+              <UniversityCardHomepage
+                key={index}
+                name={uni.name}
+                rank={uni.rank}
+                location={uni.location}
+                students={uni.students}
+                badges={uni.badges}
+                countdown={uni.countdown}
+              />
             ))}
           </div>
           <div className="text-center">
