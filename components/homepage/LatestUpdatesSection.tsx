@@ -1,6 +1,7 @@
+
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 
 const LATEST_UPDATES = [
@@ -39,7 +40,7 @@ const LATEST_UPDATES = [
 ];
 
 export function LatestUpdatesSection() {
-  const [selectedUpdate, setSelectedUpdate] = useState(LATEST_UPDATES[0]);
+  const selectedUpdate = LATEST_UPDATES[0];
 
   return (
     <section className="py-20 bg-white">
@@ -92,30 +93,27 @@ export function LatestUpdatesSection() {
               {LATEST_UPDATES.map((update) => (
                 <div
                   key={update.id}
-                  onClick={() => setSelectedUpdate(update)}
-                  className={`cursor-pointer p-4 rounded-xl transition-all duration-300 ${
-                    selectedUpdate.id === update.id
-                      ? 'bg-teal-50 border-l-4 border-teal-600 shadow-md'
-                      : 'bg-gray-50 hover:bg-gray-100 border-l-4 border-transparent'
+                  className={`p-4 rounded-xl transition-all duration-300 hover:bg-gray-100 border-l-4 border-transparent ${
+                    update.id === 1 ? 'bg-teal-50 border-teal-600 shadow-md' : ''
                   }`}
                 >
                   <p 
                     className={`text-sm font-semibold mb-1 ${
-                      selectedUpdate.id === update.id ? 'text-teal-600' : 'text-gray-500'
+                      update.id === 1 ? 'text-teal-600' : 'text-gray-500'
                     }`}
                   >
                     {update.date}
                   </p>
                   <h4 
                     className={`font-bold mb-2 line-clamp-2 ${
-                      selectedUpdate.id === update.id ? 'text-teal-700' : 'text-gray-900'
+                      update.id === 1 ? 'text-teal-700' : 'text-gray-900'
                     }`}
                   >
                     {update.title}
                   </h4>
                   <p 
                     className={`text-sm line-clamp-2 ${
-                      selectedUpdate.id === update.id ? 'text-teal-600' : 'text-gray-600'
+                      update.id === 1 ? 'text-teal-600' : 'text-gray-600'
                     }`}
                   >
                     {update.excerpt}

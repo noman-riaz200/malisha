@@ -1,10 +1,10 @@
-"use client";
+
 
 import React, { Suspense } from 'react';
 
 import Link from 'next/link';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+
+
 import { Award, Users, Globe, Building, Calendar, MapPin, Clock, ChevronRight, Star, Quote } from 'lucide-react';
 import { HeroSection } from '@/components/homepage/HeroSection';
 import { UniversityCardHomepage } from '@/components/homepage/UniversityCardHomepage';
@@ -138,11 +138,10 @@ const GALLERY_ITEMS = [
 ];
 
 export default function Homepage() {
-  const [activeTab, setActiveTab] = useState<'partners' | 'learners'>('partners');
-  const router = useRouter();
+
 
   return (
-    <Suspense fallback={null}>
+    <>
       <div suppressHydrationWarning>
         <HeroSection />
       </div>
@@ -182,10 +181,29 @@ export default function Homepage() {
       {/* International Student Admission Services Section */}
       <InternationalAdmissionServices />
       {/* Testimonials Section */}
-      <TestimonialsSection />
+      <Suspense fallback={<div className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-300 rounded-lg mx-auto w-64 mb-4"></div>
+            <div className="h-4 bg-gray-300 rounded w-48 mx-auto mb-2"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="bg-white p-8 rounded-2xl shadow-lg animate-pulse">
+                  <div className="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4"></div>
+                  <div className="h-4 bg-gray-300 rounded mb-2 mx-auto w-32"></div>
+                  <div className="h-20 bg-gray-200 rounded mb-4"></div>
+                  <div className="w-20 h-10 bg-teal-100 rounded mx-auto"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>}>
+        <TestimonialsSection />
+      </Suspense>
 
       {/* Latest Updates Section */}
       <LatestUpdatesSection />
-    </Suspense>
+    </>
   );
 }

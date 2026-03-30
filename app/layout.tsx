@@ -28,6 +28,12 @@ export const metadata: Metadata = {
   },
 };
 
+// Disable streaming metadata to prevent hydration errors
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // Simplified layout - Navbar and Footer shown on all pages except dashboard routes
   // The Navbar component itself handles route-specific visibility

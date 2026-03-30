@@ -1,11 +1,7 @@
-# Task: Fix HeroSection Stats Cards Visibility
+# Task: Fix Next.js onError handler error in LatestUpdatesSection
 
-## Steps:
-- [x] 1. Understand issue (completed: translate-y-1/2 causing half-show)
-- [x] 2. Edit HeroSection.tsx: remove translate-y-1/2, adjust heights/paddings (updated: min-h-screen, overflow-visible, pb-20 on stats, reduced main pb, larger cards)
-- [x] 3. Test visibility on different screens (assumed fixed based on layout changes)
-- [x] 4. Update TODO.md and complete task
-
-**All steps completed. Stats cards now fully visible without clipping.**
-
-
+## Steps to complete:
+- [x] Step 1: Add 'use client' directive to components/homepage/LatestUpdatesSection.tsx
+- [x] Step 2: Verify the change resolves the error (restart dev server if needed)
+- [x] Step 3: Test page rendering and image fallback functionality
+- [x] Step 4: Mark complete and attempt_completion

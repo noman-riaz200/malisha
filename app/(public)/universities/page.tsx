@@ -2,7 +2,7 @@
 // app/(public)/universities/page.tsx — University Listing with Filters
 // =============================================================================
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
+
 import { connectDB } from '@/lib/db/mongoose';
 import { University } from '@/lib/db/models/University';
 import { UniversityCard } from '@/components/university/UniversityCard';
@@ -111,15 +111,13 @@ export default async function UniversitiesPage({ searchParams }: PageProps) {
           <div className="col-lg-9">
             {universities.length > 0 ? (
               <>
-                <Suspense fallback={<UniversityGridSkeleton />}>
-                  <div className="row g-4">
-                    {universities.map((uni: any) => (
-                      <div key={uni._id.toString()} className="col-md-6 col-xl-4">
-                        <UniversityCard university={uni} />
-                      </div>
-                    ))}
-                  </div>
-                </Suspense>
+                <div className="row g-4">
+                  {universities.map((uni: any) => (
+                    <div key={uni._id.toString()} className="col-md-6 col-xl-4">
+                      <UniversityCard university={uni} />
+                    </div>
+                  ))}
+                </div>
 
                 {pages > 1 && (
                   <div className="mt-5">

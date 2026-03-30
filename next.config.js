@@ -42,6 +42,11 @@ const nextConfig = {
 //  swcMinify: true, // Removed for Next.js 15 compatibility
   reactStrictMode: true,
   
+  // Disable streaming metadata to prevent hydration errors
+  experimental: {
+    ppr: false,
+  },
+  
   // Reduce bundle size by eliminating moment.js
   webpack: (config, { isServer, dev }) => {
     if (!isServer) {
