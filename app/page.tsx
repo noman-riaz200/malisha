@@ -1,3 +1,3 @@
-import Homepage from '../app/(public)/page';
+import Homepage from './(public)/page';
 
 export default Homepage;
