@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 const STATISTICS = [
   { value: '+13', label: 'Years of experience', color: 'bg-[#e53935]' },
@@ -12,17 +11,6 @@ const STATISTICS = [
 ];
 
 export function HeroSection() {
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const [selectedIntake, setSelectedIntake] = useState<'march' | 'september'>('march');
-  const router = useRouter();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/universities?search=${encodeURIComponent(searchQuery)}`);
-    }
-  };
 
   return (
     <section className="relative min-h-screen flex flex-col overflow-visible">
@@ -62,55 +50,7 @@ export function HeroSection() {
                 Seamless Admission Services For Your Path to Success!
               </p>
 
-              {/* Search Box Container */}
-              <div className="bg-white/85 backdrop-blur-sm rounded-2xl p-5 md:p-6 shadow-lg" suppressHydrationWarning>
-                <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-3">
-                  <div className="flex-1 relative">
-                    <input
-                      type="text"
-                      placeholder="Province, City, Degree, Major, University, Scholarship, Medium of Intruction"
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 text-gray-700 text-sm bg-white"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="px-6 py-3 bg-[#0f4c3a] text-white rounded-lg font-medium hover:bg-[#0d3d2e] transition-colors flex items-center justify-center gap-2 shadow-md whitespace-nowrap"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    Search
-                  </button>
-                </form>
 
-                {/* Intake Selection */}
-                <div className="flex justify-center gap-3 mt-4" suppressHydrationWarning>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedIntake('march')}
-                    className={`px-5 py-2 rounded-lg text-sm font-medium border-2 transition-all ${
-                      selectedIntake === 'march'
-                        ? 'bg-[#0f4c3a] text-white border-[#0f4c3a] shadow-md'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-[#0f4c3a]'
-                    }`}
-                  >
-                    March-2026
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedIntake('september')}
-                    className={`px-5 py-2 rounded-lg text-sm font-medium border-2 transition-all ${
-                      selectedIntake === 'september'
-                        ? 'bg-[#0f4c3a] text-white border-[#0f4c3a] shadow-md'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-[#0f4c3a]'
-                    }`}
-                  >
-                    September-2026
-                  </button>
-                </div>
-              </div>
             </div>
 
 

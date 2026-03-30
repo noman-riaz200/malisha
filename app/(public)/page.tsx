@@ -52,6 +52,46 @@ const UNIVERSITIES = [
     badges: ['211 Projects', '985 Projects', 'Double First Class'],
     countdown: null,
   },
+  {
+    name: 'Zhejiang University',
+    rank: '51-100',
+    location: 'Hangzhou, Zhejiang',
+    students: '300+ Students Enrolled',
+    badges: ['211 Projects', '985 Projects', 'Double First Class'],
+    countdown: { days: 25, hours: 18, min: 30 },
+  },
+  {
+    name: 'Fudan University',
+    rank: '51-100',
+    location: 'Shanghai, China',
+    students: '250+ Students Enrolled',
+    badges: ['211 Projects', '985 Projects', 'Double First Class'],
+    countdown: null,
+  },
+  {
+    name: 'Nanjing University',
+    rank: '101-150',
+    location: 'Nanjing, Jiangsu',
+    students: '180+ Students Enrolled',
+    badges: ['211 Projects', '985 Projects', 'Double First Class'],
+    countdown: { days: 40, hours: 12, min: 15 },
+  },
+  {
+    name: 'Wuhan University',
+    rank: '150-200',
+    location: 'Wuhan, Hubei',
+    students: '220+ Students Enrolled',
+    badges: ['211 Projects', '985 Projects', 'Double First Class'],
+    countdown: null,
+  },
+  {
+    name: 'Harbin Institute of Technology',
+    rank: '101-150',
+    location: 'Harbin, Heilongjiang',
+    students: '190+ Students Enrolled',
+    badges: ['211 Projects', '985 Projects', 'Double First Class'],
+    countdown: { days: 28, hours: 8, min: 45 },
+  },
 ];
 
 const SERVICES = [
@@ -94,16 +134,8 @@ const GALLERY_ITEMS = [
 ];
 
 export default function Homepage() {
-  const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'partners' | 'learners'>('partners');
   const router = useRouter();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/universities?search=${encodeURIComponent(searchQuery)}`);
-    }
-  };
 
   return (
     <>
@@ -118,23 +150,9 @@ export default function Homepage() {
               Discover China&apos;s World Class Universities
             </h2>
           </div>
-          <form onSubmit={handleSearch} className="flex gap-4 max-w-xl mx-auto mb-12">
-            <input
-              type="text"
-              placeholder="Find University"
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button 
-              type="submit"
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-            >
-              Find University
-            </button>
-          </form>
-          <div suppressHydrationWarning className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {UNIVERSITIES.slice(0, 6).map((uni, index) => (
+
+          <div suppressHydrationWarning className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {UNIVERSITIES.slice(0, 8).map((uni, index) => (
               <UniversityCardHomepage
                 key={index}
                 name={uni.name}
