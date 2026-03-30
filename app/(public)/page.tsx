@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import Link from 'next/link';
 import { useState } from 'react';
@@ -11,6 +11,7 @@ import { UniversityCardHomepage } from '@/components/homepage/UniversityCardHome
 import { FindUniversitySection } from '@/components/homepage/FindUniversitySection';
 import { InternationalAdmissionServices } from '@/components/homepage/InternationalAdmissionServices';
 import { TestimonialsSection } from '@/components/homepage/TestimonialsSection';
+import { LatestUpdatesSection } from '@/components/homepage/LatestUpdatesSection';
 
 const STATISTICS = [
   { value: '+13', label: 'Years of experience', icon: 'award' },
@@ -141,7 +142,7 @@ export default function Homepage() {
   const router = useRouter();
 
   return (
-    <>
+    <Suspense fallback={null}>
       <div suppressHydrationWarning>
         <HeroSection />
       </div>
@@ -182,6 +183,9 @@ export default function Homepage() {
       <InternationalAdmissionServices />
       {/* Testimonials Section */}
       <TestimonialsSection />
-    </>
+
+      {/* Latest Updates Section */}
+      <LatestUpdatesSection />
+    </Suspense>
   );
 }
