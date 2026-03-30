@@ -9,6 +9,7 @@ import { Award, Users, Globe, Building, Calendar, MapPin, Clock, ChevronRight, S
 import { HeroSection } from '@/components/homepage/HeroSection';
 import { UniversityCardHomepage } from '@/components/homepage/UniversityCardHomepage';
 import { FindUniversitySection } from '@/components/homepage/FindUniversitySection';
+import { InternationalAdmissionServices } from '@/components/homepage/InternationalAdmissionServices';
 
 const STATISTICS = [
   { value: '+13', label: 'Years of experience', icon: 'award' },
@@ -176,32 +177,8 @@ export default function Homepage() {
       {/* Find University Section */}
       <FindUniversitySection />
 
-      {/* Services Section - Simplified */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-              International Student Admission Services
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {SERVICES.slice(0, 6).map((service, index) => (
-              <div key={index} className="text-center p-8 border rounded-xl hover:shadow-lg transition-all">
-                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <ServiceIcon name={service.icon as string} />
-                </div>
-                <h3 className="font-bold text-xl mb-4 text-gray-900">{service.title}</h3>
-                <p className="text-gray-600">{service.description}</p>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-12">
-            <Link href="/services" className="inline-block px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-              Browse More Services
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* International Student Admission Services Section */}
+      <InternationalAdmissionServices />
       {/* Testimonials */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
