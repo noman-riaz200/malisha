@@ -10,6 +10,7 @@ import { HeroSection } from '@/components/homepage/HeroSection';
 import { UniversityCardHomepage } from '@/components/homepage/UniversityCardHomepage';
 import { FindUniversitySection } from '@/components/homepage/FindUniversitySection';
 import { InternationalAdmissionServices } from '@/components/homepage/InternationalAdmissionServices';
+import { TestimonialsSection } from '@/components/homepage/TestimonialsSection';
 
 const STATISTICS = [
   { value: '+13', label: 'Years of experience', icon: 'award' },
@@ -179,31 +180,8 @@ export default function Homepage() {
 
       {/* International Student Admission Services Section */}
       <InternationalAdmissionServices />
-      {/* Testimonials */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">What Our Clients Say</h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {PARTNER_TESTIMONIALS.slice(0, 3).map((testimonial, index) => (
-              <div key={index} className="bg-white p-8 rounded-2xl shadow-lg">
-                <Quote className="w-12 h-12 text-gray-400 mb-6 mx-auto" />
-                <p className="text-gray-600 mb-6 italic">"{testimonial.quote.substring(0, 150)}..."</p>
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold mr-4">
-                    {testimonial.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-500">{testimonial.title}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Testimonials Section */}
+      <TestimonialsSection />
     </>
   );
 }
