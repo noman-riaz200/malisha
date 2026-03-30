@@ -25,7 +25,7 @@ export function HeroSection() {
   };
 
   return (
-    <section className="relative min-h-[600px] lg:min-h-[700px] flex flex-col overflow-hidden">
+    <section className="relative min-h-screen flex flex-col overflow-visible">
       {/* Background Image with Overlay */}
       <div
         className="absolute inset-0 z-0"
@@ -41,7 +41,7 @@ export function HeroSection() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center pt-8 pb-32 lg:pb-40">
+      <div className="relative z-10 flex-1 flex flex-col justify-center pt-8 pb-12 lg:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="flex flex-col items-center lg:flex-row lg:items-start justify-center lg:justify-between gap-6">
             {/* Left Content - Title and Search */}
@@ -118,17 +118,18 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Statistics Cards - Bottom Section */}
-      <div className="absolute bottom-0 left-0 right-0 z-20">
+{/* Statistics Cards - Bottom Section */}
+      {/* <div className="absolute mt-50 bottom-0 left-0 right-0 z-20 pb-20 mt-[2000px]"> */}
+      <div className=" mt--10  z-20 pb-20 mt-[2000px]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 translate-y-1/2">
+<div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 w-full">
             {STATISTICS.map((stat, index) => (
               <div
                 key={index}
-                className={`${stat.color} rounded-lg p-4 md:p-5 text-white text-center shadow-xl`}
+className={`${stat.color} rounded-2xl p-4 sm:p-6 md:p-8 text-white text-center shadow-2xl transform hover:scale-105 transition-all duration-300 min-h-[80px] flex flex-col justify-center`}
               >
-                <div className="text-2xl md:text-3xl lg:text-4xl font-bold mb-1">{stat.value}</div>
-                <div className="text-xs md:text-sm font-medium opacity-95 leading-tight">{stat.label}</div>
+<div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 whitespace-nowrap">{stat.value}</div>
+                <div className="text-xs sm:text-sm md:text-base font-semibold opacity-100 leading-tight whitespace-nowrap hyphens-none">{stat.label}</div>
               </div>
             ))}
           </div>
