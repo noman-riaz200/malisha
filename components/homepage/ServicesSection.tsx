@@ -133,22 +133,13 @@ export function ServicesSection() {
               <div key={service.id} className="col-lg-4 col-md-6 col-sm-12">
                 <Link href={service.link} style={{ textDecoration: 'none' }}>
                   <div 
-                    className="card h-100 border-0"
+                    className="card h-100 border-0 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 ease-in-out"
                     style={{ 
                       backgroundColor: '#ffffff',
                       borderRadius: '12px',
                       boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
                       overflow: 'hidden',
                       cursor: 'pointer',
-                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-5px)';
-                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.12)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 2px 10px rgba(0,0,0,0.08)';
                     }}
                   >
                     {/* Service Image */}
@@ -306,19 +297,12 @@ export function ServicesSection() {
             <div className="col-lg-6">
               <Link href="/blogs" style={{ textDecoration: 'none' }}>
                 <div 
-                  className="card h-100 border-0"
+                  className="card h-100 border-0 hover:scale-105 transition-all duration-300 ease-in-out"
                   style={{ 
                     borderRadius: '12px',
                     overflow: 'hidden',
                     boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
                     cursor: 'pointer',
-                    transition: 'transform 0.3s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'scale(1.02)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'scale(1)';
                   }}
                 >
                   <div style={{ height: '400px', overflow: 'hidden' }}>
@@ -351,25 +335,15 @@ export function ServicesSection() {
                   <div 
                     key={update.id}
                     onClick={() => setSelectedUpdate(update)}
-                    className="card border-0"
+                    className="card border-0 hover:translate-x-1 hover:bg-teal-50 transition-all duration-300 ease-in-out [&:has(.selected)]:bg-teal-50 [&:has(.selected)]:border-l-4 [&:has(.selected)]:border-l-teal-600"
                     style={{ 
                       borderRadius: '12px',
                       cursor: 'pointer',
                       backgroundColor: selectedUpdate.id === update.id ? '#f0fdfa' : '#ffffff',
                       borderLeft: selectedUpdate.id === update.id ? '4px solid #0d9488' : '4px solid transparent',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                      transition: 'all 0.3s ease',
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateX(5px)';
-                      e.currentTarget.style.backgroundColor = '#f0fdfa';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateX(0)';
-                      if (selectedUpdate.id !== update.id) {
-                        e.currentTarget.style.backgroundColor = '#ffffff';
-                      }
-                    }}
+                    onClick={() => setSelectedUpdate(update)}
                   >
                     <div className="p-3">
                       <p 

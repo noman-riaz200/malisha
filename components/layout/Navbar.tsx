@@ -1,8 +1,8 @@
 'use client';
 
-import Link from 'next/link';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import Link from 'next/link';
 
 interface NavLink {
   label: string;

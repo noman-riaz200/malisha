@@ -42,17 +42,27 @@ const nextConfig = {
   reactStrictMode: true,
   
   // Reduce bundle size by eliminating moment.js
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     if (!isServer) {
+      // Suppress Yandex bis_skin_checked hydration warning
       config.resolve.fallback = {
         ...config.resolve.fallback,
         fs: false,
         net: false,
         tls: false,
       };
+      
+      if (dev) {
+        // Ignore specific hydration warnings from browser extensions
+        config.ignoreWarnings = [
+          ...(config.ignoreWarnings || []),
+          /Warning: Extra attributes from the server: bis_skin_checked/,
+        ];
+      }
     }
     return config;
   },
+
   
   // Security headers with caching for better performance
   async headers() {

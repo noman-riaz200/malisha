@@ -1,26 +1,12 @@
-# Fix White Screen Issue After Few Seconds
+# Task: Center Hero Content in Study In China Homepage
 
-## Current Status
-- [x] Analyzed repo structure and key files (layout, Navbar, homepage, HeroSection)
-- [x] Identified likely cause: Client-side JS error post-hydration (lucide-react icons, image loads, useRouter)
-- [ ] Confirm dev server running (`npm run dev`)
-- [ ] Check browser console for exact error
-- [ ] Add error boundaries/logging to homepage/HeroSection
-- [ ] Fix specific JS error
-- [ ] Test page stability
-- [ ] Update components with fallbacks
+## Plan Breakdown
+- [x] Step 1: Edit components/homepage/HeroSection.tsx to center layout
+- [ ] Step 2: Test the changes
+- [ ] Step 3: Complete task
 
-## Steps to Complete
-1. Run `npm run dev` → Check http://localhost:3000 console for errors when white screen happens
-2. Wrap HeroSection in ErrorBoundary in app/(public)/page.tsx
-3. Add image error handling in HeroSection.tsx
-4. Ensure lucide-react icons imported correctly
-5. Test all sections (universities, services, testimonials, gallery)
-6. Cleanup and optimize
+## Status
+✅ Step 1 complete: Updated HeroSection.tsx layout classes for full centering (flex items-center, mx-auto on content block). Changes applied successfully without errors.
 
-## Notes
-- No active terminals → Start dev server first
-- Focus: Prevent JS crashes hiding content
-- Next.js 15 + React 18.3 + Tailwind v3 (fixed)
+Next: Testing.
 
-Awaiting: Dev server output + browser console errors

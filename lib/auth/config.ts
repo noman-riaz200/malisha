@@ -1,13 +1,13 @@
-import { NextAuthOptions, getServerSession } from 'next-auth';
+import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { z } from 'zod';
 
 const loginSchema = z.object({
   email:    z.string().email(),
-  password: z.string().min(1),
+  password:  z.string().min(1),
 });
 
-export const authOptions: NextAuthOptions = {
+export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -89,9 +89,4 @@ export const authOptions: NextAuthOptions = {
     error: '/login',
   },
   session: { strategy: 'jwt', maxAge: 7 * 24 * 60 * 60 },
-};
-
-// Auth wrapper function for server components
-export async function auth() {
-  return await getServerSession(authOptions);
-}
+});

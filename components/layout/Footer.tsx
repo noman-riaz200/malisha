@@ -5,8 +5,9 @@
 
 'use client';
 
+import React, { useState, useEffect } from 'react';
+
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
 
 // Quick Links Data (exact from original)
 const QUICK_LINKS = [

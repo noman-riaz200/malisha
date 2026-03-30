@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -43,9 +43,9 @@ export function HeroSection() {
       {/* Main Content */}
       <div className="relative z-10 flex-1 flex flex-col justify-center pt-8 pb-32 lg:pb-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="flex flex-col lg:flex-row items-start justify-between gap-6">
+            <div className="flex flex-col items-center lg:flex-row lg:items-start justify-center lg:justify-between gap-6">
             {/* Left Content - Title and Search */}
-            <div className="flex-1 w-full lg:max-w-4xl">
+            <div className="w-full max-w-4xl mx-auto lg:flex-1">
               {/* Title */}
               <h1
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center mb-3"
@@ -63,7 +63,7 @@ export function HeroSection() {
               </p>
 
               {/* Search Box Container */}
-              <div className="bg-white/85 backdrop-blur-sm rounded-2xl p-5 md:p-6 shadow-lg">
+              <div className="bg-white/85 backdrop-blur-sm rounded-2xl p-5 md:p-6 shadow-lg" suppressHydrationWarning>
                 <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-3">
                   <div className="flex-1 relative">
                     <input
@@ -86,7 +86,7 @@ export function HeroSection() {
                 </form>
 
                 {/* Intake Selection */}
-                <div className="flex justify-center gap-3 mt-4">
+                <div className="flex justify-center gap-3 mt-4" suppressHydrationWarning>
                   <button
                     type="button"
                     onClick={() => setSelectedIntake('march')}

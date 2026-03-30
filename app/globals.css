@@ -1,43 +1,35 @@
 /* =============================================================================
-   app/globals.css — Tailwind CSS v4 Global Styles for EduPro
+   app/globals.css — Tailwind CSS v3 Global Styles for MalishaEdu
    ============================================================================= */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── Custom Theme Configuration ────────────────────────────────────────────── */
-@theme {
-  /* Primary - Red */
-  --color-primary: #dc2626;
-  --color-primary-light: #ef4444;
-  --color-primary-dark: #b91c1c;
-  
-  /* Secondary - Blue */
-  --color-secondary: #3b82f6;
-  --color-secondary-light: #60a5fa;
-  --color-secondary-dark: #1d4ed8;
-  
-  /* Accent - Green */
-  --color-accent: #22c55e;
-  --color-accent-light: #4ade80;
-  --color-accent-dark: #16a34a;
-  
-  /* Dark */
-  --color-dark: #1e293b;
-  --color-dark-light: #334155;
-  
-  /* Light */
-  --color-light: #f8fafc;
-  --color-light-dark: #e2e8f0;
-  
-  /* Fonts */
-  --font-display: 'Outfit', system-ui, sans-serif;
-  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
-}
-
 /* ── CSS Variables for Components (Legacy + Custom) ───────────────────────── */
 :root {
+  /* Tailwind CSS Required Variables */
+  --primary: 0 0 0;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 222 47% 11%;
+  --background: 0 0% 100%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --radius: 0.5rem;
+  
   /* Primary - Red */
   --vz-primary: #dc2626;
   --vz-primary-light: #ef4444;
