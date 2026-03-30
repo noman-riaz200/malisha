@@ -1,7 +1,17 @@
-# Task: Fix Next.js onError handler error in LatestUpdatesSection
+# Task: Fix LatestUpdatesSection Runtime TypeError in app/(public)/page.tsx
 
-## Steps to complete:
-- [x] Step 1: Add 'use client' directive to components/homepage/LatestUpdatesSection.tsx
-- [x] Step 2: Verify the change resolves the error (restart dev server if needed)
-- [x] Step 3: Test page rendering and image fallback functionality
-- [x] Step 4: Mark complete and attempt_completion
+## Steps to Complete:
+
+### 1. [PENDING] Wrap LatestUpdatesSection in Suspense boundary
+- Edit app/(public)/page.tsx
+- Add Suspense with fallback around <LatestUpdatesSection />
+- Match pattern from TestimonialsSection above it
+
+### 2. [PENDING] Test the fix
+- Run `npm run dev`
+- Navigate to homepage
+- Verify error gone
+
+### 3. [PENDING] Completion
+- Update TODO.md
+- attempt_completion

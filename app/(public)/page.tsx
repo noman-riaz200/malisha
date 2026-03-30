@@ -202,8 +202,6 @@ export default function Homepage() {
         <TestimonialsSection />
       </Suspense>
 
-      {/* Latest Updates Section */}
-      <LatestUpdatesSection />
-    </>
+      {/* Latest Updates Section */}\n      <Suspense fallback={<div className="py-20 bg-white">\n        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">\n          <div className="animate-pulse">\n            <div className="h-8 bg-gray-300 rounded-lg mx-auto w-64 mb-4"></div>\n            <div className="h-4 bg-gray-300 rounded w-48 mx-auto mb-2"></div>\n            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">\n              {[...Array(2)].map((_, i) => (\n                <div key={i} className="bg-white p-8 rounded-2xl shadow-lg animate-pulse h-64"></div>\n              ))}\n            </div>\n          </div>\n        </div>\n      </div>}>\n        <LatestUpdatesSection />\n      </Suspense>\n    </>
   );
 }

@@ -1,7 +1,6 @@
-
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 const LATEST_UPDATES = [
@@ -40,10 +39,18 @@ const LATEST_UPDATES = [
 ];
 
 export function LatestUpdatesSection() {
-  const selectedUpdate = LATEST_UPDATES[0];
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const selectedUpdate = LATEST_UPDATES[selectedIndex] ?? LATEST_UPDATES[0];
+
+  useEffect(() => {
+    if (selectedIndex < 0 || selectedIndex >= LATEST_UPDATES.length) {
+      setSelectedIndex(0);
+    }
+  }, [selectedIndex]);
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20 bg-white" suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Title */}
         <div className="text-center mb-12">
@@ -67,7 +74,7 @@ export function LatestUpdatesSection() {
                     alt={selectedUpdate.title}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/images/Sozhou.jpg';
+                      e.currentTarget.src = '/images/Sozhou.jpg';
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -90,30 +97,31 @@ export function LatestUpdatesSection() {
           {/* Right Side - News Items List */}
           <div className="order-1 lg:order-2">
             <div className="flex flex-col gap-4">
-              {LATEST_UPDATES.map((update) => (
+              {LATEST_UPDATES.map((update, index) => (
                 <div
                   key={update.id}
-                  className={`p-4 rounded-xl transition-all duration-300 hover:bg-gray-100 border-l-4 border-transparent ${
-                    update.id === 1 ? 'bg-teal-50 border-teal-600 shadow-md' : ''
+                  className={`p-4 rounded-xl transition-all duration-300 cursor-pointer hover:bg-gray-100 border-l-4 border-transparent ${
+                    index === selectedIndex ? 'bg-teal-50 border-teal-600 shadow-md ring-2 ring-teal-200/50' : ''
                   }`}
+                  onClick={() => setSelectedIndex(index)}
                 >
                   <p 
                     className={`text-sm font-semibold mb-1 ${
-                      update.id === 1 ? 'text-teal-600' : 'text-gray-500'
+                      index === selectedIndex ? 'text-teal-600' : 'text-gray-500'
                     }`}
                   >
                     {update.date}
                   </p>
                   <h4 
                     className={`font-bold mb-2 line-clamp-2 ${
-                      update.id === 1 ? 'text-teal-700' : 'text-gray-900'
+                      index === selectedIndex ? 'text-teal-700' : 'text-gray-900'
                     }`}
                   >
                     {update.title}
                   </h4>
                   <p 
                     className={`text-sm line-clamp-2 ${
-                      update.id === 1 ? 'text-teal-600' : 'text-gray-600'
+                      index === selectedIndex ? 'text-teal-600' : 'text-gray-600'
                     }`}
                   >
                     {update.excerpt}
