@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Award, Users, Globe, Building, Calendar, MapPin, Clock, ChevronRight, Star, Quote } from 'lucide-react';
 import { HeroSection } from '@/components/homepage/HeroSection';
 import { UniversityCardHomepage } from '@/components/homepage/UniversityCardHomepage';
+import { FindUniversitySection } from '@/components/homepage/FindUniversitySection';
 
 const STATISTICS = [
   { value: '+13', label: 'Years of experience', icon: 'award' },
@@ -171,6 +172,10 @@ export default function Homepage() {
           </div>
         </div>
       </section>
+
+      {/* Find University Section */}
+      <FindUniversitySection />
+
       {/* Services Section - Simplified */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

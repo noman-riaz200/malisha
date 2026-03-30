@@ -23,6 +23,7 @@ const nextConfig = {
       { protocol: 'https', hostname: '*.s3.amazonaws.com' },
       { protocol: 'https', hostname: '*.s3.*.amazonaws.com' },
       { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
     // Enable modern formats (AVIF first for better compression)
     formats: ['image/avif', 'image/webp'],
