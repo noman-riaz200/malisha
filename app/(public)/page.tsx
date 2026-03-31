@@ -1,11 +1,8 @@
-
-
 import React, { Suspense } from 'react';
 
 import Link from 'next/link';
 
-
-import { Award, Users, Globe, Building, Calendar, MapPin, Clock, ChevronRight, Star, Quote } from 'lucide-react';
+import { Award, Users, Globe, Building } from 'lucide-react';
 import { HeroSection } from '@/components/homepage/HeroSection';
 import { UniversityCardHomepage } from '@/components/homepage/UniversityCardHomepage';
 import { FindUniversitySection } from '@/components/homepage/FindUniversitySection';
@@ -47,55 +44,6 @@ const UNIVERSITIES = [
     badges: ['211 Projects', '985 Projects'],
     countdown: null,
   },
-  // ... (truncated for brevity - full list in original)
-  {
-    name: 'South China University of Technology',
-    rank: '101-150',
-    location: 'Guangzhou, Guangdong',
-    students: '200+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: null,
-  },
-  {
-    name: 'Zhejiang University',
-    rank: '51-100',
-    location: 'Hangzhou, Zhejiang',
-    students: '300+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: { days: 25, hours: 18, min: 30 },
-  },
-  {
-    name: 'Fudan University',
-    rank: '51-100',
-    location: 'Shanghai, China',
-    students: '250+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: null,
-  },
-  {
-    name: 'Nanjing University',
-    rank: '101-150',
-    location: 'Nanjing, Jiangsu',
-    students: '180+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: { days: 40, hours: 12, min: 15 },
-  },
-  {
-    name: 'Wuhan University',
-    rank: '150-200',
-    location: 'Wuhan, Hubei',
-    students: '220+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: null,
-  },
-  {
-    name: 'Harbin Institute of Technology',
-    rank: '101-150',
-    location: 'Harbin, Heilongjiang',
-    students: '190+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: { days: 28, hours: 8, min: 45 },
-  },
 ];
 
 const SERVICES = [
@@ -104,42 +52,17 @@ const SERVICES = [
     description: 'To facilitate better services we provide transparent and competitive service fees.',
     icon: 'dollar',
   },
-  // ... full list
-  {
-    title: 'Airport Pickup Service',
-    description: 'Convenient airport pickup service for new international students.',
-    icon: 'car',
-  },
 ];
 
-const ServiceIcon = ({ name }: { name: string }) => {
-  const icons: Record<string, React.ReactNode> = {
-    dollar: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
-    // ... full icons
-    car: <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h8m-8 4h8m-4 4v4m-4-4h8a2 2 0 002-2V7a2 2 0 00-2-2H8a2 2 0 00-2 2v6a2 2 0 002 2zm4 0h4a2 2 0 012 2v4H10V9a2 2 0 012-2z" /></svg>,
-  };
-  return icons[name] || null;
-};
+const PARTNER_TESTIMONIALS = [];
 
-const PARTNER_TESTIMONIALS = [
-  // ... full data
-];
+const LEARNER_TESTIMONIALS = [];
 
-const LEARNER_TESTIMONIALS = [
-  // ... full data
-];
+const LATEST_UPDATES = [];
 
-const LATEST_UPDATES = [
-  // ... full data
-];
-
-const GALLERY_ITEMS = [
-  // ... full data
-];
+const GALLERY_ITEMS = [];
 
 export default function Homepage() {
-
-
   return (
     <>
       <div suppressHydrationWarning>
@@ -150,11 +73,11 @@ export default function Homepage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8 text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-              Discover China&apos;s World Class Universities
+              Discover China's World Class Universities
             </h2>
           </div>
 
-          <div suppressHydrationWarning className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {UNIVERSITIES.slice(0, 8).map((uni, index) => (
               <UniversityCardHomepage
                 key={index}
@@ -178,30 +101,46 @@ export default function Homepage() {
       {/* Find University Section */}
       <FindUniversitySection />
 
-      {/* International Student Admission Services Section */}
+      {/* International Admission Services Section */}
       <InternationalAdmissionServices />
       {/* Testimonials Section */}
-      <Suspense fallback={<div className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-300 rounded-lg mx-auto w-64 mb-4"></div>
-            <div className="h-4 bg-gray-300 rounded w-48 mx-auto mb-2"></div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="bg-white p-8 rounded-2xl shadow-lg animate-pulse">
-                  <div className="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4"></div>
-                  <div className="h-4 bg-gray-300 rounded mb-2 mx-auto w-32"></div>
-                  <div className="h-20 bg-gray-200 rounded mb-4"></div>
-                  <div className="w-20 h-10 bg-teal-100 rounded mx-auto"></div>
-                </div>
-              ))}
+      <Suspense fallback={
+        <div className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-300 rounded-lg mx-auto w-64 mb-4" />
+              <div className="h-4 bg-gray-300 rounded w-48 mx-auto mb-2" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="bg-white p-8 rounded-2xl shadow-lg animate-pulse">
+                    <div className="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4" />
+                    <div className="h-4 bg-gray-300 rounded mb-2 mx-auto w-32" />
+                    <div className="h-20 bg-gray-200 rounded mb-4" />
+                    <div className="w-20 h-10 bg-teal-100 rounded mx-auto" />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>}>
+      }>
         <TestimonialsSection />
       </Suspense>
 
-      {/* Latest Updates Section */}\n      <Suspense fallback={<div className="py-20 bg-white">\n        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">\n          <div className="animate-pulse">\n            <div className="h-8 bg-gray-300 rounded-lg mx-auto w-64 mb-4"></div>\n            <div className="h-4 bg-gray-300 rounded w-48 mx-auto mb-2"></div>\n            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">\n              {[...Array(2)].map((_, i) => (\n                <div key={i} className="bg-white p-8 rounded-2xl shadow-lg animate-pulse h-64"></div>\n              ))}\n            </div>\n          </div>\n        </div>\n      </div>}>\n        <LatestUpdatesSection />\n      </Suspense>\n    </>
+      {/* Latest Updates Section */}
+      <Suspense fallback={
+        <div className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-300 rounded-lg mx-auto w-64 mb-4" />
+              <div className="h-4 bg-gray-300 rounded w-48 mx-auto mb-2" />
+            </div>
+          </div>
+        </div>
+      }>
+        <LatestUpdatesSection />
+      </Suspense>
+    </>
   );
 }
+
