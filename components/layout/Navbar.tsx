@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 import { Logo } from './Logo';
 
 import Link from 'next/link';
@@ -173,30 +174,19 @@ function NavDropdown({
 }
 
 export function Navbar() {
-  const [pathname, setPathname] = useState('');
-  const [isClient, setIsClient] = useState(false);
+  const pathname = usePathname() || '/';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-  // Set client state and pathname on mount
-  useEffect(() => {
-    setIsClient(true);
-    if (typeof window !== 'undefined') {
-      setPathname(window.location.pathname || '');
-    }
-  }, []);
-
   // Close mobile menu when route changes (client-side)
   useEffect(() => {
-    if (isClient && typeof window !== 'undefined') {
-      const handleRouteChange = () => {
-        setMobileMenuOpen(false);
-        setOpenDropdown(null);
-      };
-      window.addEventListener('popstate', handleRouteChange);
-      return () => window.removeEventListener('popstate', handleRouteChange);
-    }
-  }, [isClient]);
+    const handleRouteChange = () => {
+      setMobileMenuOpen(false);
+      setOpenDropdown(null);
+    };
+    window.addEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener('popstate', handleRouteChange);
+  }, []);
 
   const handleDropdownToggle = (label: string) => {
     setOpenDropdown(openDropdown === label ? null : label);
@@ -218,7 +208,11 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <nav suppressHydrationWarning className="hidden lg:flex items-center gap-1">
-            {NAV_LINKS.map((link) => {
+            {NAV_LINKS.map((link, index) => {
+              if (!link) {
+                console.error('Undefined link at index', index);
+                return null;
+              }
               const isActive = isPathActive(pathname, link.href);
 
               if (link.hasDropdown) {
@@ -280,7 +274,11 @@ export function Navbar() {
         {/* Mobile Menu */}
         <div className={`lg:hidden border-t border-gray-100 py-4 ${mobileMenuOpen ? '' : 'hidden'}`} suppressHydrationWarning>
           <nav className="flex flex-col gap-2">
-              {NAV_LINKS.map((link) => {
+              {NAV_LINKS.map((link, index) => {
+                if (!link) {
+                  console.error('Undefined link at mobile index', index);
+                  return null;
+                }
                 const isActive = isPathActive(pathname, link.href);
 
                 if (link.hasDropdown) {
@@ -300,16 +298,22 @@ export function Navbar() {
                       </button>
                       {isDropdownOpen && link.dropdown && (
                         <div className="ml-4 mt-1 border-l-2 border-gray-100">
-                          {link.dropdown.map((item) => (
-                            <Link
-                              key={item.href}
-                              href={item.href}
-                              className="block px-3 py-2 text-sm text-gray-600 hover:text-[#0d9488]"
-                              onClick={() => setMobileMenuOpen(false)}
-                            >
-                              {item.label}
-                            </Link>
-                          ))}
+                          {link.dropdown.map((item, dIndex) => {
+                            if (!item) {
+                              console.error('Undefined dropdown item at', index, dIndex);
+                              return null;
+                            }
+                            return (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                className="block px-3 py-2 text-sm text-gray-600 hover:text-[#0d9488]"
+                                onClick={() => setMobileMenuOpen(false)}
+                              >
+                                {item.label}
+                              </Link>
+                            );
+                          })}
                         </div>
                       )}
                     </div>

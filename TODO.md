@@ -1,9 +1,11 @@
-# TODO: Fix Navbar Logo Error
+# TODO: Fix Navbar Runtime Error & Simplify Homepage
 
-## Plan Steps:
-- [x] Step 1: Create standalone `components/layout/Logo.tsx` component (extract from Navbar.tsx)
-- [x] Step 2: Update `components/layout/Navbar.tsx` - remove local Logo definition, add import, simplify hydration logic
-- [x] Step 3: Test by running `npm run dev` and checking Navbar renders without error (app starts successfully on port 3004, no Logo error in logs)
-- [ ] Step 4: Update Next.js version if warnings persist (`npx next@latest`)
-- [ ] Step 5: Verify other sidebar files if needed and complete task
+## Completed Steps:
+## [x] 0. Plan created and approved
 
+## Breakdown from approved plan:
+1. [x] Fix Navbar error (add null-checks, usePathname)
+2. [x] Simplify homepage (remove sections after Hero)
+3. [x] Update Next.js version
+4. [ ] Test `npm run dev`
+5. [ ] Git commit & push
