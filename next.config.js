@@ -37,9 +37,6 @@ const nextConfig = {
     disableStaticImages: false,
   },
   
-  // Enable stale-while-revalidate for faster page loads
-  serverExternalPackages: ['mongoose'],
-//  swcMinify: true, // Removed for Next.js 15 compatibility
   reactStrictMode: true,
   
   // Disable streaming metadata to prevent hydration errors
