@@ -1,10 +1,11 @@
-// =============================================================================
+ // =============================================================================
 // app/layout.tsx — Root Layout (Optimized for Performance)
 // =============================================================================
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
+import { ClientOnly } from '@/components/ClientOnly';
 import './globals.css';
 
 const inter = Inter({
@@ -51,7 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           crossOrigin="anonymous" 
         />
       </head>
-      <body suppressHydrationWarning>
+      <body>
         <Navbar />
         {children}
         <Footer />

@@ -13,7 +13,7 @@ const STATISTICS = [
 export function HeroSection() {
 
   return (
-    <section className="relative min-h-screen flex flex-col overflow-visible">
+<section className="relative min-h-screen flex flex-col overflow-visible" suppressHydrationWarning>
       {/* Background Image with Overlay */}
       <div
         className="absolute inset-0 z-0"
@@ -60,16 +60,16 @@ export function HeroSection() {
 
 {/* Statistics Cards - Bottom Section */}
       {/* <div className="absolute mt-50 bottom-0 left-0 right-0 z-20 pb-20 mt-[2000px]"> */}
-      <div className="mt-1 left-0 right-0 z-20 pb-20">
+      <div className="-mt-24 md:-mt-32 lg:-mt-40 relative z-20 pb-12 lg:pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 w-full">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full">
             {STATISTICS.map((stat, index) => (
               <div
                 key={index}
-className={`${stat.color} rounded-2xl p-4 sm:p-6 md:p-8 text-white text-center shadow-2xl transform hover:scale-105 transition-all duration-300 min-h-[80px] flex flex-col justify-center`}
+                className={`${stat.color} rounded-2xl p-6 md:p-8 text-white text-center shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 min-h-[100px] flex flex-col justify-center`}
               >
-<div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 whitespace-nowrap">{stat.value}</div>
-                <div className="text-xs sm:text-sm md:text-base font-semibold opacity-100 leading-tight whitespace-nowrap hyphens-none">{stat.label}</div>
+                <div className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 whitespace-nowrap">{stat.value}</div>
+                <div className="text-sm md:text-base font-semibold leading-tight whitespace-nowrap">{stat.label}</div>
               </div>
             ))}
           </div>
