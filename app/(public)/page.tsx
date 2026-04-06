@@ -101,7 +101,11 @@ export default function Homepage() {
         </div>
       </div>
 
+      {/* Find University Section */}
+      <FindUniversitySection />
 
+      {/* International Student Admission Services */}
+      <InternationalAdmissionServices />
 
 
 

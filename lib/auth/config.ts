@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import { NextAuthOptions, getServerSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { z } from 'zod';
 
@@ -7,7 +7,7 @@ const loginSchema = z.object({
   password:  z.string().min(1),
 });
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -89,4 +89,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: '/login',
   },
   session: { strategy: 'jwt', maxAge: 7 * 24 * 60 * 60 },
-});
+};
+
+// Helper function to get session in server components/API routes
+export async function auth() {
+  return await getServerSession(authOptions);
+}

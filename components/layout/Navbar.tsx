@@ -118,9 +118,9 @@ function NavDropdown({
   onClose: () => void;
 }) {
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const pathname: string = '/'; // Default for server-side
+  const pathname = usePathname() || '/';
 
-  // Removed direct DOM listeners for hydration safety
+  // Handle click outside to close dropdown
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
       onClose();
@@ -129,9 +129,9 @@ function NavDropdown({
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.addEventListener('click', handleClickOutside as any, true);
+      document.addEventListener('click', handleClickOutside, true);
       return () => {
-        document.removeEventListener('click', handleClickOutside as any, true);
+        document.removeEventListener('click', handleClickOutside, true);
       };
     }
   }, [handleClickOutside]);
@@ -157,16 +157,21 @@ function NavDropdown({
           className="absolute top-full left-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-100 py-2 z-50"
           onMouseLeave={onClose}
         >
-          {link.dropdown.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="block px-4 py-2 text-sm text-gray-600 hover:text-[#0d9488] hover:bg-gray-50 transition-colors"
-              onClick={onClose}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {link.dropdown?.map((item) => {
+            if (!item || !item.href) {
+              return null;
+            }
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="block px-4 py-2 text-sm text-gray-600 hover:text-[#0d9488] hover:bg-gray-50 transition-colors"
+                onClick={onClose}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
@@ -298,8 +303,8 @@ export function Navbar() {
                       </button>
                       {isDropdownOpen && link.dropdown && (
                         <div className="ml-4 mt-1 border-l-2 border-gray-100">
-                          {link.dropdown.map((item, dIndex) => {
-                            if (!item) {
+                          {link.dropdown?.map((item, dIndex) => {
+                            if (!item || !item.href) {
                               console.error('Undefined dropdown item at', index, dIndex);
                               return null;
                             }

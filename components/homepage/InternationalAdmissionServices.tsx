@@ -1,112 +1,92 @@
-
-
 'use client';
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const SERVICES = [
   {
     id: 1,
-    title: 'Service Charges',
-    description: 'To facilitate better services for our students, we have updated our service charge.',
-    image: '/images/Sozhou.jpg',
-    link: '/services/service-charges',
+    service: 'Service1',
+    title: 'Application Guidance',
+    description: 'Get expert assistance with your university application process, from document preparation to submission and tracking.',
+    image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=250&fit=crop',
   },
   {
     id: 2,
-    title: 'Admission Service',
-    description: 'Comprehensive admission assistance for international students applying to Chinese universities.',
-    image: '/images/admission-service-image.png',
-    link: '/services/admission-service',
+    service: 'Service2',
+    title: 'Visa Support',
+    description: 'Complete guidance for student visa applications, including interview preparation and documentation review.',
+    image: 'https://images.unsplash.com/photo-1569974507005-6dc61f97fb5c?w=400&h=250&fit=crop',
   },
   {
     id: 3,
-    title: 'Chinese Language and Foundation Course',
-    description: 'Build a strong foundation in Chinese language and academic preparation.',
-    image: '/images/chinese-language-image.png',
-    link: '/services/chinese-language-foundation-course',
+    service: 'Service3',
+    title: 'Accommodation',
+    description: 'Find safe and comfortable housing options near your university with our trusted partner network.',
+    image: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=400&h=250&fit=crop',
   },
   {
     id: 4,
-    title: 'Education Expo in China',
-    description: 'Connect with top Chinese universities at our exclusive education expos.',
-    image: '/images/education-expo-china-image.png',
-    link: '/services/education-expo-china',
+    service: 'Service4',
+    title: 'Airport Pickup',
+    description: 'Pre-arranged airport transfer services to ensure a smooth arrival at your destination city.',
+    image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=250&fit=crop',
   },
   {
     id: 5,
-    title: 'Education Expo in Overseas',
-    description: 'Explore global education opportunities at our international education expos.',
-    image: '/images/education-expo-overseas-image.png',
-    link: '/services/education-expo-overseas',
+    service: 'Service5',
+    title: 'Orientation Program',
+    description: 'Comprehensive orientation to help you adapt to the new environment, culture, and academic system.',
+    image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&h=250&fit=crop',
   },
   {
     id: 6,
-    title: 'Airport Pickup Service',
-    description: 'Convenient airport pickup service for new international students arriving in China.',
-    image: '/images/airport-pickup-image.png',
-    link: '/services/airport-pickup-service',
+    service: 'Service6',
+    title: 'Career Services',
+    description: 'Resume building, interview coaching, and job placement assistance for international students.',
+    image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&h=250&fit=crop',
   },
 ];
 
 export function InternationalAdmissionServices() {
   return (
-    <section className="py-20 bg-white">
+    <section className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Title */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
             International Student Admission Services
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Explore Our Comprehensive Services
-          </p>
         </div>
 
-        {/* Services Grid - 2 rows of 3 cards each */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {SERVICES.map((service) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {SERVICES.map((item) => (
             <Link
-              key={service.id}
-              href={service.link}
-              className="group block"
+              key={item.id}
+              href="/services"
+              className="group block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden h-full">
-                {/* Service Image */}
-                <div className="relative h-48 bg-gray-100 overflow-hidden">
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
-                </div>
-                
-                {/* Service Content */}
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-teal-600 mb-3 group-hover:text-teal-700 transition-colors">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {service.description}
-                  </p>
-                </div>
+              <div className="relative h-40 sm:h-48">
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  quality={80}
+                />
+              </div>
+              <div className="p-4">
+                <p className="text-xs font-semibold text-blue-600 mb-1">{item.service}</p>
+                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-gray-600 line-clamp-2">
+                  {item.description}
+                </p>
               </div>
             </Link>
           ))}
-        </div>
-
-        {/* Browse More Services Button */}
-        <div className="text-center mt-12">
-          <Link
-            href="/services"
-            className="inline-block px-8 py-3 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition-colors"
-          >
-            Browse More Services
-          </Link>
         </div>
       </div>
     </section>
