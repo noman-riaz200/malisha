@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const TESTIMONIALS = [
   {
@@ -13,36 +13,36 @@ const TESTIMONIALS = [
   {
     id: 2,
     name: 'Linda Chen',
-    title: 'Student',
-    description: 'The admission service was exceptional. They guided me through every step of the application process and helped me secure a spot at my dream university.',
+    title: 'Student, Zhejiang University',
+    description: 'The admission service was exceptional. They guided me through every step of the application process and helped me secure a spot at my dream university. The staff was incredibly supportive and patient throughout the entire journey.',
     image: '/images/profile-placeholder.svg',
   },
   {
     id: 3,
     name: 'Li Yan',
-    title: 'Parent',
-    description: 'As a parent, I was worried about my child studying abroad. The support and communication from the team made the entire process smooth and stress-free.',
+    title: 'Parent, Shanghai',
+    description: 'As a parent, I was worried about my child studying abroad. The support and communication from the team made the entire process smooth and stress-free. I highly recommend their services to any parent considering international education for their children.',
     image: '/images/profile-placeholder.svg',
   },
   {
     id: 4,
     name: 'Dr. Sarah Johnson',
-    title: 'Education Consultant',
-    description: 'Their comprehensive approach to international student services sets them apart. The quality of support and guidance is truly commendable.',
+    title: 'Education Consultant, USA',
+    description: 'Their comprehensive approach to international student services sets them apart. The quality of support and guidance is truly commendable. I have referred many students to them and received excellent feedback.',
     image: '/images/profile-placeholder.svg',
   },
   {
     id: 5,
     name: 'Mohammed Al-Rashid',
-    title: 'Graduate Student',
-    description: 'From airport pickup to accommodation, every service was perfectly arranged. I felt welcomed and supported throughout my journey in China.',
+    title: 'Graduate Student, Beijing',
+    description: 'From airport pickup to accommodation, every service was perfectly arranged. I felt welcomed and supported throughout my journey in China. The orientation program helped me adapt quickly to the new environment.',
     image: '/images/profile-placeholder.svg',
   },
   {
     id: 6,
     name: 'Emily Watson',
-    title: 'Academic Advisor',
-    description: 'The Chinese language foundation course was instrumental in helping students adapt to their new environment. Highly recommended for all international students.',
+    title: 'Academic Advisor, UK',
+    description: 'The Chinese language foundation course was instrumental in helping students adapt to their new environment. Highly recommended for all international students looking to pursue their education in China.',
     image: '/images/profile-placeholder.svg',
   },
 ];
@@ -50,44 +50,69 @@ const TESTIMONIALS = [
 export function TestimonialsSection() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Auto-slide every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsAnimating(true);
-      setTimeout(() => {
-        setCurrentIndex((prevIndex) => 
-          prevIndex + 3 >= TESTIMONIALS.length ? 0 : prevIndex + 3
-        );
-        setIsAnimating(false);
-      }, 500);
+  const startAutoSlide = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      if (!isPaused) {
+        setIsAnimating(true);
+        setTimeout(() => {
+          setCurrentIndex((prevIndex) => 
+            prevIndex + 3 >= TESTIMONIALS.length ? 0 : prevIndex + 3
+          );
+          setIsAnimating(false);
+        }, 500);
+      }
     }, 5000);
+  };
 
-    return () => clearInterval(interval);
-  }, []);
+  const stopAutoSlide = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
 
-  // Get current 3 testimonials to display
+  useEffect(() => {
+    startAutoSlide();
+    return () => stopAutoSlide();
+  }, [isPaused]);
+
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+    stopAutoSlide();
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
+    startAutoSlide();
+  };
+
   const visibleTestimonials = TESTIMONIALS.slice(currentIndex, currentIndex + 3);
   
-  // If we don't have 3 testimonials, wrap around
   const displayTestimonials = visibleTestimonials.length < 3
     ? [...visibleTestimonials, ...TESTIMONIALS.slice(0, 3 - visibleTestimonials.length)]
     : visibleTestimonials;
 
   return (
-<section className="py-20 bg-gray-50" suppressHydrationWarning>
+    <section 
+      className="py-20 bg-gray-50" 
+      suppressHydrationWarning
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Title */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
             Testimonials
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            What our Partner Saying
+            What our Partner Are Saying
           </p>
         </div>
 
-        {/* Testimonials Grid */}
         <div className="relative overflow-hidden">
           <div 
             className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-500 ease-in-out ${
@@ -97,11 +122,10 @@ export function TestimonialsSection() {
             {displayTestimonials.map((testimonial, index) => (
               <div 
                 key={`${testimonial.id}-${currentIndex}-${index}`}
-                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300"
+                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-[280px]"
               >
-                {/* Profile Section */}
-                <div className="flex items-center mb-6">
-                  <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-4 border-teal-100">
+                <div className="flex items-center mb-4 flex-shrink-0">
+                  <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-4 border-teal-100">
                     <img
                       src={testimonial.image}
                       alt={testimonial.name}
@@ -111,23 +135,23 @@ export function TestimonialsSection() {
                       }}
                     />
                   </div>
-                  <div className="ml-4">
+                  <div className="ml-3">
                     <h4 className="font-bold text-lg text-gray-900">
                       {testimonial.name}
                     </h4>
-                    <p className="text-teal-600 text-sm font-medium">
+                    <p className="text-teal-600 text-xs font-medium">
                       {testimonial.title}
                     </p>
                   </div>
                 </div>
 
-                {/* Review Content */}
-                <p className="text-gray-600 leading-relaxed italic">
-                  "{testimonial.description}"
-                </p>
+                <div className="overflow-y-auto flex-grow pr-2 custom-scrollbar">
+                  <p className="text-gray-600 leading-relaxed italic">
+                    "{testimonial.description}"
+                  </p>
+                </div>
 
-                {/* Quote Icon */}
-                <div className="mt-6 flex justify-end">
+                <div className="mt-4 flex justify-end flex-shrink-0">
                   <svg 
                     className="w-10 h-10 text-teal-100" 
                     fill="currentColor" 
@@ -141,7 +165,6 @@ export function TestimonialsSection() {
           </div>
         </div>
 
-        {/* Dots Indicator */}
         <div className="flex justify-center mt-10 space-x-2">
           {Array.from({ length: Math.ceil(TESTIMONIALS.length / 3) }).map((_, index) => (
             <button
@@ -163,6 +186,23 @@ export function TestimonialsSection() {
           ))}
         </div>
       </div>
+
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #a1a1a1;
+        }
+      `}</style>
     </section>
   );
 }

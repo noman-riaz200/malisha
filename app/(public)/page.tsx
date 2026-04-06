@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { HeroSection } from '@/components/homepage/HeroSection';
 import { UniversityCardHomepage } from '@/components/homepage/UniversityCardHomepage';
 import { FindUniversitySection } from '@/components/homepage/FindUniversitySection';
-import { InternationalAdmissionServices } from '@/components/homepage/InternationalAdmissionServices';
+import { StudentAdmissionServicesSection } from '@/components/homepage/StudentAdmissionServicesSection';
 import { TestimonialsSection } from '@/components/homepage/TestimonialsSection';
 import { LatestUpdatesSection } from '@/components/homepage/LatestUpdatesSection';
 
@@ -105,9 +105,10 @@ export default function Homepage() {
       <FindUniversitySection />
 
       {/* International Student Admission Services */}
-      <InternationalAdmissionServices />
+      <StudentAdmissionServicesSection />
 
-
+      {/* Testimonials */}
+      <TestimonialsSection />
 
     </>
   );
