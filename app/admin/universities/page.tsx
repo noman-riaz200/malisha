@@ -7,8 +7,8 @@ import Link           from 'next/link';
 import Image          from 'next/image';
 import { DeleteUniversityButton } from '@/components/admin/DeleteUniversityButton';
 
-export const metadata = { title: 'Universities — Admin' };
 export const dynamic  = 'force-dynamic';
+export const metadata = { title: 'Universities — Admin' };
 
 export default async function AdminUniversitiesPage() {
   await connectDB();

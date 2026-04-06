@@ -8,8 +8,8 @@ import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { ApplicationReviewPanel } from '@/components/admin/ApplicationReviewPanel';
 
-export const metadata = { title: 'Applications — Admin' };
 export const dynamic   = 'force-dynamic';
+export const metadata = { title: 'Applications — Admin' };
 
 const STATUSES = ['all', 'draft', 'submitted', 'under_review', 'approved', 'rejected'];
 

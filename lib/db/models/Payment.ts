@@ -1,8 +1,8 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface IPayment extends Document {
-  studentId: Types.ObjectId;
-  applicationId?: Types.ObjectId;
+  studentId: Types.ObjectId | string;
+  applicationId?: Types.ObjectId | string;
   amount: number;
   currency: string;
   provider: 'stripe' | 'paypal';
@@ -49,6 +49,17 @@ PaymentSchema.index({ providerPaymentId: 1 });
 
 // Create and export the model
 const PaymentModel = mongoose.models.Payment || mongoose.model<IPayment>('Payment', PaymentSchema);
+
+// Helper to convert string to ObjectId
+function toObjectId(id: string | Types.ObjectId | undefined): Types.ObjectId | undefined {
+  if (!id) return undefined;
+  if (id instanceof Types.ObjectId) return id;
+  try {
+    return new Types.ObjectId(id);
+  } catch {
+    return undefined;
+  }
+}
 
 // Export Payment with the old API interface for compatibility
 export const Payment = {
@@ -114,10 +125,14 @@ export const Payment = {
     return payments[0] || null;
   },
 
-  async create(data: Partial<IPayment>): Promise<IPayment> {
+  async findOneAndUpdate(query: any, updateData: any): Promise<IPayment | null> {
+    return PaymentModel.findOneAndUpdate(query, updateData, { new: true });
+  },
+
+  async create(data: Partial<IPayment> & { studentId: string; applicationId?: string }): Promise<IPayment> {
     const payment = new PaymentModel({
-      studentId: data.studentId,
-      applicationId: data.applicationId,
+      studentId: toObjectId(data.studentId)!,
+      applicationId: toObjectId(data.applicationId),
       amount: data.amount,
       currency: data.currency || 'usd',
       provider: data.provider,
@@ -149,5 +164,4 @@ export const Payment = {
   }
 };
 
-export type { IPayment };
 export default PaymentModel;

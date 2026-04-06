@@ -18,7 +18,9 @@ export interface IUser extends Document {
   addressCountry?: string;
   addressPostalCode?: string;
   emailVerifyToken?: string;
+  emailVerifyExpires?: Date;
   passwordResetToken?: string;
+  passwordResetExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
@@ -81,11 +83,8 @@ const UserModel = mongoose.models.User || mongoose.model<IUser>('User', UserSche
 
 // Export User with the old API interface for compatibility
 export const User = {
-  async findOne(conditions: { email?: string; id?: string }): Promise<IUser | null> {
-    const query: any = {};
-    if (conditions.email) query.email = conditions.email;
-    if (conditions.id) query._id = conditions.id;
-    return UserModel.findOne(query).select('+password') as Promise<IUser | null>;
+  async findOne(conditions: any): Promise<IUser | null> {
+    return UserModel.findOne(conditions).select('+password') as Promise<IUser | null>;
   },
 
   async create(data: Partial<IUser>): Promise<IUser> {
@@ -109,16 +108,71 @@ export const User = {
     return user.save();
   },
 
-  async findById(id: string | number): Promise<IUser | null> {
-    return UserModel.findById(id) as Promise<IUser | null>;
+  findById(id: string | number): any {
+    const query = UserModel.findById(id);
+    return {
+      query,
+      select(fields: string) {
+        this.query = this.query.select(fields);
+        return this;
+      },
+      lean() {
+        this.query = this.query.lean();
+        return this;
+      },
+      then(resolve: (value: any) => void, reject: (reason: any) => void) {
+        return this.query.then(resolve).catch(reject);
+      },
+      exec() {
+        return this.query;
+      }
+    };
   },
 
   async findByEmail(email: string): Promise<IUser | null> {
     return UserModel.findOne({ email: email.toLowerCase() }).select('+password') as Promise<IUser | null>;
   },
 
-  async update(id: string | number, data: Partial<IUser>): Promise<IUser | null> {
-    return UserModel.findByIdAndUpdate(id, { $set: data }, { new: true }) as Promise<IUser | null>;
+  update(id: string | number, data: Partial<IUser>): any {
+    const query = UserModel.findByIdAndUpdate(id, data, { new: true });
+    return {
+      query,
+      select(fields: string) {
+        this.query = this.query.select(fields);
+        return this;
+      },
+      lean() {
+        this.query = this.query.lean();
+        return this;
+      },
+      then(resolve: (value: any) => void, reject: (reason: any) => void) {
+        return this.query.then(resolve).catch(reject);
+      },
+      exec() {
+        return this.query;
+      }
+    };
+  },
+
+  findByIdAndUpdate(id: string | number, data: any): any {
+    const query = UserModel.findByIdAndUpdate(id, data, { new: true });
+    return {
+      query,
+      select(fields: string) {
+        this.query = this.query.select(fields);
+        return this;
+      },
+      lean() {
+        this.query = this.query.lean();
+        return this;
+      },
+      then(resolve: (value: any) => void, reject: (reason: any) => void) {
+        return this.query.then(resolve).catch(reject);
+      },
+      exec() {
+        return this.query;
+      }
+    };
   },
 
   async count(conditions: { role?: string } = {}): Promise<number> {
@@ -181,5 +235,4 @@ export const User = {
   },
 };
 
-export type { IUser };
 export default UserModel;

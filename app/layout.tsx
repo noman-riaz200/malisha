@@ -53,9 +53,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <Navbar />
+<Navbar />
         {children}
-        <Footer />
+        <ClientOnly fallback={null}>
+          <Footer />
+        </ClientOnly>
       </body>
       </html>
   );

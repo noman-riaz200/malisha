@@ -13,8 +13,9 @@ const replySchema = z.object({
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const session = await auth();
     if (!session) {
@@ -35,7 +36,7 @@ export async function POST(
     await connectDB();
 
     const inquiry = await Inquiry.findByIdAndUpdate(
-      params.id,
+      id,
       {
         $set: {
           adminReply: parsed.data.reply,

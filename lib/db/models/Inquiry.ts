@@ -65,7 +65,6 @@ export const Inquiry = {
     if (!options.limit && !options.offset) {
       const query = InquiryModel.find(conditions);
       return {
-        query,
         populate(field: string, select?: string) {
           if (typeof field === 'object') {
             this.query = this.query.populate(field);
@@ -107,8 +106,12 @@ export const Inquiry = {
     return query.sort({ createdAt: -1 });
   },
 
-  async findById(id: string | number): Promise<IInquiry | null> {
+  async findById(id: string | number): Promise<any> {
     return InquiryModel.findById(id);
+  },
+
+  async findByIdAndUpdate(id: string | number, data: any, options?: any): Promise<any> {
+    return (InquiryModel as any).findByIdAndUpdate(id, data, options);
   },
 
   async create(data: Partial<IInquiry>): Promise<IInquiry> {
@@ -154,5 +157,4 @@ export const Inquiry = {
   },
 };
 
-export type { IInquiry };
 export default InquiryModel;

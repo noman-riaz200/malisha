@@ -110,6 +110,9 @@ export default function Homepage() {
       {/* Testimonials */}
       <TestimonialsSection />
 
+      {/* Latest Update */}
+      <LatestUpdatesSection />
+
     </>
   );
 }

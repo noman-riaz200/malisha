@@ -11,9 +11,9 @@ import { Inquiry } from '@/lib/db/models/models';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 
-export const metadata = { title: 'Admin Dashboard — EduPro' };
 export const dynamic = 'force-dynamic';
 export const revalidate = 60; // Cache for 60 seconds
+export const metadata = { title: 'Admin Dashboard — EduPro' };
 
 const STATUS_COLORS: Record<string, string> = {
   draft: '#94a3b8',

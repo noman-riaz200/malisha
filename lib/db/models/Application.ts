@@ -175,22 +175,39 @@ export const Application = {
   },
 
   // findById returns a query with populate capability for the API
-  async findById(id: string | number): Promise<any> {
-    const app = await ApplicationModel.findById(id);
-    if (!app) return null;
-    
-    // Return a wrapper that supports populate()
+  findById(id: string | number): any {
+    const query = ApplicationModel.findById(id);
     return {
-      ...app.toObject(),
-      _id: app._id,
-      id: app._id.toString(),
-      populate: function(field: string, select?: string) {
-        return ApplicationModel.findById(id)
-          .populate(field, select)
-          .then(transformApp);
+      query,
+      populate(field: string, select?: string) {
+        if (typeof field === 'object') {
+          this.query = this.query.populate(field);
+        } else {
+          this.query = this.query.populate(field, select);
+        }
+        return this;
       },
-      lean: function() {
-        return transformApp(app);
+      sort(sortObj: any) {
+        this.query = this.query.sort(sortObj);
+        return this;
+      },
+      skip(n: number) {
+        this.query = this.query.skip(n);
+        return this;
+      },
+      limit(n: number) {
+        this.query = this.query.limit(n);
+        return this;
+      },
+      lean() {
+        this.query = this.query.lean();
+        return this;
+      },
+      then(resolve: (value: any) => void, reject: (reason: any) => void) {
+        return this.query.then((app: any) => app ? transformApp(app) : null).then(resolve).catch(reject);
+      },
+      exec() {
+        return this.query.then((app: any) => app ? transformApp(app) : null);
       }
     };
   },
@@ -239,6 +256,11 @@ export const Application = {
     return transformApp(updated);
   },
 
+  async findByIdAndUpdate(id: string, data: any, options?: any): Promise<any> {
+    const updated = await (ApplicationModel as any).findByIdAndUpdate(id, data, options || { new: true });
+    return updated ? transformApp(updated) : null;
+  },
+
   countDocuments(conditions: { studentId?: string; status?: string } = {}): any {
     const filter: any = {};
     if (conditions.studentId) filter.studentId = new Types.ObjectId(conditions.studentId);
@@ -271,5 +293,4 @@ export const Application = {
   }
 };
 
-export type { IApplication };
 export default ApplicationModel;

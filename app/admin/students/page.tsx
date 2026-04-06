@@ -8,8 +8,8 @@ import { User } from '@/lib/db/models/User';
 import { StudentsList } from './StudentsList';
 import { formatDate } from '@/lib/utils';
 
-export const metadata = { title: 'Students — Admin' };
 export const dynamic = 'force-dynamic';
+export const metadata = { title: 'Students — Admin' };
 
 interface PageProps {
   searchParams: { search?: string; page?: string; status?: string };

@@ -343,7 +343,6 @@ export function ServicesSection() {
                       borderLeft: selectedUpdate.id === update.id ? '4px solid #0d9488' : '4px solid transparent',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                     }}
-                    onClick={() => setSelectedUpdate(update)}
                   >
                     <div className="p-3">
                       <p 

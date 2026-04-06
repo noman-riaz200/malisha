@@ -38,8 +38,33 @@ const AppDocumentModel = mongoose.models.AppDocument || mongoose.model<IAppDocum
 
 // Export AppDocument with the old API interface for compatibility
 export const AppDocument = {
-  async find(applicationId: string | number): Promise<IAppDocument[]> {
-    return AppDocumentModel.find({ applicationId: new Types.ObjectId(String(applicationId)) });
+  find(filter?: object, options?: { sort?: any; limit?: number; skip?: number }): any {
+    const query = AppDocumentModel.find(filter || {});
+    return {
+      query,
+      sort(sortObj: any) {
+        this.query = this.query.sort(sortObj);
+        return this;
+      },
+      skip(n: number) {
+        this.query = this.query.skip(n);
+        return this;
+      },
+      limit(n: number) {
+        this.query = this.query.limit(n);
+        return this;
+      },
+      lean() {
+        this.query = this.query.lean();
+        return this;
+      },
+      then(resolve: (value: any[]) => void, reject: (reason: any) => void) {
+        return this.query.then(resolve).catch(reject);
+      },
+      exec() {
+        return this.query;
+      }
+    };
   },
 
   async findById(id: string | number): Promise<IAppDocument | null> {
@@ -66,5 +91,4 @@ export const AppDocument = {
   },
 };
 
-export type { IAppDocument };
 export default AppDocumentModel;

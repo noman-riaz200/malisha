@@ -15,7 +15,7 @@ interface Props { params: { slug: string } }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     await connectDB();
-    const uni = await University.findOne({ slug: params.slug, isActive: true }).lean();
+    const uni = await University.findBySlug(params.slug);
     if (!uni) return { title: 'University Not Found' };
     return {
       title: `${(uni as any).name} — EduPro`,
@@ -54,7 +54,7 @@ export default async function UniversityDetailPage({ params }: Props) {
     await connectDB();
 
     const [uni, programs] = await Promise.all([
-      University.findOne({ slug: params.slug, isActive: true }).lean(),
+      University.findBySlug(params.slug),
       Program.find({}).lean(),
     ]);
 

@@ -8,7 +8,7 @@ import { Payment } from '@/lib/db/models/models';
 import { Application } from '@/lib/db/models/models';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-02-24.acacia',
 });
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
@@ -41,23 +41,19 @@ export async function POST(req: NextRequest) {
         await Payment.findOneAndUpdate(
           { providerPaymentId: paymentIntent.id },
           {
-            $set: {
-              status: 'succeeded',
-              receiptUrl: paymentIntent.receipt_url,
-            },
+            status: 'succeeded',
           }
         );
 
         // Update application payment status
         const payment = await Payment.findOne({ providerPaymentId: paymentIntent.id });
         if (payment && payment.applicationId) {
-          await Application.findByIdAndUpdate(payment.applicationId, {
-            $set: {
-              paymentStatus: 'paid',
-              paymentId: paymentIntent.id,
-              status: 'submitted',
-              submittedAt: new Date(),
-            },
+          const appId = typeof payment.applicationId === 'string' ? payment.applicationId : String(payment.applicationId);
+          await Application.findByIdAndUpdate(appId, {
+            paymentStatus: 'paid',
+            paymentId: paymentIntent.id,
+            status: 'submitted',
+            submittedAt: new Date(),
           });
         }
         break;
@@ -68,7 +64,7 @@ export async function POST(req: NextRequest) {
         
         await Payment.findOneAndUpdate(
           { providerPaymentId: paymentIntent.id },
-          { $set: { status: 'failed' } }
+          { status: 'failed' }
         );
         break;
       }
@@ -79,11 +75,9 @@ export async function POST(req: NextRequest) {
         await Payment.findOneAndUpdate(
           { providerPaymentId: charge.payment_intent as string },
           {
-            $set: {
-              status: 'refunded',
-              refundId: charge.id,
-              refundedAt: new Date(),
-            },
+            status: 'refunded',
+            refundId: charge.id,
+            refundedAt: new Date(),
           }
         );
         break;

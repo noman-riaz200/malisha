@@ -1,7 +1,7 @@
 // ============================================================
 // lib/utils.ts — API helpers & auth guard
 // ============================================================
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/config';
 
 export function ok<T>(data: T, status = 200) {
@@ -92,7 +92,7 @@ export const programSchema = z.object({
 // ============================================================
 import Stripe from 'stripe';
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-02-24.acacia',
   typescript: true,
 });
 
@@ -136,10 +136,8 @@ export const emailService = {
   },
 };
 
-// ============================================================
 // app/api/users/route.ts — Registration
 // ============================================================
-import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db/mongoose';
 import { User } from '@/lib/db/models/User';
 import crypto from 'crypto';
@@ -284,7 +282,7 @@ export async function PATCH_appStatus(req: NextRequest, id: string) {
       $push: { adminNotes: { note, addedBy: (session!.user as any).id, addedAt: new Date() } },
     },
     { new: true }
-  ).populate('studentId', 'firstName lastName email');
+  );
 
   if (!app) return err('Application not found', 404);
 
@@ -460,7 +458,6 @@ export async function POST_stripeWebhook(req: NextRequest) {
 // app/api/inquiries/route.ts
 // ============================================================
 import { Inquiry } from '@/lib/db/models/models';
-import { z } from 'zod';
 
 const inquirySchema = z.object({
   source:            z.enum(['consultation', 'contact', 'footer']),

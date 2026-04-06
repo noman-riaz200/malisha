@@ -159,7 +159,7 @@ export function ApplicationForm({ programId, universityId, universityName, progr
       {step === 3 && (
         <Step3Documents
           applicationId={appId}
-          onNext={async (docs) => { await save({ documents: docs }); setStep(4); }}
+          onNext={async (docs: any) => { await save({ documents: docs }); setStep(4); }}
           onBack={() => setStep(2)}
         />
       )}
@@ -227,7 +227,7 @@ function Step1Personal({ initialData, onNext }: { initialData: any; onNext: (d: 
 }
 
 // ── Step 2: Education & Language ───────────────────────────────────────────────
-function Step2Education({ initialData, onNext, onBack }: any) {
+function Step2Education({ initialData, onNext, onBack }: { initialData: any; onNext: (d: any) => void; onBack: () => void }) {
   const [education, setEducation] = useState<any[]>(initialData.education || [{}]);
   const [language, setLanguage]   = useState(initialData.language || {});
   const setLang = (k: string, v: any) => setLanguage((p: any) => ({ ...p, [k]: v }));

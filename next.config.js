@@ -1,20 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Disable TypeScript type checking during build (handle separately)
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
-  // Disable ESLint during build
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  // Enable compression
+  
   compress: true,
   
-  // Enable static generation for faster builds and pages
   output: 'standalone',
   
-  // Enable powered by header removal
   poweredByHeader: false,
   
   // Image optimization - Enhanced for performance
@@ -39,32 +32,7 @@ const nextConfig = {
   
   reactStrictMode: true,
   
-  // Disable streaming metadata to prevent hydration errors
-  experimental: {
-    ppr: false,
-  },
-  
-  // Reduce bundle size by eliminating moment.js
-  webpack: (config, { isServer, dev }) => {
-    if (!isServer) {
-      // Suppress Yandex bis_skin_checked hydration warning
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-      };
-      
-      if (dev) {
-        // Ignore specific hydration warnings from browser extensions
-        config.ignoreWarnings = [
-          ...(config.ignoreWarnings || []),
-          /Warning: Extra attributes from the server: bis_skin_checked/,
-        ];
-      }
-    }
-    return config;
-  },
+  turbopack: {},
 
   
   // Security headers with caching for better performance

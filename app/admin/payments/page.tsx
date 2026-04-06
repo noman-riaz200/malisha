@@ -8,8 +8,8 @@ import { Payment } from '@/lib/db/models/models';
 import { formatDate } from '@/lib/utils';
 import { PaymentsList } from './PaymentsList';
 
-export const metadata = { title: 'Payments — Admin' };
 export const dynamic = 'force-dynamic';
+export const metadata = { title: 'Payments — Admin' };
 
 interface PageProps {
   searchParams: { status?: string; page?: string; search?: string };

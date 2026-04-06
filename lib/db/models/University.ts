@@ -4,15 +4,32 @@ export interface IUniversity extends Document {
   name: string;
   slug: string;
   description?: string;
-  location?: string;
+  location?: string | {
+    city: string;
+    province: string;
+    country: string;
+  };
+  locationObj?: {
+    city: string;
+    province: string;
+    country: string;
+  };
   type?: string;
   ranking?: number;
+  worldRank?: string;
   foundedYear?: number;
   logo?: string;
   coverImage?: string;
   website?: string;
   tuitionRangeMin?: number;
   tuitionRangeMax?: number;
+  badges?: {
+    is211: boolean;
+    is985: boolean;
+    isDoubleFirstClass: boolean;
+    cscaRequired: boolean;
+  };
+  studentsEnrolled?: number;
   isFeatured: boolean;
   isActive: boolean;
   createdAt: Date;
@@ -24,15 +41,19 @@ const UniversitySchema = new Schema<IUniversity>(
     name: { type: String, required: true, maxlength: 255 },
     slug: { type: String, required: true, unique: true, lowercase: true, maxlength: 255 },
     description: { type: String },
-    location: { type: String, maxlength: 255 },
+    location: { type: Schema.Types.Mixed, maxlength: 255 },
+    locationObj: { type: Schema.Types.Mixed },
     type: { type: String, maxlength: 100 },
     ranking: { type: Number },
+    worldRank: { type: String, maxlength: 50 },
     foundedYear: { type: Number },
     logo: { type: String, maxlength: 500 },
     coverImage: { type: String, maxlength: 500 },
     website: { type: String, maxlength: 255 },
     tuitionRangeMin: { type: Number },
     tuitionRangeMax: { type: Number },
+    badges: { type: Schema.Types.Mixed },
+    studentsEnrolled: { type: Number },
     isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
   },
@@ -51,10 +72,11 @@ const UniversityModel = mongoose.models.University || mongoose.model<IUniversity
 // Export University with the old API interface for compatibility
 export const University = {
   // find() - supports both old API (with options) and chainable query API (for .sort().lean())
-  find(queryStr: string = '', options: { limit?: number; offset?: number; featured?: boolean } = {}): any {
-    // If called as chainable (no args or just options with special flags), return chainable query
-    if (typeof queryStr === 'object' || (queryStr === '' && !options.limit && !options.offset && !options.featured)) {
-      const filter = typeof queryStr === 'object' ? queryStr : { isActive: true };
+  find(queryStr?: string | object, options: { limit?: number; offset?: number; featured?: boolean } = {}): any {
+    // If called as chainable (no args, string, or object), return chainable query
+    const isChainable = typeof queryStr === 'object' || queryStr === undefined || (queryStr === '' && !options.limit && !options.offset && !options.featured);
+    if (isChainable) {
+      const filter = typeof queryStr === 'object' ? queryStr : (queryStr === '' ? { isActive: true } : {});
       const query = UniversityModel.find(filter);
       return {
         query,
@@ -112,8 +134,33 @@ export const University = {
     return UniversityModel.findOne({ slug, isActive: true });
   },
 
-  async findById(id: string | number): Promise<IUniversity | null> {
-    return UniversityModel.findById(id);
+  async findOne(query: any): Promise<IUniversity | null> {
+    return UniversityModel.findOne(query);
+  },
+
+  async findById(id: string | number): any {
+    const query = UniversityModel.findById(id);
+    return {
+      query,
+      lean() {
+        this.query = this.query.lean();
+        return this;
+      },
+      select(fields: string) {
+        this.query = this.query.select(fields);
+        return this;
+      },
+      then(resolve: (value: any) => void, reject: (reason: any) => void) {
+        return this.query.then(resolve).catch(reject);
+      },
+      exec() {
+        return this.query;
+      }
+    };
+  },
+
+  async findByIdLean(id: string | number): Promise<any> {
+    return UniversityModel.findById(id).lean();
   },
 
   async create(data: Partial<IUniversity>): Promise<IUniversity> {
@@ -139,10 +186,21 @@ export const University = {
     return UniversityModel.findByIdAndUpdate(id, { $set: data }, { new: true });
   },
 
+  async findByIdAndUpdate(id: string, data: any): Promise<IUniversity | null> {
+    return UniversityModel.findByIdAndUpdate(id, data, { new: true });
+  },
+
   async count(): Promise<number> {
     return UniversityModel.countDocuments({ isActive: true });
   },
+
+  async countDocuments(filter?: any): Promise<number> {
+    return UniversityModel.countDocuments(filter || { isActive: true });
+  },
+
+  async distinct(field: string, filter?: any): Promise<string[]> {
+    return UniversityModel.distinct(field, filter || { isActive: true });
+  },
 };
 
-export type { IUniversity };
 export default UniversityModel;

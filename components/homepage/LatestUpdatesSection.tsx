@@ -55,11 +55,8 @@ export function LatestUpdatesSection() {
         {/* Section Title */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-            Latest Updates
+            Latest Update
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            Stay Updated With Our Latest News
-          </p>
         </div>
 
         {/* Content Grid */}
@@ -119,13 +116,12 @@ export function LatestUpdatesSection() {
                   >
                     {update.title}
                   </h4>
-                  <p 
-                    className={`text-sm line-clamp-2 ${
-                      index === selectedIndex ? 'text-teal-600' : 'text-gray-600'
-                    }`}
-                  >
-                    {update.excerpt}
-                  </p>
+                  <div className="flex items-center text-teal-600">
+                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-xs">Read more</span>
+                  </div>
                 </div>
               ))}
             </div>

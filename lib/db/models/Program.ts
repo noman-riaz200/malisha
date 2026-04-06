@@ -56,24 +56,75 @@ const ProgramModel = mongoose.models.Program || mongoose.model<IProgram>('Progra
 
 // Export Program with the old API interface for compatibility
 export const Program = {
-  async find(conditions: { universityId?: string; degreeLevel?: string; medium?: string } = {}, options: { limit?: number; offset?: number } = {}): Promise<IProgram[]> {
-    const filter: any = { isActive: true };
-    if (conditions.universityId) filter.universityId = new Types.ObjectId(conditions.universityId);
-    if (conditions.degreeLevel) filter.degreeLevel = conditions.degreeLevel;
-    if (conditions.medium) filter.medium = conditions.medium;
-    
-    let query = ProgramModel.find(filter).sort({ tuitionFeeUsd: 1 });
-    if (options.offset) query = query.skip(options.offset);
-    if (options.limit) query = query.limit(options.limit);
-    return query;
+  find(conditions?: { universityId?: string; degreeLevel?: string; medium?: string } | object, options: { limit?: number; offset?: number } = {}): any {
+    const filter = typeof conditions === 'object' ? { ...conditions, isActive: true } : { isActive: true };
+    const query = ProgramModel.find(filter).sort({ tuitionFeeUsd: 1 });
+    return {
+      query,
+      populate(field: string, select?: string) {
+        if (typeof field === 'object') {
+          this.query = this.query.populate(field);
+        } else {
+          this.query = this.query.populate(field, select);
+        }
+        return this;
+      },
+      sort(sortObj: any) {
+        this.query = this.query.sort(sortObj);
+        return this;
+      },
+      skip(n: number) {
+        this.query = this.query.skip(n);
+        return this;
+      },
+      limit(n: number) {
+        this.query = this.query.limit(n);
+        return this;
+      },
+      lean() {
+        this.query = this.query.lean();
+        return this;
+      },
+      then(resolve: (value: any[]) => void, reject: (reason: any) => void) {
+        return this.query.then(resolve).catch(reject);
+      },
+      exec() {
+        return this.query;
+      }
+    };
   },
 
   async findBySlug(slug: string): Promise<IProgram | null> {
     return ProgramModel.findOne({ slug, isActive: true });
   },
 
-  async findById(id: string | number): Promise<IProgram | null> {
-    return ProgramModel.findById(id);
+  findById(id: string | number): any {
+    const query = ProgramModel.findById(id);
+    return {
+      query,
+      lean() {
+        this.query = this.query.lean();
+        return this;
+      },
+      select(fields: string) {
+        this.query = this.query.select(fields);
+        return this;
+      },
+      populate(field: string, select?: string) {
+        if (typeof field === 'object') {
+          this.query = this.query.populate(field);
+        } else {
+          this.query = this.query.populate(field, select);
+        }
+        return this;
+      },
+      then(resolve: (value: any) => void, reject: (reason: any) => void) {
+        return this.query.then(resolve).catch(reject);
+      },
+      exec() {
+        return this.query;
+      }
+    };
   },
 
   async findByUniversity(universityId: string | number): Promise<IProgram[]> {
@@ -106,5 +157,4 @@ export const Program = {
   },
 };
 
-export type { IProgram };
 export default ProgramModel;

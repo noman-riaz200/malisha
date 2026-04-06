@@ -10,7 +10,7 @@ import { Application } from '@/lib/db/models/models';
 import { z } from 'zod';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-12-18.acacia',
+  apiVersion: '2025-02-24.acacia',
 });
 
 const createPaymentSchema = z.object({
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       currency: 'usd',
       provider: 'stripe',
       providerPaymentId: paymentIntent.id,
-      providerSessionId: paymentIntent.client_secret,
+      providerSessionId: paymentIntent.client_secret ?? undefined,
       status: 'pending',
     });
 

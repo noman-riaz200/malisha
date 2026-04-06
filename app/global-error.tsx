@@ -1,16 +1,15 @@
-'use server';
+'use client';
 
-export default async function GlobalError({
+export default function GlobalError({
   error,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
 }) {
   return (
     <html>
       <body>
         <h2>Something went wrong!</h2>
-        <button onClick={() => reset()}>Try again</button>
+        <p>Please refresh the page or try again later.</p>
       </body>
     </html>
   );

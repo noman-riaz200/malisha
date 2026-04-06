@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     // Save document record
     const document = await AppDocument.create({
       uploadedBy: userId,
-      docType,
+      docType: docType as 'passport' | 'academic_cert' | 'transcript' | 'photo' | 'english_cert' | 'other',
       fileUrl,
       s3Key: key,
       originalFilename: file.name,

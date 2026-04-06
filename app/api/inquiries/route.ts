@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
 
     const inquiry = await Inquiry.create({
       ...parsed.data,
+      source: parsed.data.source as 'consultation' | 'contact' | 'footer',
       status: 'new',
     });
 
