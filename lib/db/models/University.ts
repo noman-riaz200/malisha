@@ -138,7 +138,7 @@ export const University = {
     return UniversityModel.findOne(query);
   },
 
-  async findById(id: string | number): any {
+  findById(id: string | number): any {
     const query = UniversityModel.findById(id);
     return {
       query,

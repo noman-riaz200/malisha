@@ -45,8 +45,8 @@ export async function POST(req: NextRequest) {
     const program = application.programId as any;
     const amount = program.applicationFeeUSD || 50;
 
-    // In production, you would create a PayPal order here
-    // For now, we'll return mock data
+    // In production, integrate with PayPal SDK
+    // For now, return mock order ID
     const paypalOrderId = `PAYPAL-${Date.now()}`;
 
     // Create payment record

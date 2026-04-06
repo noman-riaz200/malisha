@@ -4,10 +4,19 @@ import Link from 'next/link';
 
 import React from 'react';
 
-export function Logo() {
+interface LogoProps {
+  variant?: 'default' | 'auth';
+}
+
+export function Logo({ variant = 'default' }: LogoProps = {}) {
+  const isAuth = variant === 'auth';
+  const textColor = isAuth ? 'text-white' : 'text-gray-800';
+  const subTextColor = isAuth ? 'text-white/80' : 'text-gray-600';
+  const taglineColor = isAuth ? 'text-white/70' : 'text-gray-500';
+
   return (
-    <Link href="/" className="flex items-center gap-3 no-underline">
-      <div className="flex flex-col items-start">
+    <Link href="/" className="flex items-center gap-3 no-underline" suppressHydrationWarning={true}>
+      <div className="flex flex-col items-start" suppressHydrationWarning={true}>
         {/* Logo Icon */}
         <div className="flex items-center gap-2">
           <svg
@@ -48,13 +57,13 @@ export function Logo() {
             />
           </svg>
           <div className="flex flex-col">
-            <span className="text-lg font-bold text-gray-800 leading-tight">
+            <span className={`text-lg font-bold ${textColor} leading-tight`}>
               Malisha<span className="text-[#0d9488]">Edu</span>
             </span>
-            <span className="text-xs text-gray-600">马丽莎教育</span>
+            <span className={`text-xs ${subTextColor}`}>马丽莎教育</span>
           </div>
         </div>
-        <span className="text-[10px] text-gray-500 mt-0.5">The China Education Expert</span>
+        <span className={`text-[10px] ${taglineColor} mt-0.5`}>The China Education Expert</span>
       </div>
     </Link>
   );

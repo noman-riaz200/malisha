@@ -1,14 +1,11 @@
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+import { ReactNode } from 'react';
+import { Navbar } from '@/components/layout/Navbar';
+
+export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    }}>
+    <div className="auth-page-wrapper no-navbar" suppressHydrationWarning>
       {children}
     </div>
   );
 }
+

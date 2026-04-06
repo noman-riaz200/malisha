@@ -11,7 +11,7 @@ async function createAdmin() {
   const adminData = {
     firstName: 'Admin',
     lastName: 'User',
-    email: 'admin@edupro.com',
+    email: 'admin@malisha.com',
     password: 'admin123',
     role: 'admin' as const,
     isEmailVerified: true,
@@ -26,7 +26,7 @@ async function createAdmin() {
 
   const admin = await User.create(adminData);
   console.log('Admin user created successfully!');
-  console.log('Email:', admin.email);
+  console.log('Email:', adminData.email);
   console.log('Password: admin123');
 }
 

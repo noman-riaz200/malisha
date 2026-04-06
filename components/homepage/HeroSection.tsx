@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const STATISTICS = [
   { value: '+13', label: 'Years of experience', color: 'bg-[#e53935]' },
-  { value: '+27K', label: 'Students enrolled till now', color: 'bg-[#fdd835]' },
+  { value: '+27K', label: 'Students enrolled till now', color: 'bg-[#00897b]' },
   { value: '+17', label: 'Worldwide Branches', color: 'bg-[#00897b]' },
   { value: '+250', label: 'University Cooperations', color: 'bg-[#4db6ac]' },
 ];
