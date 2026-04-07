@@ -1,11 +1,10 @@
-# Login/Register Pages Implementation TODO
+# Fix Next.js Hydration Error - TODO
 
-## Plan Breakdown
-- [ ] Step 1: Update app/(auth)/layout.tsx (hide Navbar, auth wrapper)
-- [ ] Step 2: Create app/(auth)/login/page.tsx (NextAuth signIn)
-- [ ] Step 3: Create app/(auth)/register/page.tsx (custom register form)
-- [ ] Step 4: Update Navbar.tsx (conditional hide on auth pages)
-- [ ] Step 5: Test & verify no errors
+## Steps:
+- [x] 1. Edit app/layout.tsx: Wrap <Navbar /> in ClientOnly fallback={null}
+- [x] 2. Edit components/layout/Navbar.tsx: Remove all suppressHydrationWarning props
+- [x] 3. Edit components/layout/Logo.tsx: Remove all suppressHydrationWarning props
+- [ ] 4. Test: Run `npm run dev`, check /login page console for errors
+- [ ] 5. Complete task
 
-Current: Starting Step 1
-
+**Status: Edits complete. Ready for testing.**

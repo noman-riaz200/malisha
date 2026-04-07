@@ -15,8 +15,8 @@ export function Logo({ variant = 'default' }: LogoProps = {}) {
   const taglineColor = isAuth ? 'text-white/70' : 'text-gray-500';
 
   return (
-    <Link href="/" className="flex items-center gap-3 no-underline" suppressHydrationWarning={true}>
-      <div className="flex flex-col items-start" suppressHydrationWarning={true}>
+    <Link href="/" className="flex items-center gap-3 no-underline">
+      <div className="flex flex-col items-start">
         {/* Logo Icon */}
         <div className="flex items-center gap-2">
           <svg

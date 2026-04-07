@@ -53,11 +53,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body suppressHydrationWarning={true}>
-<Navbar />
-        {children}
-        <ClientOnly fallback={null}>
-          <Footer />
+<ClientOnly fallback={null}>
+          <Navbar />
         </ClientOnly>
+        {children}
+        <Footer />
+
       </body>
       </html>
   );

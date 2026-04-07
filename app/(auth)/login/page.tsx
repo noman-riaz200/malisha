@@ -44,12 +44,12 @@ export default function LoginPage() {
   };
 
   return (
-    <>
+    <div suppressHydrationWarning>
       {/* Left Panel - Hero */}
-      <div className="auth-left-panel">
-        <div className="auth-brand-content">
-          <Link href="/" className="auth-logo">
-            <div className="logo-icon">
+      <div className="auth-left-panel" suppressHydrationWarning>
+        <div className="auth-brand-content" suppressHydrationWarning>
+          <Link href="/" className="auth-logo" suppressHydrationWarning>
+            <div className="logo-icon" suppressHydrationWarning>
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
@@ -101,8 +101,8 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel - Form */}
-      <div className="auth-right-panel">
-        <div className="auth-form-container">
+      <div className="auth-right-panel" suppressHydrationWarning>
+        <div className="auth-form-container" suppressHydrationWarning>
           <div className="auth-form-header animate-fade-up">
             <h2>Sign in to your account</h2>
             <p>Enter your credentials to access your dashboard</p>
@@ -150,7 +150,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || !email || !password}
-              className="w-full bg-red-600 text-white py-3 px-6 rounded-xl font-semibold text-base hover:bg-red-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-[#0d9488] text-white py-3 px-6 rounded-xl font-semibold text-base hover:bg-[#0f766e] transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -161,13 +161,13 @@ export default function LoginPage() {
                   Signing in...
                 </>
               ) : (
-                <span suppressHydrationWarning>Sign In</span>
+                'Sign In'
               )}
             </button>
           </form>
 
-          <div className="text-center mt-8 pt-6 border-t border-gray-100">
-            <p className="auth-switch-text">
+          <div className="text-center mt-8 pt-6 border-t border-gray-100" suppressHydrationWarning>
+            <p className="auth-switch-text" suppressHydrationWarning>
               Don&apos;t have an account?{' '}
               <Link href="/register" className="font-semibold hover:text-[#0d9488] transition-colors">
                 Sign up here
@@ -176,7 +176,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

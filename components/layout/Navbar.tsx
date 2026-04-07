@@ -139,7 +139,7 @@ function NavDropdown({
   const isActive = isPathActive(pathname, link.href);
 
   return (
-<div ref={dropdownRef} className="relative" suppressHydrationWarning={true}>
+<div ref={dropdownRef} className="relative">
       <button
         onClick={onToggle}
         onMouseEnter={() => onToggle()}
@@ -205,14 +205,14 @@ export function Navbar() {
   // Use suppressHydrationWarning to handle client-only state
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm" suppressHydrationWarning>
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Logo />
 
           {/* Desktop Navigation */}
-          <nav suppressHydrationWarning className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map((link, index) => {
               if (!link) {
                 console.error('Undefined link at index', index);
@@ -277,7 +277,7 @@ export function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`lg:hidden border-t border-gray-100 py-4 ${mobileMenuOpen ? '' : 'hidden'}`} suppressHydrationWarning>
+        <div className={`lg:hidden border-t border-gray-100 py-4 ${mobileMenuOpen ? '' : 'hidden'}`}>
           <nav className="flex flex-col gap-2">
               {NAV_LINKS.map((link, index) => {
                 if (!link) {
