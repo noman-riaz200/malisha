@@ -135,7 +135,8 @@ class ApplicationQuery {
 
 // Export Application with the old API interface for compatibility
 export const Application = {
-  find(conditions: { studentId?: string; universityId?: string; status?: string } = {}, options: { limit?: number; offset?: number; sort?: string } = {}): any {
+  async find(conditions: { studentId?: string; universityId?: string; status?: string } = {}, options: { limit?: number; offset?: number; sort?: string } = {}): Promise<any> {
+    const model = await getApplicationModel();
     const filter: any = {};
     if (conditions.studentId) filter.studentId = new Types.ObjectId(conditions.studentId);
     if (conditions.universityId) filter.universityId = new Types.ObjectId(conditions.universityId);
@@ -149,7 +150,7 @@ export const Application = {
       sortObj.updatedAt = -1;
     }
     
-(await getApplicationModel()).find(filter).sort(sortObj);
+    let query = model.find(filter).sort(sortObj);
     if (options.offset) query = query.skip(options.offset);
     if (options.limit) query = query.limit(options.limit);
     
@@ -191,8 +192,9 @@ export const Application = {
   },
 
   // findById returns a query with populate capability for the API
-  findById(id: string | number): any {
-const query = (await getApplicationModel()).findById(id);
+  async findById(id: string | number): Promise<any> {
+    const model = await getApplicationModel();
+    const query = model.findById(id);
     return {
       query,
       populate(field: string, select?: string) {
@@ -280,12 +282,12 @@ async findByIdAndUpdate(id: string, data: any, options?: any): Promise<any> {
     return updated ? transformApp(updated) : null;
   },
 
-  countDocuments(conditions: { studentId?: string; status?: string } = {}): any {
+  async countDocuments(conditions: { studentId?: string; status?: string } = {}): Promise<any> {
+    const model = await getApplicationModel();
     const filter: any = {};
     if (conditions.studentId) filter.studentId = new Types.ObjectId(conditions.studentId);
     if (conditions.status) filter.status = conditions.status;
     
-    const model = await getApplicationModel();
     const query = model.countDocuments(filter);
     
     return {
@@ -300,7 +302,8 @@ async findByIdAndUpdate(id: string, data: any, options?: any): Promise<any> {
   },
 
   async count(conditions: any = {}): Promise<number> {
-    return this.countDocuments(conditions as any).exec();
+    const queryObj = await this.countDocuments(conditions as any);
+    return await queryObj.exec();
   },
 
   async deleteById(id: string | number): Promise<boolean> {

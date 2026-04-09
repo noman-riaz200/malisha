@@ -3,9 +3,10 @@
 ## Completed ✅
 - [x] Create TODO.md
 - [x] Add lazy getApplicationModel() to Application.ts 
-- [x] Update app/admin/dashboard/page.tsx to use raw model (error fixed!)
-- [ ] Clean up Application wrapper TS errors (optional)
-- [ ] Test /admin/dashboard loads without error
+- [x] Update app/admin/dashboard/page.tsx to use raw model 
+- [x] Remove 'use client' → Server Component
+- [x] Fix Application wrapper async methods (build passes)
+- [x] Test build + load (via PR #1)
 
 ## Remaining Models (Next)
 - [ ] lib/db/models/Inquiry.ts

@@ -1,4 +1,3 @@
-'use client'
 import { auth } from '@/lib/auth/config';
 import { redirect } from 'next/navigation';
 import { connectDB } from '@/lib/db/mongoose';
