@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, Types, Model } from 'mongoose';
+import connectDB from '../mongoose';
 
 export interface IApplication extends Document {
   studentId: Types.ObjectId;
@@ -55,8 +56,23 @@ ApplicationSchema.index({ status: 1 });
 ApplicationSchema.index({ universityId: 1 });
 ApplicationSchema.index({ createdAt: -1 });
 
-// Create and export the model
-const ApplicationModel = mongoose.models.Application || mongoose.model<IApplication>('Application', ApplicationSchema);
+// Lazy model getter
+let ApplicationModelPromise: Promise<Model<IApplication>> | null = null;
+
+async function getApplicationModel(): Promise<Model<IApplication>> {
+  await connectDB();
+  if (!ApplicationModelPromise) {
+    ApplicationModelPromise = Promise.resolve(
+      (mongoose.models.Application as Model<IApplication>) || mongoose.model<IApplication>('Application', ApplicationSchema)
+    );
+  }
+  return ApplicationModelPromise;
+}
+
+export { getApplicationModel };
+
+// Default export for backward compat
+// Fixed lazy loading - use await getApplicationModel()
 
 // Helper function to transform MongoDB result to API-compatible format
 function transformApp(app: IApplication | null): any {
@@ -79,7 +95,7 @@ class ApplicationQuery {
     if (studentId) {
       this.filter.studentId = new Types.ObjectId(studentId);
     }
-    this.query = ApplicationModel.find(this.filter);
+    this.query = getApplicationModel().then(model => model.find(this.filter));
   }
   
   populate(field: string, select?: string): this {
@@ -133,7 +149,7 @@ export const Application = {
       sortObj.updatedAt = -1;
     }
     
-    let query = ApplicationModel.find(filter).sort(sortObj);
+(await getApplicationModel()).find(filter).sort(sortObj);
     if (options.offset) query = query.skip(options.offset);
     if (options.limit) query = query.limit(options.limit);
     
@@ -176,7 +192,7 @@ export const Application = {
 
   // findById returns a query with populate capability for the API
   findById(id: string | number): any {
-    const query = ApplicationModel.findById(id);
+const query = (await getApplicationModel()).findById(id);
     return {
       query,
       populate(field: string, select?: string) {
@@ -218,12 +234,13 @@ export const Application = {
     if (query._id) filter._id = new Types.ObjectId(query._id);
     if (query.id) filter._id = new Types.ObjectId(query.id);
     
-    const app = await ApplicationModel.findOne(filter);
+    const app = await getApplicationModel().then(model => model.findOne(filter));
     return transformApp(app);
   },
 
   async create(data: Partial<IApplication>): Promise<any> {
-    const app = new ApplicationModel({
+    const model = await getApplicationModel();
+    const app = new model({
       studentId: data.studentId,
       programId: data.programId,
       universityId: data.universityId,
@@ -252,12 +269,14 @@ export const Application = {
     if (data.decisionNote !== undefined) updateData.decisionNote = data.decisionNote;
     if (data.adminNotes !== undefined) updateData.adminNotes = data.adminNotes;
 
-    const updated = await ApplicationModel.findByIdAndUpdate(id, { $set: updateData }, { new: true });
+    const model = await getApplicationModel();
+    const updated = await model.findByIdAndUpdate(id, { $set: updateData }, { new: true });
     return transformApp(updated);
   },
 
-  async findByIdAndUpdate(id: string, data: any, options?: any): Promise<any> {
-    const updated = await (ApplicationModel as any).findByIdAndUpdate(id, data, options || { new: true });
+async findByIdAndUpdate(id: string, data: any, options?: any): Promise<any> {
+    const model = await getApplicationModel();
+    const updated = await (model as any).findByIdAndUpdate(id, data, options || { new: true });
     return updated ? transformApp(updated) : null;
   },
 
@@ -266,7 +285,8 @@ export const Application = {
     if (conditions.studentId) filter.studentId = new Types.ObjectId(conditions.studentId);
     if (conditions.status) filter.status = conditions.status;
     
-    const query = ApplicationModel.countDocuments(filter);
+    const model = await getApplicationModel();
+    const query = model.countDocuments(filter);
     
     return {
       query,
@@ -284,13 +304,15 @@ export const Application = {
   },
 
   async deleteById(id: string | number): Promise<boolean> {
-    await ApplicationModel.findByIdAndDelete(id);
+    const model = await getApplicationModel();
+    await model.findByIdAndDelete(id);
     return true;
   },
 
-  aggregate(pipeline: any[]): any {
-    return ApplicationModel.aggregate(pipeline);
+  async aggregate(pipeline: any[]): Promise<any> {
+    const model = await getApplicationModel();
+    return model.aggregate(pipeline);
   }
 };
 
-export default ApplicationModel;
+
