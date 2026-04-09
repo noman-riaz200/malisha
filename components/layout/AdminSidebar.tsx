@@ -25,72 +25,55 @@ export function AdminSidebar({ user }: Props) {
   const isActive = (href: string) => href === '/admin' ? pathname === href : pathname.startsWith(href);
 
   return (
-    <aside className="hidden lg:flex flex-col bg-slate-900" style={{ width: '280px' }}>
-      {/* Logo */}
-      <div className="p-4 border-b border-white/10">
-        <Link href="/admin" className="flex items-center gap-3 text-decoration-none">
-          <div className="rounded-xl flex items-center justify-center text-white font-bold"
-            style={{ width: '42px', height: '42px', background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)', fontSize: '1.25rem' }}
-          >
+    <aside className="admin-sidebar">
+      <div className="sidebar-logo">
+        <Link href="/admin" className="sidebar-brand">
+          <div className="sidebar-logo-icon">
             E
           </div>
-          <div>
-            <div className="font-bold text-white text-lg">EduPro Admin</div>
-            <div className="text-white/50 text-xs">Control Panel</div>
+          <div className="sidebar-brand-text">
+            <span className="sidebar-brand-name">EduPro Admin</span>
+            <span className="sidebar-brand-subtitle">Control Panel</span>
           </div>
         </Link>
       </div>
 
-      {/* User Info */}
       {user && (
-        <div className="mx-3 my-3 p-3 rounded-xl bg-white/10">
-          <div className="flex items-center gap-3">
-            <div className="rounded-full flex items-center justify-center text-white font-bold"
-              style={{ width: '40px', height: '40px', background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)', fontSize: '1rem' }}
-            >
-              {user.name?.[0] || 'A'}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="mb-0 text-white font-semibold truncate text-sm">{user.name || 'Admin'}</p>
-              <span className="rounded-full text-white text-xs px-2 py-0.5" style={{ background: '#dc2626' }}>
-                {user.role || 'admin'}
-              </span>
-            </div>
+        <div className="sidebar-user">
+          <div className="sidebar-user-avatar">
+            {user.name?.[0] || 'A'}
+          </div>
+          <div className="sidebar-user-info">
+            <p className="sidebar-user-name">{user.name || 'Admin'}</p>
+            <span className="sidebar-user-role">{user.role || 'admin'}</span>
           </div>
         </div>
       )}
 
-      {/* Navigation */}
-      <nav className="flex-1 px-2 py-3">
+      <nav className="sidebar-nav">
         {NAV.map(item => (
           <Link 
             key={item.href} 
             href={item.href}
-            className={`flex items-center gap-3 mb-1 px-3 py-2 rounded-lg transition-colors ${
-              isActive(item.href) 
-                ? 'bg-red-600/20 text-red-500' 
-                : 'text-slate-400 hover:bg-white/5 hover:text-white'
-            }`}
+            className={`sidebar-nav-item ${isActive(item.href) ? 'active' : ''}`}
           >
-            <span className="text-lg">{item.icon}</span>
-            <span className="text-sm">{item.label}</span>
+            <span className="sidebar-nav-icon">{item.icon}</span>
+            <span className="sidebar-nav-label">{item.label}</span>
           </Link>
         ))}
       </nav>
 
-      {/* Footer */}
-      <div className="p-3 border-t border-white/10">
-        <Link href="/" className="flex items-center gap-3 mb-2 px-3 py-2 rounded-lg text-slate-400 hover:bg-white/5 hover:text-white transition-colors">
-          <span className="text-lg">🌐</span>
-          <span className="text-sm">View Site</span>
+      <div className="sidebar-footer">
+        <Link href="/" className="sidebar-nav-item">
+          <span className="sidebar-nav-icon">🌐</span>
+          <span className="sidebar-nav-label">View Site</span>
         </Link>
         <button
           onClick={() => signOut({ callbackUrl: '/login' })}
-          className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg border-0 bg-transparent transition-colors hover:bg-white/5"
-          style={{ color: '#dc2626' }}
+          className="sidebar-nav-item sidebar-logout"
         >
-          <span className="text-lg">🚪</span>
-          <span className="text-sm">Sign Out</span>
+          <span className="sidebar-nav-icon">🚪</span>
+          <span className="sidebar-nav-label">Sign Out</span>
         </button>
       </div>
     </aside>

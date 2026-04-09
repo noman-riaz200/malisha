@@ -3,7 +3,7 @@
 // =============================================================================
 import { auth } from '@/lib/auth/config';
 import { connectDB } from '@/lib/db/mongoose';
-import { Application } from '@/lib/db/models/models';
+import { getApplicationModel } from '@/lib/db/models/Application';
 import Link from 'next/link';
 import { formatDate } from '@/lib/utils';
 import { ApplicationReviewPanel } from '@/components/admin/ApplicationReviewPanel';
@@ -19,6 +19,7 @@ interface PageProps {
 
 async function getApplications(params: PageProps['searchParams']) {
   await connectDB();
+  const ApplicationModel = await getApplicationModel();
   const page  = Math.max(1, parseInt(params.page || '1'));
   const limit = 20;
   const skip  = (page - 1) * limit;
@@ -27,14 +28,14 @@ async function getApplications(params: PageProps['searchParams']) {
   if (params.status && params.status !== 'all') filter.status = params.status;
 
   const [apps, total] = await Promise.all([
-    Application.find(filter)
+    ApplicationModel.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip).limit(limit)
       .populate('studentId',    'firstName lastName email')
       .populate('universityId', 'name')
       .populate('programId',    'name degreeLevel')
       .lean(),
-    Application.countDocuments(filter),
+    ApplicationModel.countDocuments(filter),
   ]);
 
   return { apps, total, page, pages: Math.ceil(total / limit) };

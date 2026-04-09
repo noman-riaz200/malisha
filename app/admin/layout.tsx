@@ -1,5 +1,5 @@
 // =============================================================================
-// app/admin/layout.tsx — Admin Dashboard Layout (Navy/Orange Theme)
+// app/admin/layout.tsx — Admin Dashboard Layout
 // =============================================================================
 import { auth } from '@/lib/auth/config';
 import { redirect } from 'next/navigation';
@@ -12,11 +12,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect('/dashboard');
   }
   return (
-    <div className="admin-dashboard" style={{ backgroundColor: 'var(--admin-background)', minHeight: '100vh' }}>
-      <div className="d-flex">
-        <AdminSidebar user={session.user as any} />
-        <main className="flex-grow-1 p-4" style={{ minWidth: 0, paddingTop: '60px', backgroundColor: 'var(--admin-background)' }}>{children}</main>
-      </div>
+    <div className="min-h-screen bg-slate-100 flex">
+      <AdminSidebar user={session.user as any} />
+      <main className="flex-1 ml-[280px] p-8 min-h-screen">
+        {children}
+      </main>
     </div>
   );
 }
