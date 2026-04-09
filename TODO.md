@@ -1,19 +1,10 @@
-# Admin Dashboard Tailadmin Redesign TODO
+# Task: Implement Admin Credentials Signin (admin@malisha.com/admin123)
 
-## Steps to complete:
+## Steps:
+- [x] 1. Create scripts/create-admin-malisha.ts
+- [ ] 2. Edit lib/auth/config.ts for role-based redirects  
+- [ ] 3. Edit app/(auth)/login/page.tsx for client-side role redirect
+- [x] 4. Run \`tsx scripts/create-admin-malisha.ts\` to create admin user
+- [ ] 5. Test login at /login with admin@malisha.com / admin123 → /admin/dashboard
 
-- [ ] 1. Update tailwind.config.js with Tailadmin colors/fonts/shadows
-- [x] 2. Create components/admin/TailadminStatsCard.tsx
-- [x] 3. Create components/admin/RevenueChart.tsx (Recharts)
-- [x] 4. Create components/admin/StatusPie.tsx (Recharts pie)
-- [x] 5. Create components/admin/RecentTable.tsx (table)
-- [x] 6. Update components/layout/AdminSidebar.tsx (collapsible Tailadmin style)
-- [x] 7. Update app/admin/layout.tsx (responsive sidebar)
-- [x] 8. Update app/admin/dashboard/page.tsx (new layout + components)
-- [ ] 9. Add custom styles to app/globals.css if needed
-- [x] 10. Install recharts: execute_command 'npm i recharts --legacy-peer-deps'
-- [ ] 11. Test dashboard at /admin/dashboard
-- [ ] 12. Add dark mode toggle
-
-**Progress: Steps 1-5 complete. Starting step 6 (sidebar)**
 
