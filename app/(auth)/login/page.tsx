@@ -13,34 +13,32 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    console.log('Button clicked!', { email, password });
+  const handleLogin = async (e?: React.FormEvent) => {
+    // Agar form submit event hai toh preventDefault karein
+    if (e) e.preventDefault();
+
     if (!email || !password) {
       setError('Please enter email and password');
       return;
     }
-    console.log('Form submitted', { email, password });
+
     setError('');
     setLoading(true);
 
     try {
-      console.log('Calling signIn...');
       const result = await signIn('credentials', {
         redirect: false,
         email,
         password,
       });
-      console.log('signIn result:', result);
 
       if (result?.error) {
-        console.log('Auth error:', result.error);
         setError(result.error);
       } else {
         router.push('/dashboard');
         router.refresh();
       }
     } catch (err) {
-      console.error('Login error:', err);
       setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -48,32 +46,33 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="auth-page-wrapper" style={{ position: 'relative', zIndex: 1 }}>
+    <div className="auth-page-wrapper" style={{ position: 'relative', zIndex: 1 }} suppressHydrationWarning>
       {/* Left Panel */}
       <div className="auth-left-panel">
-          <div className="auth-brand-content">
-            <Logo variant="auth" />
+        <div className="auth-brand-content">
+          <Logo variant="auth" />
 
-            <div className="auth-hero-text">
-              <h1>Welcome Back</h1>
-              <p>Continue your journey to studying in China with our comprehensive education services.</p>
+          <div className="auth-hero-text">
+            <h1>Welcome Back</h1>
+            <p>Continue your journey to studying in China with our comprehensive education services.</p>
+          </div>
+
+          <div className="auth-stats">
+            <div className="stat-item">
+              <div className="stat-number">+27K</div>
+              <div className="stat-label">Students</div>
             </div>
-
-            <div className="auth-stats">
-              <div className="stat-item">
-                <div className="stat-number">+27K</div>
-                <div className="stat-label">Students</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-number">+250</div>
-                <div className="stat-label">Universities</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-number">+13</div>
-                <div className="stat-label">Years</div>
-              </div>
+            <div className="stat-item">
+              <div className="stat-number">+250</div>
+              <div className="stat-label">Universities</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-number">+13</div>
+              <div className="stat-label">Years</div>
+            </div>
           </div>
         </div>
+      </div>
 
       {/* Right Panel */}
       <div className="auth-right-panel" style={{ position: 'relative', zIndex: 10 }}>
@@ -83,7 +82,8 @@ export default function LoginPage() {
             <p>Enter your credentials to access your account</p>
           </div>
 
-          <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-6">
+          {/* Form handling updated to use onSubmit */}
+          <form onSubmit={handleLogin} className="space-y-6">
             {error && (
               <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg">
                 {error}
@@ -129,10 +129,8 @@ export default function LoginPage() {
             </div>
 
             <button
-              type="button"
-              onClick={handleLogin}
+              type="submit"
               disabled={loading}
-              style={{ position: 'relative', zIndex: 20 }}
               className="w-full bg-[#0d9488] text-white py-3 px-4 rounded-lg font-semibold hover:bg-[#0a7a6f] transition-colors focus:ring-2 focus:ring-[#0d9488] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing in...' : 'Login'}
