@@ -1,27 +1,19 @@
-# Mongoose Model Fix - Lazy Loading Implementation
+# Admin Dashboard Tailadmin Redesign TODO
 
-## Completed ✅
-- [x] Create TODO.md
-- [x] Add lazy getApplicationModel() to Application.ts 
-- [x] Update app/admin/dashboard/page.tsx to use raw model 
-- [x] Remove 'use client' → Server Component
-- [x] Fix Application wrapper async methods (build passes)
-- [x] Test build + load (via PR #1)
+## Steps to complete:
 
-## Remaining Models (Next)
-- [ ] lib/db/models/Inquiry.ts
-- [ ] lib/db/models/Document.ts
-- [ ] lib/db/models/Payment.ts
-- [ ] lib/db/models/Program.ts
-- [ ] lib/db/models/User.ts
-- [ ] lib/db/models/University.ts
-- [ ] Create centralized lib/db/models/index.ts factory
+- [ ] 1. Update tailwind.config.js with Tailadmin colors/fonts/shadows
+- [x] 2. Create components/admin/TailadminStatsCard.tsx
+- [x] 3. Create components/admin/RevenueChart.tsx (Recharts)
+- [x] 4. Create components/admin/StatusPie.tsx (Recharts pie)
+- [x] 5. Create components/admin/RecentTable.tsx (table)
+- [x] 6. Update components/layout/AdminSidebar.tsx (collapsible Tailadmin style)
+- [x] 7. Update app/admin/layout.tsx (responsive sidebar)
+- [x] 8. Update app/admin/dashboard/page.tsx (new layout + components)
+- [ ] 9. Add custom styles to app/globals.css if needed
+- [x] 10. Install recharts: execute_command 'npm i recharts --legacy-peer-deps'
+- [ ] 11. Test dashboard at /admin/dashboard
+- [ ] 12. Add dark mode toggle
 
-## Testing
-```
-cd /workspaces/malisha
-npm run dev
-# Visit http://localhost:3000/admin/dashboard
-# Check no Runtime TypeError
-```
+**Progress: Steps 1-5 complete. Starting step 6 (sidebar)**
 
