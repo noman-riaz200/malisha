@@ -51,22 +51,23 @@ const SERVICES = [
 
 export function StudentAdmissionServicesSection() {
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+    <section suppressHydrationWarning className="py-16 bg-gray-50">
+      <div suppressHydrationWarning className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div suppressHydrationWarning className="text-center mb-10">
+          <h2 suppressHydrationWarning className="text-2xl md:text-3xl font-bold text-gray-900">
             International Student Admission Services
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div suppressHydrationWarning className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {SERVICES.map((item) => (
             <Link
+              suppressHydrationWarning
               key={item.id}
               href="/services"
               className="group block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
-              <div className="relative h-40 sm:h-48">
+              <div suppressHydrationWarning className="relative h-40 sm:h-48">
                 <Image
                   src={item.image}
                   alt={item.title}
@@ -74,14 +75,15 @@ export function StudentAdmissionServicesSection() {
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   quality={80}
+                  suppressHydrationWarning
                 />
               </div>
-              <div className="p-4">
-                <p className="text-xs font-semibold text-blue-600 mb-1">{item.service}</p>
-                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+              <div suppressHydrationWarning className="p-4">
+                <p suppressHydrationWarning className="text-xs font-semibold text-blue-600 mb-1">{item.service}</p>
+                <h3 suppressHydrationWarning className="text-lg font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                   {item.title}
                 </h3>
-                <p className="text-sm text-gray-600 line-clamp-2">
+                <p suppressHydrationWarning className="text-sm text-gray-600 line-clamp-2">
                   {item.description}
                 </p>
               </div>

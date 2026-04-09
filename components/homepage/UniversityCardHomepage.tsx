@@ -32,15 +32,16 @@ export function UniversityCardHomepage({
             src={image}
             alt={name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            suppressHydrationWarning
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div suppressHydrationWarning className="w-full h-full flex items-center justify-center">
             <span className="text-6xl font-bold text-white/30">{name.charAt(0)}</span>
           </div>
         )}
         {/* Badges Overlay */}
         {badges.length > 0 && (
-          <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+          <div suppressHydrationWarning className="absolute top-3 left-3 flex flex-wrap gap-2">
             {badges.map((badge, index) => (
               <span
                 key={index}
@@ -53,8 +54,8 @@ export function UniversityCardHomepage({
         )}
         {/* Countdown Timer */}
         {countdown && (
-          <div className="absolute bottom-3 right-3 bg-red-500 text-white px-3 py-1.5 rounded-lg shadow-lg">
-            <div className="flex items-center gap-1.5">
+          <div suppressHydrationWarning className="absolute bottom-3 right-3 bg-red-500 text-white px-3 py-1.5 rounded-lg shadow-lg">
+            <div suppressHydrationWarning className="flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5" />
               <span className="text-xs font-bold">
                 {countdown.days}d {countdown.hours}h {countdown.min}m left
@@ -67,16 +68,16 @@ export function UniversityCardHomepage({
       {/* Card Content */}
       <div suppressHydrationWarning className="p-5">
         {/* University Name */}
-        <h3 className="font-bold text-lg text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+        <h3 suppressHydrationWarning className="font-bold text-lg text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
           {name}
         </h3>
 
         {/* University Details */}
-        <div className="space-y-2.5 mb-4">
+        <div suppressHydrationWarning className="space-y-2.5 mb-4">
           {/* World Rank */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
-              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div suppressHydrationWarning className="flex items-center gap-2">
+            <div suppressHydrationWarning className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+              <svg suppressHydrationWarning className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -87,8 +88,8 @@ export function UniversityCardHomepage({
           </div>
 
           {/* Location */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
+          <div suppressHydrationWarning className="flex items-center gap-2">
+            <div suppressHydrationWarning className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center">
               <MapPin className="w-4 h-4 text-green-600" />
             </div>
             <div>
@@ -98,8 +99,8 @@ export function UniversityCardHomepage({
           </div>
 
           {/* Students Enrolled */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
+          <div suppressHydrationWarning className="flex items-center gap-2">
+            <div suppressHydrationWarning className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
               <Users className="w-4 h-4 text-purple-600" />
             </div>
             <div>

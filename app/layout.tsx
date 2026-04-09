@@ -6,6 +6,7 @@ import { Inter } from 'next/font/google';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { ClientOnly } from '@/components/ClientOnly';
+import { Providers } from '@/components/Providers';
 import './globals.css';
 
 const inter = Inter({
@@ -39,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // Simplified layout - Navbar and Footer shown on all pages except dashboard routes
   // The Navbar component itself handles route-specific visibility
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         {/* Preconnect to Google Fonts */}
         <link 
@@ -53,12 +54,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body suppressHydrationWarning={true}>
-<ClientOnly fallback={null}>
-          <Navbar />
-        </ClientOnly>
-        {children}
-        <Footer />
-
+        <Providers>
+          <ClientOnly fallback={null}>
+            <Navbar />
+          </ClientOnly>
+          {children}
+          <ClientOnly fallback={null}>
+            <Footer />
+          </ClientOnly>
+        </Providers>
       </body>
       </html>
   );

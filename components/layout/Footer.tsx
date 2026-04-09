@@ -142,13 +142,13 @@ export function Footer() {
     setMounted(true);
   }, []);
 
-  const displayYear = mounted ? currentYear : 2026;
+  const displayYear = mounted ? currentYear : 2025;
 
   return (
     <footer className="bg-gradient-to-b from-[#0d2137] to-[#061525] text-slate-400" suppressHydrationWarning>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10">
-          <div className="lg:col-span-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16" suppressHydrationWarning>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10" suppressHydrationWarning>
+          <div className="lg:col-span-2" suppressHydrationWarning>
             <Link href="/" className="inline-flex items-center gap-2 text-decoration-none mb-4">
               <span className="font-bold text-2xl text-white">
                 Malisha<span style={{ color: '#C62828' }}>Edu</span>
@@ -157,15 +157,15 @@ export function Footer() {
             <p className="mb-6 text-sm leading-relaxed text-slate-400 max-w-sm">
               Your trusted partner for studying in China. We provide comprehensive services for international students seeking quality education in Chinese universities.
             </p>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-sm">
-                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#C62828]/10 flex items-center justify-center text-[#C62828]">
+            <div className="space-y-3" suppressHydrationWarning>
+              <div className="flex items-center gap-3 text-sm" suppressHydrationWarning>
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#C62828]/10 flex items-center justify-center text-[#C62828]" suppressHydrationWarning>
                   <ContactIcon type="phone" />
                 </div>
                 <span className="text-slate-300">+8618613114366</span>
               </div>
-              <div className="flex items-center gap-3 text-sm">
-                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#C62828]/10 flex items-center justify-center text-[#C62828]">
+              <div className="flex items-center gap-3 text-sm" suppressHydrationWarning>
+                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-[#C62828]/10 flex items-center justify-center text-[#C62828]" suppressHydrationWarning>
                   <ContactIcon type="email" />
                 </div>
                 <span className="text-slate-300">info@malishaedu.com</span>
@@ -173,7 +173,7 @@ export function Footer() {
             </div>
           </div>
 
-          <div>
+          <div suppressHydrationWarning>
             <h6 className="font-semibold mb-5 text-white text-sm uppercase tracking-wide">
               Quick Links
             </h6>

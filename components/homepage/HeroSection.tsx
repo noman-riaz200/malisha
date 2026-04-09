@@ -1,4 +1,4 @@
-
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -11,9 +11,8 @@ const STATISTICS = [
 ];
 
 export function HeroSection() {
-
   return (
-<section className="relative min-h-screen flex flex-col overflow-visible" suppressHydrationWarning>
+    <section className="relative min-h-screen flex flex-col overflow-visible" suppressHydrationWarning>
       {/* Background Image with Overlay */}
       <div
         className="absolute inset-0 z-0"
@@ -23,17 +22,18 @@ export function HeroSection() {
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
         }}
+        suppressHydrationWarning
       >
         {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/30" suppressHydrationWarning />
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center pt-8 pb-12 lg:pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-            <div className="flex flex-col items-center lg:flex-row lg:items-start justify-center lg:justify-between gap-6">
-            {/* Left Content - Title and Search */}
-            <div className="w-full max-w-4xl mx-auto lg:flex-1">
+      <div className="relative z-10 flex-1 flex flex-col justify-center pt-8 pb-12 lg:pb-16" suppressHydrationWarning>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full" suppressHydrationWarning>
+          <div className="flex flex-col items-center lg:flex-row lg:items-start justify-center lg:justify-between gap-6" suppressHydrationWarning>
+            {/* Left Content - Title and Subtitle */}
+            <div className="w-full max-w-4xl mx-auto lg:flex-1" suppressHydrationWarning>
               {/* Title */}
               <h1
                 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center mb-3"
@@ -49,34 +49,34 @@ export function HeroSection() {
               >
                 Seamless Admission Services For Your Path to Success!
               </p>
-
-
             </div>
-
-
           </div>
         </div>
       </div>
 
-{/* Statistics Cards - Bottom Section */}
-      {/* <div className="absolute mt-50 bottom-0 left-0 right-0 z-20 pb-20 mt-[2000px]"> */}
-      <div className="-mt-24 md:-mt-32 lg:-mt-40 relative z-20 pb-12 lg:pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full">
+      {/* Statistics Cards - Bottom Section */}
+      <div className="-mt-24 md:-mt-32 lg:-mt-40 relative z-20 pb-12 lg:pb-16" suppressHydrationWarning>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" suppressHydrationWarning>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full" suppressHydrationWarning>
             {STATISTICS.map((stat, index) => (
               <div
                 key={index}
                 className={`${stat.color} rounded-2xl p-6 md:p-8 text-white text-center shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 min-h-[100px] flex flex-col justify-center`}
+                suppressHydrationWarning
               >
-                <div className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 whitespace-nowrap">{stat.value}</div>
-                <div className="text-sm md:text-base font-semibold leading-tight whitespace-nowrap">{stat.label}</div>
+                <div suppressHydrationWarning className="text-2xl md:text-3xl lg:text-4xl font-bold mb-3 whitespace-nowrap">
+                  {stat.value}
+                </div>
+                <div suppressHydrationWarning className="text-sm md:text-base font-semibold leading-tight whitespace-nowrap">
+                  {stat.label}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Floating Chat Button */}
+      {/* Floating Chat Button - Fixed: No <a> tag inside <Link> */}
       <Link
         href="/contact"
         className="fixed bottom-6 right-6 z-50 w-12 h-12 bg-[#4db6ac] rounded-full flex items-center justify-center text-white shadow-xl hover:bg-[#3d9b91] transition-all hover:scale-105"
@@ -87,17 +87,17 @@ export function HeroSection() {
         </svg>
       </Link>
 
-      {/* Mobile Action Buttons */}
-      <div className="lg:hidden fixed bottom-24 right-4 flex flex-col gap-2 z-40">
+      {/* Mobile Action Buttons - Fixed: No <a> tags inside <Link> */}
+      <div className="lg:hidden fixed bottom-24 right-4 flex flex-col gap-2 z-40" suppressHydrationWarning>
         <Link
           href="/apply"
-          className="px-4 py-2 bg-[#e53935] text-white text-sm rounded-lg font-semibold shadow-lg"
+          className="px-4 py-2 bg-[#e53935] text-white text-sm rounded-lg font-semibold shadow-lg text-center"
         >
           Apply Now
         </Link>
         <Link
           href="/get-free-consultation"
-          className="px-4 py-2 bg-[#0f4c3a] text-white text-sm rounded-lg font-semibold shadow-lg"
+          className="px-4 py-2 bg-[#0f4c3a] text-white text-sm rounded-lg font-semibold shadow-lg text-center"
         >
           Free Consultation
         </Link>

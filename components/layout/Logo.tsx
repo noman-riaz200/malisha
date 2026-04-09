@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-
 import React from 'react';
 
 interface LogoProps {
@@ -15,9 +14,9 @@ export function Logo({ variant = 'default' }: LogoProps = {}) {
   const taglineColor = isAuth ? 'text-white/70' : 'text-gray-500';
 
   return (
-    <Link href="/" className="flex items-center gap-3 no-underline">
+    <Link href="/" className="flex items-center gap-3 no-underline" suppressHydrationWarning>
       <div className="flex flex-col items-start">
-        {/* Logo Icon */}
+        {/* Logo Icon and Brand Name */}
         <div className="flex items-center gap-2">
           <svg
             width="40"
@@ -63,9 +62,10 @@ export function Logo({ variant = 'default' }: LogoProps = {}) {
             <span className={`text-xs ${subTextColor}`}>马丽莎教育</span>
           </div>
         </div>
-        <span className={`text-[10px] ${taglineColor} mt-0.5`}>The China Education Expert</span>
+        <span className={`text-[10px] ${taglineColor} mt-0.5`}>
+          The China Education Expert
+        </span>
       </div>
     </Link>
   );
 }
-

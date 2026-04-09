@@ -103,56 +103,60 @@ export function TestimonialsSection() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+      <div suppressHydrationWarning className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div suppressHydrationWarning className="text-center mb-12">
+          <h2 suppressHydrationWarning className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
             Testimonials
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+          <p suppressHydrationWarning className="text-gray-600 max-w-2xl mx-auto text-lg">
             What our Partner Are Saying
           </p>
         </div>
 
-        <div className="relative overflow-hidden">
+        <div suppressHydrationWarning className="relative overflow-hidden">
           <div 
+            suppressHydrationWarning
             className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-500 ease-in-out ${
               isAnimating ? 'opacity-0 transform translate-x-full' : 'opacity-100 transform translate-x-0'
             }`}
           >
             {displayTestimonials.map((testimonial, index) => (
               <div 
+                suppressHydrationWarning
                 key={`${testimonial.id}-${currentIndex}-${index}`}
                 className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col h-[280px]"
               >
-                <div className="flex items-center mb-4 flex-shrink-0">
-                  <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-4 border-teal-100">
+                <div suppressHydrationWarning className="flex items-center mb-4 flex-shrink-0">
+                  <div suppressHydrationWarning className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 border-4 border-teal-100">
                     <img
                       src={testimonial.image}
                       alt={testimonial.name}
                       className="w-full h-full object-cover"
+                      suppressHydrationWarning
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/images/profile-placeholder.svg';
                       }}
                     />
                   </div>
-                  <div className="ml-3">
-                    <h4 className="font-bold text-lg text-gray-900">
+                  <div suppressHydrationWarning className="ml-3">
+                    <h4 suppressHydrationWarning className="font-bold text-lg text-gray-900">
                       {testimonial.name}
                     </h4>
-                    <p className="text-teal-600 text-xs font-medium">
+                    <p suppressHydrationWarning className="text-teal-600 text-xs font-medium">
                       {testimonial.title}
                     </p>
                   </div>
                 </div>
 
-                <div className="overflow-y-auto flex-grow pr-2 custom-scrollbar">
-                  <p className="text-gray-600 leading-relaxed italic">
+                <div suppressHydrationWarning className="overflow-y-auto flex-grow pr-2 custom-scrollbar">
+                  <p suppressHydrationWarning className="text-gray-600 leading-relaxed italic">
                     "{testimonial.description}"
                   </p>
                 </div>
 
-                <div className="mt-4 flex justify-end flex-shrink-0">
+                <div suppressHydrationWarning className="mt-4 flex justify-end flex-shrink-0">
                   <svg 
+                    suppressHydrationWarning
                     className="w-10 h-10 text-teal-100" 
                     fill="currentColor" 
                     viewBox="0 0 24 24"
@@ -165,7 +169,7 @@ export function TestimonialsSection() {
           </div>
         </div>
 
-        <div className="flex justify-center mt-10 space-x-2">
+        <div suppressHydrationWarning className="flex justify-center mt-10 space-x-2">
           {Array.from({ length: Math.ceil(TESTIMONIALS.length / 3) }).map((_, index) => (
             <button
               key={index}
