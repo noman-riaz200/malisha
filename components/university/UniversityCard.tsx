@@ -10,13 +10,13 @@ interface University {
   _id: string;
   name: string;
   slug: string;
-  logo: string;
-  bannerImage: string;
+  logo?: string;
+  bannerImage?: string;
   worldRank?: string;
-  location: { city: string; province: string; country: string };
-  badges: { is211: boolean; is985: boolean; isDoubleFirstClass: boolean; cscaRequired: boolean };
-  studentsEnrolled: number;
-  intakes: Array<{ season: string; year: number; deadline: string }>;
+  location?: { city: string; province: string; country: string };
+  badges?: { is211: boolean; is985: boolean; isDoubleFirstClass: boolean; cscaRequired: boolean };
+  studentsEnrolled?: number;
+  intakes?: Array<{ season: string; year: number; deadline: string }>;
 }
 
 function CountdownTimer({ deadline }: { deadline: string }) {
@@ -48,7 +48,7 @@ function CountdownTimer({ deadline }: { deadline: string }) {
 }
 
 export function UniversityCard({ university: uni }: { university: University }) {
-  const nextIntake = uni.intakes
+  const nextIntake = (uni.intakes || [])
     ?.filter(i => new Date(i.deadline) > new Date())
     .sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime())[0];
 
@@ -86,10 +86,10 @@ export function UniversityCard({ university: uni }: { university: University }) 
       <div className="p-4 flex-1 flex flex-col">
         {/* Badges */}
         <div className="flex flex-wrap gap-1 mb-3">
-          {uni.badges.is211           && <span className="badge-211">211</span>}
-          {uni.badges.is985           && <span className="badge-985">985</span>}
-          {uni.badges.isDoubleFirstClass && <span className="badge-dfc">Double First</span>}
-          {uni.badges.cscaRequired    && <span className="badge-csca">CSCA</span>}
+          {uni.badges?.is211           && <span className="badge-211">211</span>}
+          {uni.badges?.is985           && <span className="badge-985">985</span>}
+          {uni.badges?.isDoubleFirstClass && <span className="badge-dfc">Double First</span>}
+          {uni.badges?.cscaRequired    && <span className="badge-csca">CSCA</span>}
         </div>
 
         <h3 className="font-semibold text-slate-900 text-sm leading-snug mb-2 group-hover:text-blue-700 transition-colors line-clamp-2">
@@ -104,11 +104,11 @@ export function UniversityCard({ university: uni }: { university: University }) 
             </div>
           )}
           <div className="flex items-center gap-2 text-xs text-slate-500">
-            <span>📍</span><span>{uni.location.city}, {uni.location.country}</span>
+            <span>📍</span><span>{uni.location?.city}, {uni.location?.country}</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <span>🎓</span>
-            <span><span className="font-medium text-slate-700">{uni.studentsEnrolled.toLocaleString()}+</span> students enrolled</span>
+            <span><span className="font-medium text-slate-700">{(uni.studentsEnrolled || 0).toLocaleString()}+</span> students enrolled</span>
           </div>
         </div>
 

@@ -7,8 +7,17 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { connectDB } from '@/lib/db/mongoose';
 import { AppDocument } from '@/lib/db/models/models';
 import { nanoid } from 'nanoid';
+import path from 'path';
+import fs from 'fs';
 
-const s3Client = new S3Client({
+const isDev = process.env.NODE_ENV === 'development';
+const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+
+if (isDev && !fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const s3Client = isDev ? null : new S3Client({
   region: process.env.AWS_REGION || 'us-east-1',
   credentials: {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
@@ -19,11 +28,11 @@ const s3Client = new S3Client({
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
-    if (!session) {
+    const userId = isDev ? 'dev-user' : (session?.user as any)?.id;
+    
+    if (!isDev && !session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const userId = (session.user as any).id;
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const docType = formData.get('docType') as string;
@@ -48,34 +57,54 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid file type. Allowed: PDF, JPG, PNG, DOC' }, { status: 400 });
     }
 
-    await connectDB();
+    const ext = file.name.split('.').pop() || 'bin';
+    const nanoidStr = nanoid();
+    let fileUrl: string;
+    let s3Key: string;
 
-    // Generate unique filename
-    const ext = file.name.split('.').pop();
-    const key = `documents/${userId}/${nanoid()}.${ext}`;
+    if (isDev) {
+      const filename = `${nanoidStr}.${ext}`;
+      const filepath = path.join(uploadDir, filename);
+      fs.writeFileSync(filepath, Buffer.from(await file.arrayBuffer()));
+      fileUrl = `/uploads/${filename}`;
+      s3Key = filename;
+    } else {
+      s3Key = `documents/${userId}/${nanoidStr}.${ext}`;
+      const command = new PutObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET,
+        Key: s3Key,
+        Body: Buffer.from(await file.arrayBuffer()),
+        ContentType: file.type,
+      });
+      await s3Client!.send(command);
+      fileUrl = `${process.env.AWS_S3_BUCKET_URL}/${s3Key}`;
+    }
 
-    // Upload to S3
-    const command = new PutObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET,
-      Key: key,
-      Body: Buffer.from(await file.arrayBuffer()),
-      ContentType: file.type,
-    });
-
-    await s3Client.send(command);
-
-    const fileUrl = `${process.env.AWS_S3_BUCKET_URL}/${key}`;
-
-    // Save document record
-    const document = await AppDocument.create({
-      uploadedBy: userId,
-      docType: docType as 'passport' | 'academic_cert' | 'transcript' | 'photo' | 'english_cert' | 'other',
-      fileUrl,
-      s3Key: key,
-      originalFilename: file.name,
-      mimeType: file.type,
-      fileSize: file.size,
-    });
+    let document = null;
+    if (!isDev) {
+      await connectDB();
+      document = await AppDocument.create({
+        uploadedBy: userId,
+        docType: docType as 'passport' | 'academic_cert' | 'transcript' | 'photo' | 'english_cert' | 'other',
+        fileUrl,
+        s3Key,
+        originalFilename: file.name,
+        mimeType: file.type,
+        fileSize: file.size,
+      });
+    } else {
+      document = {
+        _id: nanoidStr,
+        uploadedBy: userId,
+        docType,
+        fileUrl,
+        s3Key,
+        originalFilename: file.name,
+        mimeType: file.type,
+        fileSize: file.size,
+        createdAt: new Date(),
+      };
+    }
 
     return NextResponse.json({ 
       success: true, 

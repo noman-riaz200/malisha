@@ -21,14 +21,27 @@ export default function NewUniversityPage() {
 
   const set = (k: string, v: any) => setForm(p => ({ ...p, [k]: v }));
 
+  const [uploadError, setUploadError] = useState('');
+
   const uploadImage = async (file: File, setUrl: (u: string) => void) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('docType', 'photo');
-    const res = await fetch('/api/documents/upload', { method: 'POST', body: formData });
-    const json = await res.json();
-    if (json.success) {
-      setUrl(json.document.fileUrl);
+    try {
+      setUploadError('');
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('docType', 'photo');
+      const res = await fetch('/api/documents/upload', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const json = await res.json();
+        throw new Error(json.error || 'Upload failed');
+      }
+      const json = await res.json();
+      if (json.success) {
+        setUrl(json.document.fileUrl);
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Upload failed';
+      setUploadError(msg);
+      console.error('Upload error:', err);
     }
   };
 
@@ -70,7 +83,7 @@ export default function NewUniversityPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">{error}</div>}
+        {(error || uploadError) && <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">{uploadError || error}</div>}
 
         {/* Basic info */}
         <div className="bg-white rounded-2xl border border-slate-100 p-6 space-y-4">
@@ -143,7 +156,11 @@ export default function NewUniversityPage() {
                   onChange={e => e.target.files?.[0] && uploadImage(e.target.files[0], setLogoUrl)} />
                 <label htmlFor="logo" className="cursor-pointer">
                   {logoUrl
-                    ? <div><img src={logoUrl} alt="" className="w-16 h-16 object-contain mx-auto" /><p className="text-green-600 text-xs mt-2 font-medium">✓ Uploaded</p></div>
+                    ? <div className="relative inline-block">
+                      <img src={logoUrl} alt="" className="w-12 h-12 object-contain mx-auto" />
+                      <button type="button" onClick={(e) => { e.preventDefault(); setLogoUrl(''); }} className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600">×</button>
+                      <p className="text-green-600 text-xs mt-1 font-medium">✓ Uploaded</p>
+                    </div>
                     : <><p className="text-blue-600 text-sm font-medium">Upload Logo</p><p className="text-xs text-slate-400 mt-1">PNG, SVG recommended</p></>
                   }
                 </label>
@@ -157,7 +174,11 @@ export default function NewUniversityPage() {
                   onChange={e => e.target.files?.[0] && uploadImage(e.target.files[0], setBannerUrl)} />
                 <label htmlFor="banner" className="cursor-pointer">
                   {bannerUrl
-                    ? <div><img src={bannerUrl} alt="" className="w-full h-16 object-cover rounded-lg" /><p className="text-green-600 text-xs mt-2 font-medium">✓ Uploaded</p></div>
+                    ? <div className="relative inline-block">
+                      <img src={bannerUrl} alt="" className="w-20 h-10 object-cover rounded" />
+                      <button type="button" onClick={(e) => { e.preventDefault(); setBannerUrl(''); }} className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600">×</button>
+                      <p className="text-green-600 text-xs mt-1 font-medium">✓ Uploaded</p>
+                    </div>
                     : <><p className="text-blue-600 text-sm font-medium">Upload Banner</p><p className="text-xs text-slate-400 mt-1">1200×400px recommended</p></>
                   }
                 </label>

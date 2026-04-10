@@ -25,9 +25,20 @@ export const authOptions: NextAuthOptions = {
         try {
           const mongooseModule = await import('@/lib/db/mongoose');
           const connectDB = mongooseModule.connectDB;
+          const isConnected = mongooseModule.isConnected;
           const { User } = await import('@/lib/db/models/User');
           
-          await connectDB();
+          const dbConnected = await isConnected();
+          if (!dbConnected) {
+            console.log('[Auth] Database not connected, establishing connection...');
+            await connectDB();
+          }
+          
+          const connectionOk = await isConnected();
+          if (!connectionOk) {
+            console.error('[Auth] Database connection failed');
+            throw new Error('Database connection unavailable');
+          }
           
           console.log('[Auth] Searching for email:', parsed.data.email);
           console.log('[Auth] Connection established');

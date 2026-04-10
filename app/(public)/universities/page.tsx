@@ -60,7 +60,12 @@ async function getUniversities(params: PageProps['searchParams']) {
     University.countDocuments(filter),
   ]);
 
-  return { universities, total, page, pages: Math.ceil(total / limit) };
+  const plainUniversities = universities.map((uni: any) => ({
+    ...uni,
+    _id: uni._id.toString(),
+  }));
+
+  return { universities: plainUniversities, total, page, pages: Math.ceil(total / limit) };
 }
 
 async function getCities() {

@@ -33,9 +33,9 @@ export default async function AdminUniversitiesPage() {
 
       {/* Table Card */}
       <div className="admin-card">
-        <div className="card-body p-0">
-          <div className="table-responsive">
-            <table className="table table-hover mb-0">
+        <div className="p-0">
+          <div className="w-100">
+            <table className="table table-hover mb-0 w-100" style={{ width: '100%' }}>
               <thead>
                 <tr style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
                   <th className="px-4 py-3 fw-semibold text-dark" style={{ fontSize: '0.75rem' }}>UNIVERSITY</th>

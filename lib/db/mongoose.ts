@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/malisha';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/malisha';
 
 interface MongooseCache {
   conn: typeof mongoose | null;
@@ -8,7 +8,6 @@ interface MongooseCache {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var mongoose: MongooseCache | undefined;
 }
 
@@ -18,15 +17,31 @@ if (!global.mongoose) {
   global.mongoose = cached;
 }
 
-async function connectDB(): Promise<typeof mongoose> {
+export async function isConnected(): Promise<boolean> {
   if (cached.conn) {
-    console.log('MongoDB: Using existing connection');
-    return cached.conn;
+    if (cached.conn.connection.readyState === 1) {
+      return true;
+    }
+    cached.conn = null;
+  }
+  return false;
+}
+
+export async function connectDB(): Promise<typeof mongoose> {
+  if (cached.conn) {
+    const ready = await isConnected();
+    if (ready) {
+      console.log('MongoDB: Using existing connection');
+      return cached.conn;
+    }
   }
 
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     };
 
     console.log('MongoDB: Creating new connection...');
@@ -40,6 +55,7 @@ async function connectDB(): Promise<typeof mongoose> {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
+    cached.conn = null;
     throw e;
   }
 
@@ -47,4 +63,3 @@ async function connectDB(): Promise<typeof mongoose> {
 }
 
 export default connectDB;
-export { connectDB };
