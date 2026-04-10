@@ -50,31 +50,21 @@ const ApplicationSchema = new Schema<IApplication>(
   { timestamps: true }
 );
 
-// Indexes
 ApplicationSchema.index({ studentId: 1 });
 ApplicationSchema.index({ status: 1 });
 ApplicationSchema.index({ universityId: 1 });
 ApplicationSchema.index({ createdAt: -1 });
 
-// Lazy model getter
-let ApplicationModelPromise: Promise<Model<IApplication>> | null = null;
+let ApplicationModel: Model<IApplication> | null = null;
 
 async function getApplicationModel(): Promise<Model<IApplication>> {
   await connectDB();
-  if (!ApplicationModelPromise) {
-    ApplicationModelPromise = Promise.resolve(
-      (mongoose.models.Application as Model<IApplication>) || mongoose.model<IApplication>('Application', ApplicationSchema)
-    );
+  if (!ApplicationModel) {
+    ApplicationModel = (mongoose.models.Application as Model<IApplication>) || mongoose.model<IApplication>('Application', ApplicationSchema);
   }
-  return ApplicationModelPromise;
+  return ApplicationModel;
 }
 
-export { getApplicationModel };
-
-// Default export for backward compat
-// Fixed lazy loading - use await getApplicationModel()
-
-// Helper function to transform MongoDB result to API-compatible format
 function transformApp(app: IApplication | null): any {
   if (!app) return null;
   return {
@@ -86,148 +76,96 @@ function transformApp(app: IApplication | null): any {
   };
 }
 
-// Query builder class for chainable operations
-class ApplicationQuery {
-  private query: any;
-  private filter: any = {};
-  
-  constructor(studentId?: string) {
-    if (studentId) {
-      this.filter.studentId = new Types.ObjectId(studentId);
-    }
-    this.query = getApplicationModel().then(model => model.find(this.filter));
-  }
-  
-  populate(field: string, select?: string): this {
-    this.query = this.query.populate(field, select);
-    return this;
-  }
-  
-  sort(sortObj: any): this {
-    this.query = this.query.sort(sortObj);
-    return this;
-  }
-  
-  limit(n: number): this {
-    this.query = this.query.limit(n);
-    return this;
-  }
-  
-  lean(): this {
-    this.query = this.query.lean();
-    return this;
-  }
-  
-  async then(resolve: (value: any[]) => void, reject: (reason: any) => void): Promise<void> {
-    try {
-      const results = await this.query;
-      resolve(results);
-    } catch (e) {
-      reject(e);
-    }
-  }
-  
-  // Support for await
-  async exec(): Promise<any[]> {
-    return this.query;
-  }
-}
-
-// Export Application with the old API interface for compatibility
 export const Application = {
-  async find(conditions: { studentId?: string; universityId?: string; status?: string } = {}, options: { limit?: number; offset?: number; sort?: string } = {}): Promise<any> {
-    const model = await getApplicationModel();
-    const filter: any = {};
-    if (conditions.studentId) filter.studentId = new Types.ObjectId(conditions.studentId);
-    if (conditions.universityId) filter.universityId = new Types.ObjectId(conditions.universityId);
-    if (conditions.status) filter.status = conditions.status;
-    
-    const sortObj: any = {};
-    if (options.sort) {
-      const parts = options.sort.split(' ');
-      sortObj[parts[0]] = parts[1] === 'DESC' ? -1 : 1;
-    } else {
-      sortObj.updatedAt = -1;
-    }
-    
-    let query = model.find(filter).sort(sortObj);
-    if (options.offset) query = query.skip(options.offset);
-    if (options.limit) query = query.limit(options.limit);
-    
-    // Return chainable query object
-    return {
-      query,
-      populate(field: string, select?: string) {
-        if (typeof field === 'object') {
-          // Handle object-based populate
-          this.query = this.query.populate(field);
-        } else {
-          this.query = this.query.populate(field, select);
+  find(conditions: any = {}, options: any = {}): any {
+    return getApplicationModel().then((model) => {
+      const filter: any = {};
+      if (conditions.studentId) filter.studentId = new Types.ObjectId(conditions.studentId);
+      if (conditions.universityId) filter.universityId = new Types.ObjectId(conditions.universityId);
+      if (conditions.status) filter.status = conditions.status;
+      
+      let q: any = model.find(filter).sort({ updatedAt: -1 });
+      if (options.offset) q = q.skip(options.offset);
+      if (options.limit) q = q.limit(options.limit);
+      
+      const chain = {
+        _query: q,
+        get query() { return this._query; },
+        populate(field: string, select?: string) {
+          if (typeof field === 'object') {
+            this._query = this._query.populate(field);
+          } else {
+            this._query = this._query.populate(field, select);
+          }
+          return chain;
+        },
+        sort(sortArg: any) {
+          this._query = this._query.sort(sortArg);
+          return chain;
+        },
+        skip(n: number) {
+          this._query = this._query.skip(n);
+          return chain;
+        },
+        limit(n: number) {
+          this._query = this._query.limit(n);
+          return chain;
+        },
+        lean() {
+          this._query = this._query.lean();
+          return chain;
+        },
+        then(resolve: any, reject: any) {
+          return this._query.then((apps: any) => apps.map(transformApp)).then(resolve).catch(reject);
+        },
+        exec() {
+          return this._query.then((apps: any) => apps.map(transformApp));
         }
-        return this;
-      },
-      sort(sortArg: any) {
-        this.query = this.query.sort(sortArg);
-        return this;
-      },
-      skip(n: number) {
-        this.query = this.query.skip(n);
-        return this;
-      },
-      limit(n: number) {
-        this.query = this.query.limit(n);
-        return this;
-      },
-      lean() {
-        this.query = this.query.lean();
-        return this;
-      },
-      then(resolve: (value: any[]) => void, reject: (reason: any) => void) {
-        return this.query.then((apps: any) => apps.map(transformApp)).then(resolve).catch(reject);
-      },
-      exec() {
-        return this.query.then((apps: any) => apps.map(transformApp));
-      }
-    };
+      };
+      return chain;
+    });
   },
 
-  // findById returns a query with populate capability for the API
-  async findById(id: string | number): Promise<any> {
-    const model = await getApplicationModel();
-    const query = model.findById(id);
-    return {
-      query,
-      populate(field: string, select?: string) {
-        if (typeof field === 'object') {
-          this.query = this.query.populate(field);
-        } else {
-          this.query = this.query.populate(field, select);
+  findById(id: string | number): any {
+    return getApplicationModel().then((model) => {
+      const q: any = model.findById(id);
+      
+      const chain: any = {
+        _query: q,
+        get query() { return this._query; },
+        populate(field: string, select?: string) {
+          if (typeof field === 'object') {
+            this._query = this._query.populate(field);
+          } else {
+            this._query = this._query.populate(field, select);
+          }
+          return chain;
+        },
+        sort(sortObj: any) {
+          this._query = this._query.sort(sortObj);
+          return chain;
+        },
+        skip(n: number) {
+          this._query = this._query.skip(n);
+          return chain;
+        },
+        limit(n: number) {
+          this._query = this._query.limit(n);
+          return chain;
+        },
+        lean() {
+          this._query = this._query.lean();
+          return chain;
+        },
+        then(resolve: any, reject: any) {
+          return this._query.then((app: any) => app ? transformApp(app) : null).then(resolve).catch(reject);
+        },
+        exec() {
+          return this._query.then((app: any) => app ? transformApp(app) : null);
         }
-        return this;
-      },
-      sort(sortObj: any) {
-        this.query = this.query.sort(sortObj);
-        return this;
-      },
-      skip(n: number) {
-        this.query = this.query.skip(n);
-        return this;
-      },
-      limit(n: number) {
-        this.query = this.query.limit(n);
-        return this;
-      },
-      lean() {
-        this.query = this.query.lean();
-        return this;
-      },
-      then(resolve: (value: any) => void, reject: (reason: any) => void) {
-        return this.query.then((app: any) => app ? transformApp(app) : null).then(resolve).catch(reject);
-      },
-      exec() {
-        return this.query.then((app: any) => app ? transformApp(app) : null);
-      }
-    };
+      };
+      return chain;
+    });
   },
 
   async findOne(query: any): Promise<any> {
@@ -276,34 +214,28 @@ export const Application = {
     return transformApp(updated);
   },
 
-async findByIdAndUpdate(id: string, data: any, options?: any): Promise<any> {
+  async findByIdAndUpdate(id: string, data: any, options?: any): Promise<any> {
     const model = await getApplicationModel();
     const updated = await (model as any).findByIdAndUpdate(id, data, options || { new: true });
     return updated ? transformApp(updated) : null;
   },
 
-  async countDocuments(conditions: { studentId?: string; status?: string } = {}): Promise<any> {
+  async countDocuments(conditions: any = {}): Promise<number> {
     const model = await getApplicationModel();
     const filter: any = {};
     if (conditions.studentId) filter.studentId = new Types.ObjectId(conditions.studentId);
     if (conditions.status) filter.status = conditions.status;
     
-    const query = model.countDocuments(filter);
-    
-    return {
-      query,
-      then(resolve: (value: number) => void, reject: (reason: any) => void) {
-        return this.query.then(resolve).catch(reject);
-      },
-      exec() {
-        return this.query;
-      }
-    };
+    return model.countDocuments(filter);
   },
 
   async count(conditions: any = {}): Promise<number> {
-    const queryObj = await this.countDocuments(conditions as any);
-    return await queryObj.exec();
+    const model = await getApplicationModel();
+    const filter: any = {};
+    if (conditions.studentId) filter.studentId = new Types.ObjectId(conditions.studentId);
+    if (conditions.status) filter.status = conditions.status;
+    
+    return model.countDocuments(filter);
   },
 
   async deleteById(id: string | number): Promise<boolean> {
@@ -318,4 +250,5 @@ async findByIdAndUpdate(id: string, data: any, options?: any): Promise<any> {
   }
 };
 
-
+export { getApplicationModel };
+export default Application;

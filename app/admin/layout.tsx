@@ -14,7 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex">
       <AdminSidebar user={session.user as any} />
-      <main className="flex-1 lg:ml-64 p-6 lg:p-8 min-h-screen transition-all duration-500">
+      <main className="flex-1 p-6 lg:p-8 min-h-screen transition-all duration-500">
         {children}
       </main>
     </div>

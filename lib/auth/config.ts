@@ -23,17 +23,18 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // Dynamic import to avoid mongoose in Edge runtime
           const mongooseModule = await import('@/lib/db/mongoose');
-          const connectDB = mongooseModule.default;
+          const connectDB = mongooseModule.connectDB;
           const { User } = await import('@/lib/db/models/User');
           
           await connectDB();
           
           console.log('[Auth] Searching for email:', parsed.data.email);
+          console.log('[Auth] Connection established');
           
           // Query user from MongoDB
           const user = await User.findByEmail(parsed.data.email);
+          console.log('[Auth] User query completed, result:', user ? 'found' : 'not found');
           console.log('[Auth] User found:', user ? 'yes' : 'no', user?.email, user?.role);
           
           if (!user) {

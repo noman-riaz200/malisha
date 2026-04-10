@@ -1,5 +1,4 @@
 import React from 'react';
-// Icon prop as React.ComponentType
 
 interface TailadminStatsCardProps {
   title: string;
@@ -17,14 +16,14 @@ export function TailadminStatsCard({
   prefix = '', 
   change, 
   changeType, 
-  icon: Icon, 
+  icon,
   color = 'slate' 
 }: TailadminStatsCardProps) {
   return (
     <div className="group bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-3xl p-6 shadow-tailadmin-lg border border-slate-200/50 dark:border-slate-700/50 hover:shadow-tailadmin-xl hover:-translate-y-2 transition-all duration-500 hover:border-slate-200/70 dark:hover:border-slate-600/70">
       <div className="flex items-center justify-between mb-4">
         <div className={`p-4 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-slate-100 dark:from-indigo-500/20 dark:to-slate-800/50 group-hover:from-indigo-500/20 dark:group-hover:from-indigo-500/30 transition-all duration-300`}>
-          <Icon className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
+          {icon}
         </div>
         <span className={`px-3 py-1 rounded-full text-sm font-semibold transition-colors ${
           changeType === 'positive' 
@@ -43,4 +42,3 @@ export function TailadminStatsCard({
     </div>
   );
 }
-
