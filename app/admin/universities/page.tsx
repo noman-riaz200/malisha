@@ -18,14 +18,13 @@ export default async function AdminUniversitiesPage() {
     <div className="p-4">
       {/* Header */}
       <div className="admin-page-header mb-4" style={{ background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)' }}>
-        <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
-          <div>
-            <h1 className="display-font fw-bold mb-1" style={{ fontSize: '1.75rem', color: 'white' }}>Universities</h1>
-            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.875rem' }}>{universities.length} universities in the network</p>
+        <div className="flex items-center justify-end flex-wrap gap-3">
+          <div className="flex-1">
+            <h1 className="font-bold mb-1 text-white text-2xl">Universities</h1>
+            <p className="text-white/80 text-sm">{universities.length} universities in the network</p>
           </div>
           <Link href="/admin/universities/new" 
-            className="btn btn-light fw-semibold px-4 py-2" 
-            style={{ color: '#dc2626', borderRadius: '8px' }}>
+            className="px-4 py-2 rounded-lg font-semibold bg-white text-red-700 border-2 border-white shadow-md hover:bg-gray-50">
             <i className="bi bi-plus-lg me-2"></i>
             Add University
           </Link>

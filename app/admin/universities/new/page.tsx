@@ -22,13 +22,14 @@ export default function NewUniversityPage() {
   const set = (k: string, v: any) => setForm(p => ({ ...p, [k]: v }));
 
   const uploadImage = async (file: File, setUrl: (u: string) => void) => {
-    const res = await fetch('/api/upload', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fileName: file.name, fileType: file.type, fileSize: file.size, docType: 'university_image' }),
-    });
-    const { data } = await res.json();
-    await fetch(data.presignedUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
-    setUrl(data.fileUrl);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('docType', 'photo');
+    const res = await fetch('/api/documents/upload', { method: 'POST', body: formData });
+    const json = await res.json();
+    if (json.success) {
+      setUrl(json.document.fileUrl);
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {

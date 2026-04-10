@@ -104,6 +104,10 @@ export const University = {
           this.query = this.query.lean();
           return this;
         },
+        select(fields: string | object) {
+          this.query = this.query.select(fields);
+          return this;
+        },
         then(resolve: (value: any[]) => void, reject: (reason: any) => void) {
           return this.query.then(resolve).catch(reject);
         },

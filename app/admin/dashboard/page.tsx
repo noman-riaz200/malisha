@@ -1,5 +1,6 @@
 import { auth } from '@/lib/auth/config';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { connectDB } from '@/lib/db/mongoose';
 import { getApplicationModel } from '@/lib/db/models/Application';
 import User from '@/lib/db/models/User';
@@ -141,6 +142,13 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
+      {/* Quick Actions */}
+      <div className="flex justify-end gap-3">
+        <Link href="/admin/universities/new" className="bg-white hover:bg-gray-50 text-indigo-600 px-4 py-2 rounded-xl font-medium transition-colors shadow-lg">
+          + Add University
+        </Link>
+      </div>
+
       {/* Header */}
       <div className="bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600 rounded-3xl p-6 lg:p-8 text-white shadow-tailadmin-xl">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">

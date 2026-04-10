@@ -155,7 +155,7 @@ export function AdminSidebar({ user }: Props) {
           </Link>
         )}
         <button
-          onClick={() => signOut({ callbackUrl: '/login' })}
+          onClick={() => signOut({ callbackUrl: '/login', redirect: true })}
           className="w-full flex items-center gap-3 p-3 rounded-2xl hover:bg-red-500/20 text-red-400 hover:text-red-200 hover:bg-red-500/10 transition-all group"
         >
           <Icons.logout className="w-5 h-5" />
