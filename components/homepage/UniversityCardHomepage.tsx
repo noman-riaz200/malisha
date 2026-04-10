@@ -124,5 +124,9 @@ export function UniversityCardHomepage({
     );
   }
 
-  return cardContent;
+  return (
+    <Link href="/universities">
+      {cardContent}
+    </Link>
+  );
 }

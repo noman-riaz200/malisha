@@ -22,6 +22,8 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        let dbConnectionError = false;
+        
         try {
           const mongooseModule = await import('@/lib/db/mongoose');
           const connectDB = mongooseModule.connectDB;
@@ -37,7 +39,8 @@ export const authOptions: NextAuthOptions = {
           const connectionOk = await isConnected();
           if (!connectionOk) {
             console.error('[Auth] Database connection failed');
-            throw new Error('Database connection unavailable');
+            dbConnectionError = true;
+            throw new Error('DATABASE_CONNECTION_FAILED');
           }
           
           console.log('[Auth] Searching for email:', parsed.data.email);
@@ -71,8 +74,17 @@ export const authOptions: NextAuthOptions = {
             role:             user.role || 'student',
             isEmailVerified:  user.isEmailVerified || false,
           };
-        } catch (error) {
-          console.error('[Auth] Error during authorization:', error);
+        } catch (error: any) {
+          console.error('[Auth] Error during authorization:', error?.message || error);
+          
+          if (error?.message === 'DATABASE_CONNECTION_FAILED') {
+            throw new Error('Database connection failed. Please check your MongoDB configuration and IP whitelist.');
+          }
+          
+          if (error?.name === 'MongooseServerSelectionError' || error?.message?.includes('connect')) {
+            throw new Error('Cannot connect to MongoDB. Please verify your MONGODB_URI and ensure your IP is whitelisted in MongoDB Atlas.');
+          }
+          
           return null;
         }
       },
