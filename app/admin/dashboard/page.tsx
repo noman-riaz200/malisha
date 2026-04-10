@@ -2,6 +2,9 @@ import { auth } from '@/lib/auth/config';
 import { redirect } from 'next/navigation';
 import { connectDB } from '@/lib/db/mongoose';
 import { getApplicationModel } from '@/lib/db/models/Application';
+import User from '@/lib/db/models/User';
+import Payment from '@/lib/db/models/Payment';
+import Inquiry from '@/lib/db/models/Inquiry';
 import { Metadata } from 'next';
 import { TailadminStatsCard } from '@/components/admin/TailadminStatsCard';
 import { RevenueChart } from '@/components/admin/RevenueChart';
@@ -18,6 +21,7 @@ interface DashboardData {
   totalApplications: number;
   totalPayments: number;
   totalRevenue: number;
+  todayRevenue: number;
   totalInquiries: number;
   pendingApplications: number;
   approvedApplications: number;
@@ -36,21 +40,52 @@ async function getDashboardData(): Promise<DashboardData> {
   await connectDB();
   const ApplicationModel = await getApplicationModel();
   
-  const totalApplications = await ApplicationModel.countDocuments({});
-  const pendingApplications = await ApplicationModel.countDocuments({ status: 'pending' });
-  const approvedApplications = await ApplicationModel.countDocuments({ status: 'approved' });
-  
-  const recentApplications = await ApplicationModel.find({})
-    .sort({ createdAt: -1 })
-    .limit(5)
-    .lean();
+  const [
+    totalStudents,
+    totalApplications,
+    totalPayments,
+    totalRevenueResult,
+    todayRevenueResult,
+    totalInquiries,
+    pendingApplications,
+    approvedApplications,
+    recentApplications
+  ] = await Promise.all([
+    User.countDocuments({ role: 'student' }),
+    ApplicationModel.countDocuments({}),
+    Payment.countDocuments({ status: 'succeeded' }),
+    Payment.aggregate([
+      { $match: { status: 'succeeded' } },
+      { $group: { _id: null, total: { $sum: '$amount' } } }
+    ]),
+    Payment.aggregate([
+      { 
+        $match: { 
+          status: 'succeeded',
+          createdAt: { $gte: new Date(new Date().setHours(0, 0, 0, 0)) }
+        } 
+      },
+      { $group: { _id: null, total: { $sum: '$amount' } } }
+    ]),
+    Inquiry.countDocuments({}),
+    ApplicationModel.countDocuments({ status: { $in: ['submitted', 'under_review'] } }),
+    ApplicationModel.countDocuments({ status: 'approved' }),
+    ApplicationModel.find({})
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .lean() as Promise<any[]>
+  ]);
+
+  const totalRevenue = totalRevenueResult[0]?.total || 0;
+  const todayRevenue = todayRevenueResult[0]?.total || 0;
 
   return {
-    totalStudents: 1245,
+    totalStudents,
     totalApplications,
-    totalPayments: 89,
-    totalRevenue: 45230,
-    totalInquiries: 567,
+    totalPayments,
+    totalRevenue,
+    todayRevenue,
+    totalInquiries,
     pendingApplications,
     approvedApplications,
     recentApplications: recentApplications.map(app => ({
@@ -115,10 +150,10 @@ export default async function AdminDashboardPage() {
           </div>
           <div className="flex flex-col sm:flex-row items-end gap-4 lg:gap-6">
             <div className="text-right">
-              <p className="text-indigo-200 text-sm">Today's Revenue</p>
-              <p className="text-2xl lg:text-3xl font-bold">$2,890</p>
+              <p className="text-indigo-200 text-sm">Total Revenue</p>
+              <p className="text-2xl lg:text-3xl font-bold">${data.totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
             </div>
-            <div className="w-20 h-20 lg:w-24 lg:h-24 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center animate-pulse">
+            <div className="w-20 h-20 lg:w-24 lg:h-24 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center">
               <DollarIcon className="w-8 h-8 lg:w-10 lg:h-10 text-indigo-200" />
             </div>
           </div>
