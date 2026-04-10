@@ -6,6 +6,7 @@ import { University } from '@/lib/db/models/University';
 import Link           from 'next/link';
 import Image          from 'next/image';
 import { DeleteUniversityButton } from '@/components/admin/DeleteUniversityButton';
+import { EditUniversityButton } from '@/components/admin/EditUniversityButton';
 
 export const dynamic  = 'force-dynamic';
 export const metadata = { title: 'Universities — Admin' };
@@ -110,10 +111,7 @@ export default async function AdminUniversitiesPage() {
                           className="btn btn-sm" style={{ color: '#64748b', border: '1px solid #e2e8f0', fontSize: '0.75rem' }}>
                           <i className="bi bi-eye"></i>
                         </Link>
-                        <Link href={`/admin/universities/${uni._id}/edit`}
-                          className="btn btn-sm" style={{ color: '#3b82f6', border: '1px solid #3b82f6', fontSize: '0.75rem' }}>
-                          <i className="bi bi-pencil"></i>
-                        </Link>
+                        <EditUniversityButton id={uni._id.toString()} name={uni.name} />
                         <DeleteUniversityButton id={uni._id.toString()} name={uni.name} />
                       </div>
                     </td>

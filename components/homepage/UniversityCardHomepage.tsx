@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { MapPin, Users, Clock, ChevronRight } from 'lucide-react';
+import { MapPin, Users, Clock } from 'lucide-react';
 
 interface UniversityCardProps {
   name: string;
@@ -12,6 +12,7 @@ interface UniversityCardProps {
   badges: string[];
   countdown: { days: number; hours: number; min: number } | null;
   image?: string;
+  slug?: string;
 }
 
 export function UniversityCardHomepage({
@@ -22,9 +23,10 @@ export function UniversityCardHomepage({
   badges,
   countdown,
   image,
+  slug,
 }: UniversityCardProps) {
-  return (
-    <div suppressHydrationWarning className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 group">
+  const cardContent = (
+    <div suppressHydrationWarning className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 group cursor-pointer">
       {/* University Image */}
       <div suppressHydrationWarning className="relative h-48 bg-gradient-to-br from-blue-600 to-indigo-700 overflow-hidden">
         {image ? (
@@ -110,15 +112,17 @@ export function UniversityCardHomepage({
           </div>
         </div>
 
-        {/* View Details Button */}
-        <Link
-          href="/universities"
-          className="flex items-center justify-center gap-2 w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors duration-200"
-        >
-          View Details
-          <ChevronRight className="w-4 h-4" />
-        </Link>
-      </div>
+        </div>
     </div>
   );
+
+  if (slug) {
+    return (
+      <Link href={`/universities/${slug}`}>
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 }

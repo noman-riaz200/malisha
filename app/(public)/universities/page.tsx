@@ -5,8 +5,6 @@ import type { Metadata } from 'next';
 
 import { connectDB } from '@/lib/db/mongoose';
 import { University } from '@/lib/db/models/University';
-import { UniversityCard } from '@/components/university/UniversityCard';
-import { UniversityFilters } from '@/components/university/UniversityFilters';
 import { Pagination } from '@/components/ui/Pagination';
 
 export const metadata: Metadata = {
@@ -68,59 +66,61 @@ async function getUniversities(params: PageProps['searchParams']) {
   return { universities: plainUniversities, total, page, pages: Math.ceil(total / limit) };
 }
 
-async function getCities() {
-  await connectDB();
-  return University.distinct('location.city', { isActive: true });
+function transformUniversityToCardData(uni: any) {
+  const nextIntake = (uni.intakes || [])
+    ?.filter((i: any) => new Date(i.deadline) > new Date())
+    .sort((a: any, b: any) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime())[0];
+
+  const badges: string[] = [];
+  if (uni.badges?.is211) badges.push('211 Projects');
+  if (uni.badges?.is985) badges.push('985 Projects');
+  if (uni.badges?.isDoubleFirstClass) badges.push('Double First Class');
+
+  let countdown = null;
+  if (nextIntake) {
+    const diff = new Date(nextIntake.deadline).getTime() - Date.now();
+    if (diff > 0) {
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      countdown = { days, hours, min: mins };
+    }
+  }
+
+  return {
+    name: uni.name,
+    rank: uni.worldRank || 'Not Ranked',
+    location: `${uni.location?.city || 'N/A'}, ${uni.location?.country || 'China'}`,
+    students: `${(uni.studentsEnrolled || 0).toLocaleString()}+ Students Enrolled`,
+    badges,
+    countdown,
+    image: uni.bannerImage,
+    slug: uni.slug,
+  };
+}
+
+import { UniversityCardHomepage } from '@/components/homepage/UniversityCardHomepage';
+
+function UniversityCardGridItem({ university }: { university: any }) {
+  const cardData = transformUniversityToCardData(university);
+  return <UniversityCardHomepage {...cardData} />;
 }
 
 export default async function UniversitiesPage({ searchParams }: PageProps) {
-  const [{ universities, total, page, pages }, cities] = await Promise.all([
-    getUniversities(searchParams),
-    getCities(),
-  ]);
-
-  const hasFilters = !!(searchParams.search || searchParams.city || searchParams.intake ||
-                        searchParams.is211 || searchParams.is985);
+  const { universities, total, page, pages } = await getUniversities(searchParams);
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', paddingTop: '6rem' }}>
-      {/* Page header */}
-      <div className="bg-white py-4" style={{ borderBottom: '1px solid #e2e8f0' }}>
-        <div className="container-vz">
-          <div className="d-flex align-items-end justify-content-between flex-wrap gap-3">
-            <div>
-              <p className="text-uppercase fw-semibold mb-1" style={{ color: 'var(--vz-primary)', fontSize: '0.875rem', letterSpacing: '0.05em' }}>Partner Network</p>
-              <h1 className="display-font fw-bold" style={{ fontSize: '2.5rem', color: '#1e293b' }}>
-                Chinese Universities
-              </h1>
-              <p style={{ color: '#64748b', marginTop: '0.5rem' }}>
-                {total > 0 ? (
-                  <><span className="fw-semibold" style={{ color: '#334155' }}>{total}</span> universities {hasFilters ? 'matching your filters' : 'in our network'}</>
-                ) : (
-                  'No universities match your search'
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      {/* Filters and Results */}
       <div className="container-vz py-5">
         <div className="row g-5">
-          {/* Sidebar filters */}
-          <div className="col-lg-3">
-            <UniversityFilters cities={cities} currentFilters={searchParams} />
-          </div>
-
-          {/* Results */}
-          <div className="col-lg-9">
+          {/* Results Grid */}
+          <div className="col-12">
             {universities.length > 0 ? (
               <>
-                <div className="row g-4">
+                <div className="row g-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
                   {universities.map((uni: any) => (
-                    <div key={uni._id.toString()} className="col-md-6 col-xl-4">
-                      <UniversityCard university={uni} />
-                    </div>
+                    <UniversityCardGridItem key={uni._id.toString()} university={uni} />
                   ))}
                 </div>
 
@@ -151,9 +151,9 @@ export default async function UniversitiesPage({ searchParams }: PageProps) {
 
 function UniversityGridSkeleton() {
   return (
-    <div className="row g-4">
-      {Array.from({ length: 9 }).map((_, i) => (
-        <div key={i} className="col-md-6 col-xl-4">
+    <div className="row g-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+      {Array.from({ length: 12 }).map((_, i) => (
+        <div key={i}>
           <div className="bg-white rounded-4 overflow-hidden" style={{ border: '1px solid #e2e8f0' }}>
             <div className="skeleton-vz" style={{ height: '10rem' }} />
             <div className="p-4">

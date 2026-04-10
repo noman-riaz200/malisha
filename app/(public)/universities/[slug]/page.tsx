@@ -7,15 +7,16 @@ import Image         from 'next/image';
 import Link          from 'next/link';
 import { connectDB } from '@/lib/db/mongoose';
 import { University } from '@/lib/db/models/University';
-import { Program }    from '@/lib/db/models/models';
+import { Program }    from '@/lib/db/models/Program';
 import { IntakeCountdown } from '@/components/university/IntakeCountdown';
 
-interface Props { params: { slug: string } }
+interface Props { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
   try {
     await connectDB();
-    const uni = await University.findBySlug(params.slug);
+    const uni = await University.findBySlug(slug);
     if (!uni) return { title: 'University Not Found' };
     return {
       title: `${(uni as any).name} — EduPro`,
@@ -50,11 +51,12 @@ const DEGREE_LABELS: Record<string, string> = {
 const MEDIUM_LABELS: Record<string, string> = { english: 'English', chinese: 'Chinese' };
 
 export default async function UniversityDetailPage({ params }: Props) {
+  const { slug } = await params;
   try {
     await connectDB();
 
     const [uni, programs] = await Promise.all([
-      University.findBySlug(params.slug),
+      University.findBySlug(slug),
       Program.find({}).lean(),
     ]);
 
@@ -110,7 +112,7 @@ export default async function UniversityDetailPage({ params }: Props) {
             </div>
             <h1 className="font-display text-2xl md:text-3xl font-bold text-white">{u.name}</h1>
             <p className="text-blue-200 text-sm mt-1">
-              📍 {u.location.city}, {u.location.province}, {u.location.country}
+              📍 {u.location?.city || 'N/A'}, {u.location?.province || ''}, {u.location?.country || 'N/A'}
               {u.worldRank && <> · 🌐 World Rank: {u.worldRank}</>}
             </p>
           </div>
@@ -178,8 +180,8 @@ export default async function UniversityDetailPage({ params }: Props) {
                           )}
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="text-sm font-bold text-slate-900">${prog.tuitionFeeUSD.toLocaleString()}<span className="font-normal text-slate-400 text-xs">/yr</span></p>
-                          <p className="text-xs text-slate-400 mt-0.5">App fee: ${prog.applicationFeeUSD}</p>
+                          <p className="text-sm font-bold text-slate-900">${prog.tuitionFeeUSD ? prog.tuitionFeeUSD.toLocaleString() : 'N/A'}<span className="font-normal text-slate-400 text-xs">/yr</span></p>
+                          <p className="text-xs text-slate-400 mt-0.5">App fee: ${prog.applicationFeeUSD ? prog.applicationFeeUSD : 'N/A'}</p>
                           <Link
                             href={`/student/dashboard/applications/new?program=${prog._id}&university=${u._id}`}
                             className="inline-flex btn-primary text-xs py-2 px-4 mt-3"
@@ -218,8 +220,8 @@ export default async function UniversityDetailPage({ params }: Props) {
               <div className="space-y-3">
                 {[
                   { icon: '🌐', label: 'World Rank',   value: u.worldRank || 'Not ranked' },
-                  { icon: '📍', label: 'Location',     value: `${u.location.city}, ${u.location.country}` },
-                  { icon: '🎓', label: 'Students',     value: `${u.studentsEnrolled.toLocaleString()}+ enrolled` },
+                  { icon: '📍', label: 'Location',     value: u.location ? `${u.location.city}, ${u.location.country}` : 'N/A' },
+                  { icon: '🎓', label: 'Students',     value: u.studentsEnrolled ? `${u.studentsEnrolled.toLocaleString()}+ enrolled` : 'N/A' },
                   { icon: '📚', label: 'Programs',     value: `${uniPrograms.length} available` },
                 ].map(f => (
                   <div key={f.label} className="flex items-center gap-3 text-sm">
