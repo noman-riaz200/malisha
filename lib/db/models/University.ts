@@ -20,6 +20,7 @@ export interface IUniversity extends Document {
   foundedYear?: number;
   logo?: string;
   coverImage?: string;
+  bannerImage?: string;
   website?: string;
   tuitionRangeMin?: number;
   tuitionRangeMax?: number;
@@ -30,6 +31,11 @@ export interface IUniversity extends Document {
     cscaRequired: boolean;
   };
   studentsEnrolled?: number;
+  intakes?: Array<{
+    season: 'march' | 'september';
+    year: number;
+    deadline: string;
+  }>;
   isFeatured: boolean;
   isActive: boolean;
   createdAt: Date;
@@ -49,11 +55,13 @@ const UniversitySchema = new Schema<IUniversity>(
     foundedYear: { type: Number },
     logo: { type: String, maxlength: 500 },
     coverImage: { type: String, maxlength: 500 },
+    bannerImage: { type: String, maxlength: 500 },
     website: { type: String, maxlength: 255 },
     tuitionRangeMin: { type: Number },
     tuitionRangeMax: { type: Number },
     badges: { type: Schema.Types.Mixed },
     studentsEnrolled: { type: Number },
+    intakes: { type: Schema.Types.Mixed },
     isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
   },
@@ -175,14 +183,20 @@ export const University = {
       location: data.location,
       type: data.type,
       ranking: data.ranking,
+      worldRank: data.worldRank,
       foundedYear: data.foundedYear,
       logo: data.logo,
-      coverImage: data.coverImage,
+      coverImage: data.coverImage || data.bannerImage,
       website: data.website,
       tuitionRangeMin: data.tuitionRangeMin,
       tuitionRangeMax: data.tuitionRangeMax,
+      badges: data.badges,
+      studentsEnrolled: data.studentsEnrolled,
       isFeatured: data.isFeatured || false,
     });
+    if (data.intakes) {
+      (university as any).intakes = data.intakes;
+    }
     return university.save();
   },
 
@@ -192,6 +206,10 @@ export const University = {
 
   async findByIdAndUpdate(id: string, data: any): Promise<IUniversity | null> {
     return UniversityModel.findByIdAndUpdate(id, data, { new: true });
+  },
+
+  async findByIdAndDelete(id: string): Promise<IUniversity | null> {
+    return UniversityModel.findByIdAndDelete(id);
   },
 
   async count(): Promise<number> {

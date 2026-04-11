@@ -13,12 +13,14 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   await connectDB();
 
+  const { bannerImage, ...rest } = body;
   const slug = slugify(body.name, { lower: true, strict: true });
 
   const university = await University.create({
-    ...body,
+    ...rest,
     slug,
     isActive: true,
+    coverImage: bannerImage,
   });
 
   return NextResponse.json({ success: true, data: university }, { status: 201 });

@@ -14,7 +14,7 @@ const NAV = [
   { label: 'Applications', href: '/admin/applications', icon: '📋' },
   { label: 'Inquiries', href: '/admin/inquiries', icon: '💬' },
   { label: 'Payments', href: '/admin/payments', icon: '💰' },
-  { label: 'Settings', href: '/admin/settings', icon: '⚙️' },
+  { label: 'Services', href: '/admin/services', icon: '🛠️' },
 ];
 
 interface Props {
@@ -59,10 +59,9 @@ export function AdminSidebar({ user }: Props) {
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
       </svg>
     ),
-    settings: ({ className }: { className?: string }) => (
+    services: ({ className }: { className?: string }) => (
       <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37  .826-2.573-1.065-2.572-2.572-1.065-.426-1.756 0-2.924-.426-3.35z" />
-        <circle cx={12} cy={12} r={3} />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
       </svg>
     ),
     globe: ({ className }: { className?: string }) => (

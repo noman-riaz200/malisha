@@ -39,7 +39,7 @@ async function main() {
     });
     
     console.log('Admin created:', admin.email);
-  } catch (e) {
+  } catch (e: any) {
     console.error('Error:', e.message);
   } finally {
     await mongoose.disconnect();

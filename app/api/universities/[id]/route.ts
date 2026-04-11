@@ -46,7 +46,7 @@ export async function DELETE(
   }
 
   await connectDB();
-  const updated = await University.findByIdAndUpdate(id, { isActive: false });
-  if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  return NextResponse.json({ success: true, message: 'University deactivated' });
+  const deleted = await University.findByIdAndDelete(id);
+  if (!deleted) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+  return NextResponse.json({ success: true, message: 'University deleted' });
 }

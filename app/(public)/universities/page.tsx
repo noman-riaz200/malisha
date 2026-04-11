@@ -95,6 +95,7 @@ function transformUniversityToCardData(uni: any) {
     badges,
     countdown,
     image: uni.bannerImage,
+    logo: uni.logo,
     slug: uni.slug,
   };
 }

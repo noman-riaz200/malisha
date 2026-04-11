@@ -1,8 +1,7 @@
 import React, { Suspense } from 'react';
 
-import Link from 'next/link';
-
-
+import { connectDB } from '@/lib/db/mongoose';
+import { University } from '@/lib/db/models/University';
 import { HeroSection } from '@/components/homepage/HeroSection';
 import { UniversityCardHomepage } from '@/components/homepage/UniversityCardHomepage';
 import { FindUniversitySection } from '@/components/homepage/FindUniversitySection';
@@ -10,76 +9,44 @@ import { StudentAdmissionServicesSection } from '@/components/homepage/StudentAd
 import { TestimonialsSection } from '@/components/homepage/TestimonialsSection';
 import { LatestUpdatesSection } from '@/components/homepage/LatestUpdatesSection';
 
-const UNIVERSITIES = [
-  {
-    name: 'Tsinghua University',
-    rank: '1-50',
-    location: 'Beijing, China',
-    students: '350+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: null,
-  },
-  {
-    name: 'South China University of Technology',
-    rank: '101-150',
-    location: 'Guangzhou, Guangdong',
-    students: '200+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: null,
-  },
-  {
-    name: 'Zhejiang University',
-    rank: '51-100',
-    location: 'Hangzhou, Zhejiang',
-    students: '300+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: { days: 25, hours: 18, min: 30 },
-  },
-  {
-    name: 'Fudan University',
-    rank: '51-100',
-    location: 'Shanghai, China',
-    students: '250+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: null,
-  },
-  {
-    name: 'Nanjing University',
-    rank: '101-150',
-    location: 'Nanjing, Jiangsu',
-    students: '180+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: { days: 40, hours: 12, min: 15 },
-  },
-  {
-    name: 'Wuhan University',
-    rank: '150-200',
-    location: 'Wuhan, Hubei',
-    students: '220+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: null,
-  },
-  {
-    name: 'Harbin Institute of Technology',
-    rank: '101-150',
-    location: 'Harbin, Heilongjiang',
-    students: '190+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: { days: 28, hours: 8, min: 45 },
-  },
-  {
-    name: 'Shanghai Jiao Tong University',
-    rank: '51-100',
-    location: 'Shanghai, China',
-    students: '280+ Students Enrolled',
-    badges: ['211 Projects', '985 Projects', 'Double First Class'],
-    countdown: null,
-  },
-];
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
+async function getLatestUniversities() {
+  await connectDB();
+  
+  const universities = await University.find({ isActive: true })
+    .sort({ studentsEnrolled: -1 })
+    .limit(8)
+    .lean();
+  
+  return universities.map((uni: any) => ({
+    ...uni,
+    _id: uni._id.toString(),
+  }));
+}
 
+function transformUniversityToCardData(uni: any) {
+  const badges: string[] = [];
+  if (uni.badges?.is211) badges.push('211 Projects');
+  if (uni.badges?.is985) badges.push('985 Projects');
+  if (uni.badges?.isDoubleFirstClass) badges.push('Double First Class');
 
-export default function Homepage() {
+  return {
+    name: uni.name,
+    rank: uni.worldRank || 'Not Ranked',
+    location: `${uni.locationObj?.city || uni.location || 'N/A'}, ${uni.locationObj?.country || 'China'}`,
+    students: `${(uni.studentsEnrolled || 0).toLocaleString()}+ Students Enrolled`,
+    badges,
+    countdown: null,
+    image: uni.logo,
+    slug: uni.slug,
+  };
+}
+
+export default async function Homepage() {
+  const universities = await getLatestUniversities();
+  const cardData = universities.map(transformUniversityToCardData);
   return (
     <>
       <HeroSection />
@@ -95,8 +62,8 @@ export default function Homepage() {
           </p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {UNIVERSITIES.map((uni, index) => (
-            <UniversityCardHomepage key={index} {...uni} />
+          {cardData.map((uni: any, index: number) => (
+            <UniversityCardHomepage key={uni.slug || index} {...uni} />
           ))}
         </div>
       </div>

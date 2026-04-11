@@ -17,18 +17,25 @@ export function DeleteUniversityButton({ id, name }: { id: string; name: string 
 
   if (confirm) {
     return (
-      <span className="flex items-center gap-1">
+      <span className="flex items-center gap-2">
         <button onClick={handleDelete} disabled={pending}
-          className="text-xs text-red-600 hover:text-red-700 font-medium">
+          className="px-3 py-1.5 rounded-md text-xs font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors"
+        >
           {pending ? '...' : 'Confirm'}
         </button>
-        <button onClick={() => setConfirm(false)} className="text-xs text-slate-400">Cancel</button>
+        <button onClick={() => setConfirm(false)}
+          className="px-3 py-1.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
+        >
+          Cancel
+        </button>
       </span>
     );
   }
 
   return (
-    <button onClick={() => setConfirm(true)} className="text-xs text-red-400 hover:text-red-600 transition-colors">
+    <button onClick={() => setConfirm(true)}
+      className="px-3 py-1.5 rounded-md text-xs font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors"
+    >
       Delete
     </button>
   );

@@ -106,7 +106,7 @@ export default async function AdminUniversitiesPage() {
                     </td>
                     {/* Actions */}
                     <td className="px-4 py-3">
-                      <div className="d-flex align-items-center gap-2">
+                      <div className="d-flex align-items-center gap-3">
                         <Link href={`/universities/${uni.slug}`} target="_blank"
                           className="btn btn-sm" style={{ color: '#64748b', border: '1px solid #e2e8f0', fontSize: '0.75rem' }}>
                           <i className="bi bi-eye"></i>

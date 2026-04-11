@@ -1,5 +1,5 @@
-'use client';
-import { useState, useTransition, useEffect } from "react";
+"use client";
+import { useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -131,36 +131,34 @@ export function EditUniversityButton({ id, name }: { id: string; name: string })
   };
 
   const handleSubmit = async () => {
-    if (!logoUrl || !bannerUrl) {
-      setError("Please ensure logo and banner are set.");
-      return;
-    }
-
     const intakes = [];
     if (form.marchDeadline) intakes.push({ season: "march" as const, year: 2026, deadline: form.marchDeadline });
     if (form.septemberDeadline) intakes.push({ season: "september" as const, year: 2026, deadline: form.septemberDeadline });
 
+    const updateData: Record<string, any> = {
+      name: form.name,
+      description: form.description,
+      worldRank: form.worldRank,
+      website: form.website,
+      location: { city: form.city, province: form.province, country: "China" },
+      studentsEnrolled: parseInt(form.studentsEnrolled) || 0,
+      badges: {
+        is211: form.is211,
+        is985: form.is985,
+        isDoubleFirstClass: form.isDoubleFirstClass,
+        cscaRequired: form.cscaRequired,
+      },
+      intakes,
+      isActive: form.isActive,
+    };
+
+    if (logoUrl) updateData.logo = logoUrl;
+    if (bannerUrl) updateData.bannerImage = bannerUrl;
+
     const res = await fetch(`/api/universities/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: form.name,
-        description: form.description,
-        worldRank: form.worldRank,
-        website: form.website,
-        logo: logoUrl,
-        bannerImage: bannerUrl,
-        location: { city: form.city, province: form.province, country: "China" },
-        studentsEnrolled: parseInt(form.studentsEnrolled) || 0,
-        badges: {
-          is211: form.is211,
-          is985: form.is985,
-          isDoubleFirstClass: form.isDoubleFirstClass,
-          cscaRequired: form.cscaRequired,
-        },
-        intakes,
-        isActive: form.isActive,
-      }),
+      body: JSON.stringify(updateData),
     });
 
     if (res.ok) {
@@ -183,7 +181,7 @@ export function EditUniversityButton({ id, name }: { id: string; name: string })
     <>
       <button
         onClick={fetchUniversity}
-        className="text-xs text-blue-500 hover:text-blue-700 font-medium transition-colors"
+        className="px-3 py-1.5 rounded-md text-xs font-semibold bg-blue-500 text-white hover:bg-blue-600 transition-colors"
       >
         Edit
       </button>
@@ -215,7 +213,7 @@ export function EditUniversityButton({ id, name }: { id: string; name: string })
                 <h3 className="font-semibold text-slate-900 text-lg">Basic Information</h3>
                 <div>
                   <label className={labelClass}>Name</label>
-                  <input required value={form.name} onChange={(e) => set("name", e.target.value)} className={inputClass} />
+                  <input value={form.name} onChange={(e) => set("name", e.target.value)} className={inputClass} />
                 </div>
                 <div>
                   <label className={labelClass}>Description</label>
@@ -244,11 +242,11 @@ export function EditUniversityButton({ id, name }: { id: string; name: string })
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className={labelClass}>City</label>
-                    <input required value={form.city} onChange={(e) => set("city", e.target.value)} className={inputClass} />
+                    <input value={form.city} onChange={(e) => set("city", e.target.value)} className={inputClass} />
                   </div>
                   <div>
                     <label className={labelClass}>Province</label>
-                    <input required value={form.province} onChange={(e) => set("province", e.target.value)} className={inputClass} />
+                    <input value={form.province} onChange={(e) => set("province", e.target.value)} className={inputClass} />
                   </div>
                 </div>
                 <div>

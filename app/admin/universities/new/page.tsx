@@ -189,7 +189,7 @@ export default function NewUniversityPage() {
 
         <div className="flex gap-3 justify-end">
           <button type="button" onClick={() => router.back()} className="btn-secondary">Cancel</button>
-          <button type="submit" disabled={saving} className="btn-primary disabled:opacity-60">
+          <button type="submit" disabled={saving} className="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-xl font-medium transition-colors disabled:opacity-60">
             {saving ? 'Saving...' : '+ Add University'}
           </button>
         </div>

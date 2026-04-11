@@ -12,6 +12,7 @@ interface UniversityCardProps {
   badges: string[];
   countdown: { days: number; hours: number; min: number } | null;
   image?: string;
+  logo?: string;
   slug?: string;
 }
 
@@ -23,6 +24,7 @@ export function UniversityCardHomepage({
   badges,
   countdown,
   image,
+  logo,
   slug,
 }: UniversityCardProps) {
   const cardContent = (
@@ -32,6 +34,13 @@ export function UniversityCardHomepage({
         {image ? (
           <img
             src={image}
+            alt={name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            suppressHydrationWarning
+          />
+        ) : logo ? (
+          <img
+            src={logo}
             alt={name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             suppressHydrationWarning
