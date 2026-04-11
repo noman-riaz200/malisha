@@ -6,6 +6,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import ClientApplyButton from '@/components/ClientApplyButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -211,9 +212,10 @@ export default function ScholarshipsPage() {
                     </div>
                   </div>
                   
-                  <Link href="/contact" className="btn btn-sm btn-outline-primary">
-                    Apply Now <i className="bi bi-arrow-right ms-1"></i>
-                  </Link>
+                  <ClientApplyButton 
+                    buttonText="Apply Now"
+                    className="btn btn-sm btn-outline-primary"
+                  />
                 </div>
               </div>
             ))}

@@ -5,6 +5,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import ClientApplyButton from '@/components/ClientApplyButton';
 
 interface University {
   _id: string;
@@ -113,9 +114,11 @@ export function UniversityCard({ university: uni }: { university: University }) 
         </div>
 
         <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-          <span className="text-xs text-blue-600 font-semibold group-hover:gap-2 transition-all">
-            Apply Now →
-          </span>
+          <ClientApplyButton 
+            universityId={uni._id}
+            buttonText="Apply Now →"
+            className="text-xs text-blue-600 font-semibold group-hover:gap-2 transition-all"
+          />
           {nextIntake && (
             <span className="text-xs text-slate-400 capitalize">{nextIntake.season} {nextIntake.year}</span>
           )}

@@ -1,6 +1,3 @@
-// =============================================================================
-// app/admin/universities/page.tsx — Universities Management (Bootstrap + Red Theme)
-// =============================================================================
 import { connectDB }  from '@/lib/db/mongoose';
 import { University } from '@/lib/db/models/University';
 import Link           from 'next/link';
@@ -50,7 +47,7 @@ export default async function AdminUniversitiesPage() {
               </thead>
               <tbody>
                 {universities.map((uni: any) => (
-                  <tr key={uni._id.toString()} className="border-bottom" style={{ transition: 'all 0.2s' }}>
+                  <tr key={uni._id.toString()} className="border-bottom cursor-pointer" style={{ transition: 'all 0.2s' }} onClick={() => window.open(`/universities/${uni.slug}`, '_blank')}>
                     {/* University */}
                     <td className="px-4 py-3">
                       <div className="d-flex align-items-center gap-3">
@@ -105,12 +102,8 @@ export default async function AdminUniversitiesPage() {
                       </span>
                     </td>
                     {/* Actions */}
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                       <div className="d-flex align-items-center gap-3">
-                        <Link href={`/universities/${uni.slug}`} target="_blank"
-                          className="btn btn-sm" style={{ color: '#64748b', border: '1px solid #e2e8f0', fontSize: '0.75rem' }}>
-                          <i className="bi bi-eye"></i>
-                        </Link>
                         <EditUniversityButton id={uni._id.toString()} name={uni.name} />
                         <DeleteUniversityButton id={uni._id.toString()} name={uni.name} />
                       </div>

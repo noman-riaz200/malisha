@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import ApplyBeforeDeadlineButton from '@/components/ApplyBeforeDeadlineButton';
 
 const STATISTICS = [
   { value: '+13', label: 'Years of experience', color: 'bg-[#e53935]' },
@@ -89,12 +90,11 @@ export function HeroSection() {
 
       {/* Mobile Action Buttons - Fixed: No <a> tags inside <Link> */}
       <div className="lg:hidden fixed bottom-24 right-4 flex flex-col gap-2 z-40" suppressHydrationWarning>
-        <Link
-          href="/apply"
+        <ApplyBeforeDeadlineButton 
+          buttonText="Apply Now"
+          studentDashboardUrl="/student/dashboard/applications/new"
           className="px-4 py-2 bg-[#e53935] text-white text-sm rounded-lg font-semibold shadow-lg text-center"
-        >
-          Apply Now
-        </Link>
+        />
         <Link
           href="/get-free-consultation"
           className="px-4 py-2 bg-[#0f4c3a] text-white text-sm rounded-lg font-semibold shadow-lg text-center"

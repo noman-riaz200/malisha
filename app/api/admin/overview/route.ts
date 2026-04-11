@@ -19,8 +19,8 @@ export async function GET(req: NextRequest) {
 
     // Get stats
     const [totalStudents, pendingApplications, totalRevenue] = await Promise.all([
-      User.count({ role: 'student' }),
-      Application.count({ status: 'submitted' }),
+      User.countDocuments({ role: 'student' }),
+      Application.countDocuments({ status: 'submitted' }),
       Payment.aggregate([
         { $match: { status: 'succeeded' } },
         { $group: { _id: null, total: { $sum: '$amount' } } }

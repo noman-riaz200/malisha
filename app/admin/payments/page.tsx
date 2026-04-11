@@ -69,7 +69,7 @@ export default async function AdminPaymentsPage({ searchParams }: PageProps) {
       </div>
 
       <PaymentsList 
-        payments={payments}
+        payments={payments as any}
         pagination={{ page, pages, total }}
         currentStatus={searchParams.status || 'all'}
       />

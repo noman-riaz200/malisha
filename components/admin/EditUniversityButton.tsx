@@ -45,8 +45,8 @@ export function EditUniversityButton({ id, name }: { id: string; name: string })
     try {
       const res = await fetch(`/api/universities/${id}`);
       if (res.ok) {
-        const data = await res.json();
-        setUniversity(data);
+        const json = await res.json();
+        setUniversity(json.data);
       } else {
         setError("Failed to load university data");
       }

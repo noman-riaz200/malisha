@@ -2,7 +2,7 @@ import { auth } from '@/lib/auth/config';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { connectDB } from '@/lib/db/mongoose';
-import { getApplicationModel } from '@/lib/db/models/Application';
+import { Application } from '@/lib/db/models/Application';
 import User from '@/lib/db/models/User';
 import Payment from '@/lib/db/models/Payment';
 import Inquiry from '@/lib/db/models/Inquiry';
@@ -39,7 +39,6 @@ interface DashboardData {
 
 async function getDashboardData(): Promise<DashboardData> {
   await connectDB();
-  const ApplicationModel = await getApplicationModel();
   
   const [
     totalStudents,
@@ -53,7 +52,7 @@ async function getDashboardData(): Promise<DashboardData> {
     recentApplications
   ] = await Promise.all([
     User.countDocuments({ role: 'student' }),
-    ApplicationModel.countDocuments({}),
+    Application.countDocuments({}),
     Payment.countDocuments({ status: 'succeeded' }),
     Payment.aggregate([
       { $match: { status: 'succeeded' } },
@@ -69,9 +68,9 @@ async function getDashboardData(): Promise<DashboardData> {
       { $group: { _id: null, total: { $sum: '$amount' } } }
     ]),
     Inquiry.countDocuments({}),
-    ApplicationModel.countDocuments({ status: { $in: ['submitted', 'under_review'] } }),
-    ApplicationModel.countDocuments({ status: 'approved' }),
-    ApplicationModel.find({})
+    Application.countDocuments({ status: { $in: ['submitted', 'under_review'] } }),
+    Application.countDocuments({ status: 'approved' }),
+    Application.find({})
       .sort({ createdAt: -1 })
       .limit(5)
       .lean() as Promise<any[]>

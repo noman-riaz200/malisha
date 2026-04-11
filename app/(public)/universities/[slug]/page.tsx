@@ -3,12 +3,13 @@
 // =============================================================================
 import type { Metadata } from 'next';
 import { notFound }  from 'next/navigation';
-import Image         from 'next/image';
 import Link          from 'next/link';
 import { connectDB } from '@/lib/db/mongoose';
 import { University } from '@/lib/db/models/University';
 import { Program }    from '@/lib/db/models/Program';
 import { IntakeCountdown } from '@/components/university/IntakeCountdown';
+import ApplyBeforeDeadlineButton from '@/components/ApplyBeforeDeadlineButton';
+import ClientApplyButton from '@/components/ClientApplyButton';
 
 interface Props { params: Promise<{ slug: string }> }
 
@@ -73,48 +74,47 @@ export default async function UniversityDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Hero banner */}
-      <div className="relative h-72 md:h-96 bg-gradient-to-br from-blue-900 to-slate-900 overflow-hidden">
-        {u.bannerImage && (
-          <Image 
-            src={u.bannerImage} 
-            alt={u.name} 
-            fill 
-            className="object-cover opacity-40" 
-            priority 
-            sizes="100vw"
-            quality={75}
-          />
+      {/* Hero banner - banner as background image on container */}
+      <div className="relative h-[85vh] min-h-[600px] overflow-hidden" style={{ backgroundImage: u.bannerImage ? `url(${u.bannerImage})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+        {u.bannerImage ? (
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent" />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900 to-slate-900" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
 
         {/* Back link */}
-        <div className="absolute top-24 left-6 md:left-12">
+        <div className="absolute top-24 left-6 md:left-12 z-10">
           <Link href="/universities" className="text-white/70 hover:text-white text-sm flex items-center gap-1 transition-colors">
             ← All Universities
           </Link>
         </div>
 
-        {/* University ID card */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 flex items-end gap-5">
-          <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-2xl shadow-xl flex items-center justify-center p-2 shrink-0">
-            {u.logo
-              ? <Image src={u.logo} alt="" width={64} height={64} className="object-contain" quality={80} />
-              : <span className="font-bold text-2xl text-blue-700">{u.name[0]}</span>
+        {/* Full screen logo */}
+        <div className="absolute inset-0 flex items-center justify-center p-8 z-10">
+          <div className="relative w-48 h-48 md:w-64 md:h-64 bg-white/20 backdrop-blur-md rounded-3xl shadow-2xl flex items-center justify-center p-6">
+            {u.logo && u.logo.trim() !== ""
+              ? <img src={u.logo} alt={u.name} className="w-full h-full object-contain p-4" />
+              : <span className="font-bold text-6xl md:text-7xl text-white drop-shadow-lg">{u.name[0]}</span>
             }
           </div>
-          <div>
-            <div className="flex flex-wrap gap-1.5 mb-2">
-              {u.badges?.is211           && <span className="badge-211">211</span>}
-              {u.badges?.is985           && <span className="badge-985">985</span>}
-              {u.badges?.isDoubleFirstClass && <span className="badge-dfc">Double First Class</span>}
-              {u.badges?.cscaRequired    && <span className="badge-csca">CSCA Required</span>}
+        </div>
+
+        {/* University info overlay at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 bg-gradient-to-t from-slate-900/90 to-transparent">
+          <div className="flex items-end gap-5">
+            <div className="flex-1">
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {u.badges?.is211           && <span className="badge-211">211</span>}
+                {u.badges?.is985           && <span className="badge-985">985</span>}
+                {u.badges?.isDoubleFirstClass && <span className="badge-dfc">Double First Class</span>}
+                {u.badges?.cscaRequired    && <span className="badge-csca">CSCA Required</span>}
+              </div>
+              <h1 className="font-display text-2xl md:text-3xl font-bold text-white">{u.name}</h1>
+              <p className="text-blue-200 text-sm mt-1">
+                📍 {u.location?.city || 'N/A'}, {u.location?.province || ''}, {u.location?.country || 'N/A'}
+                {u.worldRank && <> · 🌐 World Rank: {u.worldRank}</>}
+              </p>
             </div>
-            <h1 className="font-display text-2xl md:text-3xl font-bold text-white">{u.name}</h1>
-            <p className="text-blue-200 text-sm mt-1">
-              📍 {u.location?.city || 'N/A'}, {u.location?.province || ''}, {u.location?.country || 'N/A'}
-              {u.worldRank && <> · 🌐 World Rank: {u.worldRank}</>}
-            </p>
           </div>
         </div>
       </div>
@@ -182,12 +182,11 @@ export default async function UniversityDetailPage({ params }: Props) {
                         <div className="text-right shrink-0">
                           <p className="text-sm font-bold text-slate-900">${prog.tuitionFeeUSD ? prog.tuitionFeeUSD.toLocaleString() : 'N/A'}<span className="font-normal text-slate-400 text-xs">/yr</span></p>
                           <p className="text-xs text-slate-400 mt-0.5">App fee: ${prog.applicationFeeUSD ? prog.applicationFeeUSD : 'N/A'}</p>
-                          <Link
-                            href={`/student/dashboard/applications/new?program=${prog._id}&university=${u._id}`}
-                            className="inline-flex btn-primary text-xs py-2 px-4 mt-3"
-                          >
-                            Apply Now
-                          </Link>
+                          <ClientApplyButton 
+                            programId={prog._id.toString()}
+                            universityId={u._id.toString()}
+                            buttonText="Apply Now"
+                          />
                         </div>
                       </div>
                     </div>
@@ -207,10 +206,11 @@ export default async function UniversityDetailPage({ params }: Props) {
                   Next Deadline — {nextIntake.season.charAt(0).toUpperCase() + nextIntake.season.slice(1)} {nextIntake.year}
                 </p>
                 <IntakeCountdown deadline={nextIntake.deadline} />
-                <Link href={`/student/dashboard/applications/new?university=${u._id}`}
-                  className="mt-4 w-full flex items-center justify-center bg-white text-blue-700 font-semibold text-sm py-2.5 rounded-xl hover:bg-blue-50 transition-colors">
-                  Apply Before Deadline →
-                </Link>
+                <ApplyBeforeDeadlineButton 
+                  buttonText="Apply Before Deadline →"
+                  studentDashboardUrl={`/student/dashboard/applications/new?university=${u._id}`}
+                  className="mt-4 w-full flex items-center justify-center bg-white text-blue-700 font-semibold text-sm py-2.5 rounded-xl hover:bg-blue-50 transition-colors"
+                />
               </div>
             )}
 

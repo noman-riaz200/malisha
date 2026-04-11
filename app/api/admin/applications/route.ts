@@ -62,7 +62,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Application not found' }, { status: 404 });
     }
 
-    await Application.update(applicationId, {
+    await Application.findByIdAndUpdate(applicationId, {
       status,
       reviewedBy: (session.user as any).id,
       reviewedAt: new Date(),
