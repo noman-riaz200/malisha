@@ -31,14 +31,18 @@ async function getStudents(params: PageProps['searchParams']) {
     ];
   }
 
-  const [students, total] = await Promise.all([
-    User.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean(),
-    User.countDocuments(filter),
-  ]);
+  const studentsRaw = await User.find(filter)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  const total = await User.countDocuments(filter);
+
+  const students = (studentsRaw as any[]).map((doc: any) => ({
+    ...doc,
+    _id: doc._id?.toString(),
+  }));
 
   return { students, total, page, pages: Math.ceil(total / limit) };
 }
@@ -55,7 +59,7 @@ export default async function AdminStudentsPage({ searchParams }: PageProps) {
   return (
     <div className="p-4">
       {/* Header */}
-      <div className="admin-page-header mb-4" style={{ background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)' }}>
+      <div className="admin-page-header mb-4">
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
           <div>
             <h1 className="display-font fw-bold mb-1" style={{ fontSize: '1.75rem', color: 'white' }}>Students</h1>

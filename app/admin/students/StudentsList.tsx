@@ -43,7 +43,7 @@ export function StudentsList({ students, pagination, currentSearch }: Props) {
   };
 
   return (
-    <div className="admin-card">
+    <div className="admin-card w-100" style={{ maxWidth: '100%' }}>
       {/* Search Bar */}
       <div className="card-body border-bottom">
         <form onSubmit={handleSearch} className="d-flex gap-2">
@@ -63,8 +63,8 @@ export function StudentsList({ students, pagination, currentSearch }: Props) {
       </div>
 
       {/* Table */}
-      <div className="table-responsive">
-        <table className="table table-hover mb-0">
+      <div className="table-responsive w-100">
+        <table className="table table-hover mb-0" style={{ minWidth: '100%', width: '100%' }}>
           <thead>
             <tr style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
               <th className="px-4 py-3 fw-semibold text-dark" style={{ fontSize: '0.75rem' }}>STUDENT</th>
@@ -137,7 +137,7 @@ export function StudentsList({ students, pagination, currentSearch }: Props) {
 
       {/* Pagination */}
       {pagination.pages > 1 && (
-        <div className="card-body d-flex align-items-center justify-content-between border-top">
+        <div className="card-body d-flex align-items-center justify-content-between border-top w-100">
           <p className="mb-0 text-muted" style={{ fontSize: '0.85rem' }}>
             Showing {((pagination.page - 1) * 20) + 1} to {Math.min(pagination.page * 20, pagination.total)} of {pagination.total} students
           </p>

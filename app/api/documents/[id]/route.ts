@@ -5,10 +5,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/config';
 import { connectDB } from '@/lib/db/mongoose';
 import { AppDocument } from '@/lib/db/models/models';
+import { devDocuments } from '@/lib/dev-storage';
 
 const isDev = process.env.NODE_ENV === 'development';
-
-const devDocuments: Map<string, any> = new Map();
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
