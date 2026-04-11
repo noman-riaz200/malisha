@@ -3,7 +3,7 @@
 // =============================================================================
 import { auth } from '@/lib/auth/config';
 import { connectDB } from '@/lib/db/mongoose';
-import { User } from '@/lib/db/models/User';
+import mongoose from 'mongoose';
 import { notFound, redirect } from 'next/navigation';
 import { ProfileForm } from './ProfileForm';
 
@@ -12,10 +12,12 @@ export const dynamic = 'force-dynamic';
 
 async function getUser(userId: string) {
   await connectDB();
-  const user = await User.findById(userId)
+  const UserModel = mongoose.models.User || mongoose.model('User', new mongoose.Schema({}, { strict: false }));
+  const user = await UserModel.findById(userId)
     .select('-password -emailVerifyToken -passwordResetToken')
     .lean();
-  return user;
+  if (!user) return null;
+  return JSON.parse(JSON.stringify(user));
 }
 
 export default async function ProfilePage() {
