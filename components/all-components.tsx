@@ -61,7 +61,7 @@ export function FileUpload({ applicationId, docType, label, accept, onUploadComp
       <label className="block text-sm font-medium text-slate-700">{label}</label>
       <div
         className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors
-          ${done ? 'border-green-400 bg-green-50' : 'border-slate-300 hover:border-blue-400 hover:bg-blue-50'}`}
+          ${done ? 'border-green-400 bg-green-50' : 'border-slate-200 hover:border-blue-400 hover:bg-blue-50'}`}
         onClick={() => inputRef.current?.click()}
       >
         <input
@@ -72,7 +72,7 @@ export function FileUpload({ applicationId, docType, label, accept, onUploadComp
           <div className="space-y-2">
             <p className="text-sm text-slate-500">Uploading... {progress}%</p>
             <div className="w-full bg-slate-200 rounded-full h-2">
-              <div className="bg-blue-600 h-2 rounded-full transition-all" style={{ width: `${progress}%` }} />
+              <div className="bg-red-600 h-2 rounded-full transition-all" style={{ width: `${progress}%` }} />
             </div>
           </div>
         ) : done ? (
@@ -143,13 +143,13 @@ export function ApplicationForm({ programId, universityId, universityName, progr
       <div className="mb-8">
         <div className="flex justify-between mb-2">
           {STEPS.map((s, i) => (
-            <span key={i} className={`text-xs font-medium ${i + 1 === step ? 'text-blue-600' : i + 1 < step ? 'text-green-600' : 'text-slate-400'}`}>
+            <span key={i} className={`text-xs font-medium ${i + 1 === step ? 'text-red-600' : i + 1 < step ? 'text-green-600' : 'text-slate-400'}`}>
               {i + 1 < step ? '✓ ' : `${i + 1}. `}{s}
             </span>
           ))}
         </div>
         <div className="h-2 bg-slate-200 rounded-full">
-          <div className="h-2 bg-blue-600 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+          <div className="h-2 bg-red-600 rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
         </div>
       </div>
 
@@ -184,7 +184,7 @@ function Step1Personal({ initialData, onNext }: { initialData: any; onNext: (d: 
       <label className="block text-sm font-medium text-slate-700 mb-1">{label}{required && <span className="text-red-500">*</span>}</label>
       <input
         type={type} value={form[key] || ''} onChange={e => set(key, e.target.value)}
-        className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         required={required}
       />
     </div>
@@ -210,7 +210,7 @@ function Step1Personal({ initialData, onNext }: { initialData: any; onNext: (d: 
       <div>
         <label className="block text-sm font-medium text-slate-700 mb-1">Gender</label>
         <select value={form.gender || ''} onChange={e => set('gender', e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm">
           <option value="">Select gender</option>
           <option value="male">Male</option><option value="female">Female</option>
         </select>
@@ -218,7 +218,7 @@ function Step1Personal({ initialData, onNext }: { initialData: any; onNext: (d: 
       {field('Hobbies & Interests', 'hobbies')}
       <div className="flex justify-end pt-4">
         <button onClick={() => onNext(form)}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
+          className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
           Save & Continue →
         </button>
       </div>
@@ -244,25 +244,25 @@ function Step2Education({ initialData, onNext, onBack }: { initialData: any; onN
             <p className="text-xs font-medium text-slate-500 uppercase">Institution {i + 1}</p>
             <input placeholder="School / College / University name" value={edu.schoolName || ''}
               onChange={e => setEdu(i, 'schoolName', e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" />
             <div className="grid grid-cols-3 gap-3">
               <select value={edu.major || ''} onChange={e => setEdu(i, 'major', e.target.value)}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                className="border border-slate-200 rounded-lg px-3 py-2 text-sm">
                 <option value="">Major</option>
                 <option>Science</option><option>Business Studies</option><option>Arts</option>
               </select>
               <input type="month" placeholder="Start" value={edu.startDate || ''}
                 onChange={e => setEdu(i, 'startDate', e.target.value)}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+                className="border border-slate-200 rounded-lg px-3 py-2 text-sm" />
               <input type="month" placeholder="End" value={edu.endDate || ''}
                 onChange={e => setEdu(i, 'endDate', e.target.value)}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+                className="border border-slate-200 rounded-lg px-3 py-2 text-sm" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <input placeholder="GPA" value={edu.gpa || ''} onChange={e => setEdu(i, 'gpa', e.target.value)}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+                className="border border-slate-200 rounded-lg px-3 py-2 text-sm" />
               <input placeholder="Country" value={edu.country || ''} onChange={e => setEdu(i, 'country', e.target.value)}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm" />
+                className="border border-slate-200 rounded-lg px-3 py-2 text-sm" />
             </div>
           </div>
         ))}
@@ -281,7 +281,7 @@ function Step2Education({ initialData, onNext, onBack }: { initialData: any; onN
             <div key={key}>
               <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
               <select value={language[key] || ''} onChange={e => setLang(key, e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm">
                 <option value="">Select {label}</option>
                 {opts.map(o => <option key={o}>{o}</option>)}
               </select>
@@ -290,15 +290,15 @@ function Step2Education({ initialData, onNext, onBack }: { initialData: any; onN
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">English Score</label>
             <input value={language.englishScore || ''} onChange={e => setLang('englishScore', e.target.value)}
-              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 6.5" />
+              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="e.g. 6.5" />
           </div>
         </div>
       </div>
 
       <div className="flex justify-between pt-4">
-        <button onClick={onBack} className="border border-slate-300 px-6 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">← Back</button>
+        <button onClick={onBack} className="border border-slate-200 px-6 py-2 rounded-lg text-sm text-slate-700 hover:bg-slate-50">← Back</button>
         <button onClick={() => onNext({ education, language })}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">Save & Continue →</button>
+          className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">Save & Continue →</button>
       </div>
     </div>
   );
@@ -326,9 +326,9 @@ function Step3Documents({ applicationId, onNext, onBack }: any) {
           onUploadComplete={(url, key) => addDoc(type, url, key)} />
       ))}
       <div className="flex justify-between pt-4">
-        <button onClick={onBack} className="border border-slate-300 px-6 py-2 rounded-lg text-sm text-slate-700">← Back</button>
+        <button onClick={onBack} className="border border-slate-200 px-6 py-2 rounded-lg text-sm text-slate-700">← Back</button>
         <button onClick={() => onNext(docs)}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
+          className="bg-red-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
           Review Application →
         </button>
       </div>
@@ -365,7 +365,7 @@ function Step4Review({ data, universityName, programName, saving, onSubmit, onBa
       </div>
 
       <div className="flex justify-between">
-        <button onClick={onBack} className="border border-slate-300 px-6 py-2 rounded-lg text-sm text-slate-700">← Back</button>
+        <button onClick={onBack} className="border border-slate-200 px-6 py-2 rounded-lg text-sm text-slate-700">← Back</button>
         <button onClick={onSubmit} disabled={saving}
           className="bg-green-600 text-white px-8 py-2 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50">
           {saving ? 'Submitting...' : '✓ Submit Application'}

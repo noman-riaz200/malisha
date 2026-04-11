@@ -2,8 +2,9 @@
 // =============================================================================
 // app/dashboard/documents/DocumentsList.tsx
 // =============================================================================
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
+import { DOC_TYPES } from './docTypes';
 
 interface Document {
   _id: string;
@@ -16,14 +17,7 @@ interface Document {
   createdAt: string;
 }
 
-const DOC_TYPES = [
-  { value: 'passport', label: 'Passport', icon: '📘' },
-  { value: 'academic_cert', label: 'Academic Certificate', icon: '🎓' },
-  { value: 'transcript', label: 'Transcript', icon: '📜' },
-  { value: 'photo', label: 'Photo', icon: '📷' },
-  { value: 'english_cert', label: 'English Certificate', icon: '📝' },
-  { value: 'other', label: 'Other', icon: '📄' },
-];
+
 
 const STATUS_COLORS: Record<string, string> = {
   pending: 'bg-warning',
@@ -37,7 +31,9 @@ export function DocumentsList() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [selectedType, setSelectedType] = useState('passport');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchDocuments();
@@ -57,17 +53,29 @@ export function DocumentsList() {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (file) {
+      setSelectedFile(file);
+      setMessage(null);
+    }
+  };
+
+  const resetFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleUploadClick = async () => {
+    if (!selectedFile) return;
 
     setUploading(true);
     setMessage(null);
 
     try {
-      // Create form data
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', selectedFile);
       formData.append('docType', selectedType);
 
       const response = await fetch('/api/documents/upload', {
@@ -79,6 +87,7 @@ export function DocumentsList() {
 
       if (response.ok) {
         setMessage({ type: 'success', text: 'Document uploaded successfully!' });
+        setSelectedFile(null);
         fetchDocuments();
       } else {
         setMessage({ type: 'error', text: data.error || 'Failed to upload document' });
@@ -87,8 +96,7 @@ export function DocumentsList() {
       setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
     } finally {
       setUploading(false);
-      // Reset file input
-      e.target.value = '';
+      resetFileInput();
     }
   };
 
@@ -125,31 +133,29 @@ export function DocumentsList() {
 
   if (loading) {
     return (
-      <div className="text-center py-5">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <div className="text-center py-12">
+        <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
       </div>
     );
   }
 
   return (
-    <div className="row g-4">
-      {/* Upload Section */}
-      <div className="col-lg-4">
-        <div className="bg-white rounded-4 p-4" style={{ border: '1px solid #e2e8f0' }}>
-          <h2 className="fw-semibold mb-4" style={{ color: '#1e293b' }}>Upload Document</h2>
-          
-          {message && (
-            <div className={`alert ${message.type === 'success' ? 'alert-success' : 'alert-danger'} mb-4`}>
-              {message.text}
-            </div>
-          )}
+    <div className="bg-white rounded-2xl border border-slate-200 p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="font-semibold text-slate-900">My Documents</h2>
+      </div>
 
-          <div className="mb-3">
-            <label className="form-label">Document Type</label>
+      {message && (
+        <div className={`p-3 rounded-xl mb-6 text-sm ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+          {message.text}
+        </div>
+      )}
+
+      <div className="mb-6 p-4 rounded-xl border border-slate-200 bg-slate-50">
+        <div className="flex flex-wrap gap-4 items-center">
+          <div className="flex-1 min-w-[200px]">
             <select
-              className="form-select"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none bg-white"
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
             >
@@ -160,121 +166,82 @@ export function DocumentsList() {
               ))}
             </select>
           </div>
-
-          <div className="mb-3">
-            <label className="form-label">File</label>
+          <div className="flex-1 min-w-[200px]">
+            <button
+              type="button"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none bg-white text-left text-slate-600 hover:bg-slate-50"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+            >
+              {selectedFile ? selectedFile.name : 'Choose File'}
+            </button>
             <input
+              ref={fileInputRef}
               type="file"
-              className="form-control"
+              className="hidden"
               accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-              onChange={handleFileUpload}
+              onChange={handleFileChange}
               disabled={uploading}
             />
-            <small className="text-muted">Max size: 10MB. Supported: PDF, JPG, PNG, DOC</small>
           </div>
-
           <button
-            className="btn btn-primary w-100"
-            disabled={uploading}
-            onClick={() => document.querySelector<HTMLInputElement>('input[type="file"]')?.click()}
+            type="button"
+            className="px-6 py-2.5 bg-gradient-to-r from-red-500 to-rose-600 text-white font-medium rounded-xl hover:from-red-600 hover:to-rose-700 transition-all disabled:opacity-50"
+            disabled={uploading || !selectedFile}
+            onClick={handleUploadClick}
           >
-            {uploading ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                Uploading...
-              </>
-            ) : (
-              <>
-                <i className="bi bi-cloud-upload me-2"></i>
-                Upload Document
-              </>
-            )}
+            {uploading ? 'Uploading...' : 'Upload'}
           </button>
         </div>
-
-        {/* Document Requirements */}
-        <div className="bg-white rounded-4 p-4 mt-4" style={{ border: '1px solid #e2e8f0' }}>
-          <h2 className="fw-semibold mb-4" style={{ color: '#1e293b' }}>Required Documents</h2>
-          <ul className="list-unstyled mb-0">
-            {DOC_TYPES.map(type => (
-              <li key={type.value} className="d-flex align-items-center gap-2 mb-2">
-                <span>{type.icon}</span>
-                <span style={{ color: '#64748b' }}>{type.label}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
 
-      {/* Documents List */}
-      <div className="col-lg-8">
-        <div className="bg-white rounded-4" style={{ border: '1px solid #e2e8f0' }}>
-          <div className="px-4 py-3" style={{ borderBottom: '1px solid #f1f5f9' }}>
-            <h2 className="fw-semibold mb-0" style={{ color: '#1e293b' }}>My Documents</h2>
-          </div>
-
-          {documents.length === 0 ? (
-            <div className="p-5 text-center">
-              <div className="rounded-4 d-flex align-items-center justify-content-center mx-auto mb-4" style={{ width: '5rem', height: '5rem', backgroundColor: '#f1f5f9' }}>
-                <span style={{ fontSize: '1.5rem' }}>📁</span>
+      {documents.length === 0 ? (
+        <div className="p-12 text-center">
+          <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">📁</div>
+          <h3 className="font-semibold text-slate-900 mb-2">No documents yet</h3>
+          <p className="text-slate-500">Upload your first document to get started.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {documents.map((doc) => (
+            <div key={doc._id} className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-xl shrink-0">
+                  {DOC_TYPES.find(d => d.value === doc.docType)?.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-medium text-slate-900 truncate">{getDocTypeLabel(doc.docType)}</h3>
+                    <span className={`shrink-0 px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${
+                      doc.status === 'verified' ? 'bg-green-100 text-green-700' :
+                      doc.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                      'bg-amber-100 text-amber-700'
+                    }`}>
+                      {doc.status}
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-500 truncate mb-2">
+                    {doc.originalFilename || 'Document'}
+                    <span className="text-slate-400 ml-2">• {formatFileSize(doc.fileSize)}</span>
+                  </p>
+                  <div className="flex items-center gap-3 text-xs text-slate-400">
+                    <span>{new Date(doc.createdAt).toLocaleDateString()}</span>
+                    <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-red-600 hover:underline">
+                      View
+                    </a>
+                    <button
+                      className="text-red-600 hover:text-red-700"
+                      onClick={() => handleDelete(doc._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
               </div>
-              <h3 className="fw-semibold mb-2" style={{ color: '#1e293b' }}>No documents yet</h3>
-              <p className="mb-0" style={{ color: '#64748b' }}>Upload your first document to get started.</p>
             </div>
-          ) : (
-            <div className="table-responsive">
-              <table className="table table-hover mb-0">
-                <thead>
-                  <tr style={{ backgroundColor: '#f8fafc' }}>
-                    <th className="px-4 py-3" style={{ color: '#64748b', fontWeight: 600 }}>Type</th>
-                    <th className="px-4 py-3" style={{ color: '#64748b', fontWeight: 600 }}>File</th>
-                    <th className="px-4 py-3" style={{ color: '#64748b', fontWeight: 600 }}>Size</th>
-                    <th className="px-4 py-3" style={{ color: '#64748b', fontWeight: 600 }}>Status</th>
-                    <th className="px-4 py-3" style={{ color: '#64748b', fontWeight: 600 }}>Date</th>
-                    <th className="px-4 py-3" style={{ color: '#64748b', fontWeight: 600 }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {documents.map((doc) => (
-                    <tr key={doc._id}>
-                      <td className="px-4 py-3">
-                        <div className="d-flex align-items-center gap-2">
-                          <span>{DOC_TYPES.find(d => d.value === doc.docType)?.icon}</span>
-                          <span>{getDocTypeLabel(doc.docType)}</span>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-decoration-none">
-                          {doc.originalFilename || 'View File'}
-                        </a>
-                      </td>
-                      <td className="px-4 py-3" style={{ color: '#64748b' }}>
-                        {formatFileSize(doc.fileSize)}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`badge ${STATUS_COLORS[doc.status] || 'bg-secondary'}`}>
-                          {doc.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3" style={{ color: '#64748b' }}>
-                        {new Date(doc.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => handleDelete(doc._id)}
-                        >
-                          <i className="bi bi-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }

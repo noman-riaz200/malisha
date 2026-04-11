@@ -14,7 +14,7 @@ export interface IAppDocument extends Document {
 
 const AppDocumentSchema = new Schema<IAppDocument>(
   {
-    applicationId: { type: Schema.Types.ObjectId, ref: 'Application', required: true },
+    applicationId: { type: Schema.Types.ObjectId, ref: 'Application' },
     uploadedBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     docType: { 
       type: String, 
@@ -69,6 +69,10 @@ export const AppDocument = {
 
   async findById(id: string | number): Promise<IAppDocument | null> {
     return AppDocumentModel.findById(id);
+  },
+
+  async findOne(filter: object): Promise<IAppDocument | null> {
+    return AppDocumentModel.findOne(filter);
   },
 
   async create(data: Partial<IAppDocument>): Promise<IAppDocument> {

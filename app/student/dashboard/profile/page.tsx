@@ -32,66 +32,63 @@ export default async function ProfilePage() {
   }
 
   return (
-    <div className="container-vz">
-      <div className="mb-5">
-        <h1 className="display-font fw-bold mb-2" style={{ fontSize: '2rem', color: '#1e293b' }}>
-          My Profile
-        </h1>
-        <p style={{ color: '#64748b' }}>Manage your personal information and account settings.</p>
+    <div className="max-w-5xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-slate-900">My Profile</h1>
+        <p className="text-slate-500 mt-1">Manage your personal information and account settings.</p>
       </div>
 
-      <div className="row g-4">
-        {/* Profile Information */}
-        <div className="col-lg-8">
-          <div className="bg-white rounded-4 p-4" style={{ border: '1px solid #e2e8f0' }}>
-            <h2 className="fw-semibold mb-4" style={{ color: '#1e293b' }}>Personal Information</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+            <h2 className="font-semibold text-slate-900 mb-6">Personal Information</h2>
             <ProfileForm user={user} />
           </div>
         </div>
 
-        {/* Account Summary */}
-        <div className="col-lg-4">
-          <div className="bg-white rounded-4 p-4 mb-4" style={{ border: '1px solid #e2e8f0' }}>
-            <h2 className="fw-semibold mb-4" style={{ color: '#1e293b' }}>Account</h2>
-            <div className="d-flex align-items-center gap-3 mb-4">
-              <div className="rounded-circle d-flex align-items-center justify-content-center" style={{ width: '4rem', height: '4rem', backgroundColor: 'var(--vz-primary)', color: 'white', fontSize: '1.5rem', fontWeight: 600 }}>
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+            <h2 className="font-semibold text-slate-900 mb-6">Account</h2>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-red-500 to-rose-600 flex items-center justify-center text-white text-xl font-semibold">
                 {user.firstName?.[0]}{user.lastName?.[0]}
               </div>
               <div>
-                <p className="fw-semibold mb-0" style={{ color: '#1e293b' }}>{user.firstName} {user.lastName}</p>
-                <p className="mb-0" style={{ color: '#64748b', fontSize: '0.875rem' }}>{user.email}</p>
+                <p className="font-semibold text-slate-900">{user.firstName} {user.lastName}</p>
+                <p className="text-sm text-slate-500">{user.email}</p>
               </div>
             </div>
             
-            <div className="border-top pt-4" style={{ borderColor: '#e2e8f0' }}>
-              <div className="d-flex justify-content-between mb-3">
-                <span style={{ color: '#64748b' }}>Role</span>
-                <span className="badge bg-primary text-capitalize">{user.role}</span>
+            <div className="border-t border-slate-100 pt-4 space-y-3">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Role</span>
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 capitalize">{user.role}</span>
               </div>
-              <div className="d-flex justify-content-between mb-3">
-                <span style={{ color: '#64748b' }}>Email Verified</span>
-                <span className={`badge ${user.isEmailVerified ? 'bg-success' : 'bg-warning'}`}>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Email Verified</span>
+                <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${user.isEmailVerified ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'}`}>
                   {user.isEmailVerified ? 'Verified' : 'Pending'}
                 </span>
               </div>
-              <div className="d-flex justify-content-between">
-                <span style={{ color: '#64748b' }}>Member Since</span>
-                <span style={{ color: '#1e293b' }}>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Member Since</span>
+                <span className="text-slate-900">
                   {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Security Section */}
-          <div className="bg-white rounded-4 p-4" style={{ border: '1px solid #e2e8f0' }}>
-            <h2 className="fw-semibold mb-4" style={{ color: '#1e293b' }}>Security</h2>
-            <div className="d-grid gap-2">
-              <a href="/student/dashboard/profile/change-password" className="btn btn-outline-secondary btn-sm">
-                <i className="bi bi-key me-2"></i>Change Password
+          <div className="bg-white rounded-2xl border border-slate-200 p-6">
+            <h2 className="font-semibold text-slate-900 mb-6">Security</h2>
+            <div className="space-y-2">
+              <a href="/student/dashboard/profile/change-password" className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-colors text-sm">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l7-7a6 6 0 017.743-5.743L17 11a2 2 0 012 2z" /></svg>
+                Change Password
               </a>
-              <button className="btn btn-outline-secondary btn-sm">
-                <i className="bi bi-shield-lock me-2"></i>Two-Factor Auth
+              <button className="w-full flex items-center gap-3 p-3 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition-colors text-sm">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                Two-Factor Auth
               </button>
             </div>
           </div>

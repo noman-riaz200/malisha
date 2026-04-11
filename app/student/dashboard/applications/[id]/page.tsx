@@ -25,11 +25,11 @@ export default async function ApplicationDetailPage({ params, searchParams }: Pr
 
   if (!application) {
     return (
-      <div className="max-w-4xl mx-auto py-8 px-4">
+      <div className="max-w-5xl mx-auto">
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
           <h2 className="text-xl font-semibold text-red-800 mb-2">Application Not Found</h2>
           <p className="text-red-600 mb-4">The application you're looking for doesn't exist or has been removed.</p>
-          <Link href="/student/dashboard/applications" className="text-blue-600 hover:underline">
+          <Link href="/student/dashboard/applications" className="text-red-600 hover:underline">
             ← Back to Applications
           </Link>
         </div>
@@ -41,18 +41,19 @@ export default async function ApplicationDetailPage({ params, searchParams }: Pr
   const prog = application.programId as any;
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <Link href="/student/dashboard/applications" className="text-blue-600 hover:underline text-sm mb-2 inline-block">
-            ← Back to Applications
-          </Link>
-          <h1 className="text-2xl font-bold text-slate-900">{uni?.name}</h1>
-          <p className="text-slate-500 mt-1">{prog?.name} · {prog?.degreeLevel}</p>
-        </div>
-        <div className={`px-3 py-1 rounded-full text-sm font-medium ${application.status === 'approved' ? 'bg-green-100 text-green-700' : application.status === 'rejected' ? 'bg-red-100 text-red-700' : application.status === 'under_review' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
-          {application.status?.replace('_', ' ')}
+    <div className="max-w-5xl mx-auto">
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <Link href="/student/dashboard/applications" className="text-red-600 hover:underline text-sm mb-2 inline-block">
+              ← Back to Applications
+            </Link>
+            <h1 className="text-2xl font-bold text-slate-900">{uni?.name}</h1>
+            <p className="text-slate-500 mt-1">{prog?.name} · {prog?.degreeLevel}</p>
+          </div>
+          <div className={`px-3 py-1 rounded-full text-sm font-medium ${application.status === 'approved' ? 'bg-green-100 text-green-700' : application.status === 'rejected' ? 'bg-red-100 text-red-700' : application.status === 'under_review' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
+            {application.status?.replace('_', ' ')}
+          </div>
         </div>
       </div>
 
@@ -66,13 +67,13 @@ export default async function ApplicationDetailPage({ params, searchParams }: Pr
           <div className="flex gap-3">
             <Link
               href={`/api/payments/stripe/create-payment-intent?applicationId=${application._id}`}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white font-medium rounded-xl hover:from-red-600 hover:to-rose-700 transition-all"
             >
               Pay with Stripe
             </Link>
             <Link
               href={`/api/payments/paypal/create-order?applicationId=${application._id}`}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              className="px-4 py-2 border border-slate-200 text-slate-700 font-medium rounded-xl hover:bg-slate-50 transition-all"
             >
               Pay with PayPal
             </Link>
@@ -102,7 +103,7 @@ export default async function ApplicationDetailPage({ params, searchParams }: Pr
               {application.status !== 'draft' && (
                 <Link
                   href={`/student/dashboard/applications/${application._id}?pay=1`}
-                  className="ml-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="ml-auto px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white font-medium rounded-xl hover:from-red-600 hover:to-rose-700 transition-all"
                 >
                   Pay Now
                 </Link>

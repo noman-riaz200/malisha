@@ -5,21 +5,28 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth/config';
 import { connectDB } from '@/lib/db/mongoose';
 import { AppDocument } from '@/lib/db/models/models';
+import { devDocuments } from '@/lib/dev-storage';
+
+const isDev = process.env.NODE_ENV === 'development';
 
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();
-    if (!session) {
+    const userId = isDev ? 'dev-user' : (session?.user as any)?.id;
+
+    if (!session && !isDev) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = (session.user as any).id;
-    await connectDB();
+    if (isDev) {
+      const docs = Array.from(devDocuments.values()).filter(
+        (doc) => doc.uploadedBy === userId
+      );
+      return NextResponse.json({ documents: docs });
+    }
 
-    // Get documents uploaded by this user
-    const documents = await AppDocument.find({ uploadedBy: userId })
-      .sort({ createdAt: -1 })
-      .lean();
+    await connectDB();
+    const documents = await AppDocument.find({ uploadedBy: userId }, { sort: { createdAt: -1 } });
 
     return NextResponse.json({ documents });
   } catch (error) {

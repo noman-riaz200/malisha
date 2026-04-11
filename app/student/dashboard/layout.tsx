@@ -15,9 +15,9 @@ export default async function StudentDashboardLayout({ children }: { children: R
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 flex">
+    <div className="min-h-screen bg-slate-50 flex">
       <DashboardSidebar user={session.user as any} />
-      <main className="flex-1 w-full p-6 lg:p-8 min-h-screen transition-all duration-500">
+      <main className="flex-1 w-full p-6 lg:p-8 min-h-screen">
         {children}
       </main>
     </div>

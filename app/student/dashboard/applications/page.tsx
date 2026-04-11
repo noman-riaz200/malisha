@@ -33,14 +33,13 @@ export default async function ApplicationsPage({ searchParams }: { searchParams:
     .lean();
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="max-w-5xl mx-auto">
+      <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="font-display text-2xl font-bold text-slate-900">My Applications</h1>
-          <p className="text-slate-500 text-sm mt-0.5">{applications.length} application{applications.length !== 1 ? 's' : ''}</p>
+          <h1 className="text-2xl font-bold text-slate-900">My Applications</h1>
+          <p className="text-slate-500 mt-1">{applications.length} application{applications.length !== 1 ? 's' : ''}</p>
         </div>
-        <Link href="/universities" className="btn-primary text-sm py-2">
+        <Link href="/universities" className="px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white text-sm font-medium rounded-xl hover:from-red-600 hover:to-rose-700 transition-all">
           + New Application
         </Link>
       </div>
@@ -62,7 +61,7 @@ export default async function ApplicationsPage({ searchParams }: { searchParams:
           <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4">📋</div>
           <h3 className="font-semibold text-slate-900 text-lg mb-2">No applications yet</h3>
           <p className="text-slate-500 mb-6">Start your journey by browsing our 250+ partner universities.</p>
-          <Link href="/universities" className="btn-primary">Browse Universities →</Link>
+          <Link href="/universities" className="inline-flex px-4 py-2 bg-gradient-to-r from-red-500 to-rose-600 text-white text-sm font-medium rounded-xl hover:from-red-600 hover:to-rose-700 transition-all">Browse Universities →</Link>
         </div>
       ) : (
         <div className="space-y-4">
@@ -137,12 +136,12 @@ export default async function ApplicationsPage({ searchParams }: { searchParams:
                         <div className="flex items-center gap-2">
                           {app.paymentStatus !== 'paid' && app.status !== 'draft' && (
                             <Link href={`/student/dashboard/applications/${app._id}?pay=1`}
-                              className="btn-primary text-xs py-1.5 px-3">
+                              className="inline-flex px-3 py-1.5 bg-gradient-to-r from-red-500 to-rose-600 text-white text-xs font-medium rounded-lg hover:from-red-600 hover:to-rose-700 transition-all">
                               Pay Fee
                             </Link>
                           )}
                           <Link href={`/student/dashboard/applications/${app._id}`}
-                            className="btn-secondary text-xs py-1.5 px-3">
+                            className="inline-flex px-3 py-1.5 border border-slate-200 text-slate-600 text-xs font-medium rounded-lg hover:bg-slate-50 transition-all">
                             View Details →
                           </Link>
                         </div>

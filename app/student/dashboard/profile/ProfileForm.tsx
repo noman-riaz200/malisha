@@ -92,139 +92,136 @@ export function ProfileForm({ user }: Props) {
   return (
     <form onSubmit={handleSubmit}>
       {message && (
-        <div className={`alert ${message.type === 'success' ? 'alert-success' : 'alert-danger'} mb-4`}>
+        <div className={`p-4 rounded-xl mb-4 ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
           {message.text}
         </div>
       )}
 
-      <div className="row g-3">
-        <div className="col-md-6">
-          <label className="form-label">First Name</label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">First Name</label>
           <input
             type="text"
             name="firstName"
             value={formData.firstName}
             onChange={handleChange}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
             required
           />
         </div>
-        <div className="col-md-6">
-          <label className="form-label">Last Name</label>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Last Name</label>
           <input
             type="text"
             name="lastName"
             value={formData.lastName}
             onChange={handleChange}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
             required
           />
         </div>
-        <div className="col-md-6">
-          <label className="form-label">Email</label>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
           <input
             type="email"
             value={user.email || ''}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 cursor-not-allowed"
             disabled
           />
-          <small className="text-muted">Email cannot be changed</small>
+          <p className="text-xs text-slate-400 mt-1">Email cannot be changed</p>
         </div>
-        <div className="col-md-6">
-          <label className="form-label">Phone</label>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Phone</label>
           <input
             type="tel"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
           />
         </div>
-        <div className="col-md-6">
-          <label className="form-label">Nationality</label>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Nationality</label>
           <input
             type="text"
             name="nationality"
             value={formData.nationality}
             onChange={handleChange}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
           />
         </div>
-        <div className="col-md-6">
-          <label className="form-label">Date of Birth</label>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Date of Birth</label>
           <input
             type="date"
             name="dateOfBirth"
             value={formData.dateOfBirth}
             onChange={handleChange}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
           />
         </div>
-        <div className="col-md-6">
-          <label className="form-label">Passport Number</label>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Passport Number</label>
           <input
             type="text"
             name="passportNumber"
             value={formData.passportNumber}
             onChange={handleChange}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
           />
         </div>
       </div>
 
-      <hr className="my-4" />
+      <div className="border-t border-slate-100 my-6"></div>
 
-      <h5 className="fw-semibold mb-3">Address</h5>
-      <div className="row g-3">
-        <div className="col-12">
-          <label className="form-label">Street Address</label>
+      <h5 className="font-semibold text-slate-900 mb-4">Address</h5>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-slate-700 mb-1">Street Address</label>
           <input
             type="text"
             name="address.street"
             value={formData['address.street']}
             onChange={handleChange}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
           />
         </div>
-        <div className="col-md-6">
-          <label className="form-label">City</label>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
           <input
             type="text"
             name="address.city"
             value={formData['address.city']}
             onChange={handleChange}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
           />
         </div>
-        <div className="col-md-6">
-          <label className="form-label">Country</label>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Country</label>
           <input
             type="text"
             name="address.country"
             value={formData['address.country']}
             onChange={handleChange}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
           />
         </div>
-        <div className="col-md-6">
-          <label className="form-label">Postal Code</label>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Postal Code</label>
           <input
             type="text"
             name="address.postalCode"
             value={formData['address.postalCode']}
             onChange={handleChange}
-            className="form-control"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all outline-none"
           />
         </div>
       </div>
 
-      <div className="mt-4">
-        <button type="submit" className="btn btn-primary" disabled={loading}>
+      <div className="mt-6">
+        <button type="submit" className="px-5 py-2.5 bg-gradient-to-r from-red-500 to-rose-600 text-white font-medium rounded-xl hover:from-red-600 hover:to-rose-700 transition-all disabled:opacity-50" disabled={loading}>
           {loading ? (
-            <>
-              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              Saving...
-            </>
+            <span>Saving...</span>
           ) : (
             'Save Changes'
           )}
