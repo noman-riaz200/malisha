@@ -13,3 +13,5 @@ export { Payment } from './Payment';
 export type { IPayment } from './Payment';
 export { Inquiry } from './Inquiry';
 export type { IInquiry } from './Inquiry';
+export { Service } from './Service';
+export type { IService } from './Service';

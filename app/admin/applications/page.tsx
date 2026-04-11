@@ -61,7 +61,7 @@ export default async function AdminApplicationsPage({ searchParams }: PageProps)
   const currentStatus = searchParams.status || 'all';
 
   return (
-    <div className="p-4">
+    <div className="p-4 w-100">
       {/* Header */}
       <div className="admin-page-header mb-4" style={{ background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)' }}>
         <div className="d-flex align-items-center justify-content-between flex-wrap gap-3">
@@ -77,18 +77,19 @@ export default async function AdminApplicationsPage({ searchParams }: PageProps)
       </div>
 
       {/* Status tabs */}
-      <div className="admin-card mb-4">
+      <div className="admin-card mb-4 w-100">
         <div className="card-body p-2">
-          <div className="d-flex gap-1 flex-wrap">
+          <div className="flex w-full gap-2" style={{ minWidth: '0' }}>
             {STATUSES.map(status => (
               <Link key={status}
                 href={`/admin/applications${status !== 'all' ? `?status=${status}` : ''}`}
-                className={`btn btn-sm fw-semibold px-4 py-2`}
+                className="btn btn-sm fw-semibold py-2 flex-1 text-center"
                 style={{ 
                   borderRadius: '8px',
                   backgroundColor: currentStatus === status ? '#dc2626' : 'transparent',
                   color: currentStatus === status ? 'white' : '#64748b',
-                  border: currentStatus === status ? 'none' : '1px solid #e2e8f0'
+                  border: currentStatus === status ? 'none' : '1px solid #e2e8f0',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 {status.replace('_', ' ')}
@@ -99,10 +100,10 @@ export default async function AdminApplicationsPage({ searchParams }: PageProps)
       </div>
 
       {/* Table */}
-      <div className="admin-card">
+      <div className="admin-card w-100">
         <div className="card-body p-0">
-          <div className="table-responsive">
-            <table className="table table-hover mb-0">
+          <div className="table-responsive w-100">
+            <table className="table table-hover mb-0" style={{ minWidth: '100%', width: '100%' }}>
               <thead>
                 <tr style={{ backgroundColor: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
                   <th className="px-4 py-3 fw-semibold text-dark" style={{ fontSize: '0.75rem' }}>STUDENT</th>
@@ -174,7 +175,7 @@ export default async function AdminApplicationsPage({ searchParams }: PageProps)
 
         {/* Pagination */}
         {pages > 1 && (
-          <div className="card-body d-flex align-items-center justify-content-between border-top">
+          <div className="card-body d-flex align-items-center justify-content-between border-top w-100">
             <p className="mb-0 text-muted" style={{ fontSize: '0.85rem' }}>Page {page} of {pages}</p>
             <nav>
               <ul className="pagination mb-0 gap-1">

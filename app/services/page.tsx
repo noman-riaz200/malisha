@@ -2,8 +2,26 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-const services = [
+interface Service {
+  _id?: string;
+  id?: number;
+  title: string;
+  description?: string;
+  shortDesc?: string;
+  image?: string;
+  color?: string;
+  icon?: string;
+  location?: string;
+  address?: string;
+  href?: string;
+  tags?: string[];
+  isActive?: boolean;
+  order?: number;
+}
+
+const defaultServices = [
   { 
     id: 1,
     title: 'International Student Admission Services', 
@@ -88,6 +106,25 @@ export const dynamic = 'force-dynamic';
 
 export default function ServicesPage() {
   const pathname = usePathname();
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/services?active=true')
+      .then(res => res.json())
+      .then(json => {
+        if (json.success && json.data.length > 0) {
+          setServices(json.data);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setServices(defaultServices as any);
+        setLoading(false);
+      });
+  }, []);
+
+  const displayServices = services.length > 0 ? services : defaultServices;
 
   return (
     <div className="min-vh-100" style={{ backgroundColor: '#f8fafc', paddingTop: '80px' }}>
@@ -107,9 +144,9 @@ export default function ServicesPage() {
 
         {/* Service Cards - University Card Style */}
         <div className="row g-4">
-          {services.map((service, index) => (
-            <div key={service.id} className="col-lg-3 col-md-6">
-              <Link href={service.href} className="text-decoration-none">
+          {displayServices.map((service: Service, index: number) => (
+            <div key={(service._id || service.id || index).toString()} className="col-lg-3 col-md-6">
+              <Link href={service.href || '#'} className="text-decoration-none">
                 <div 
                   className="card h-100 border-0"
                   style={{ 
@@ -134,7 +171,7 @@ export default function ServicesPage() {
                     style={{ height: '200px', overflow: 'hidden' }}
                   >
                     <Image 
-                      src={service.image} 
+                      src={service.image || '/images/banner.png'} 
                       alt={service.title}
                       fill
                       className="object-fit-cover"
@@ -163,7 +200,7 @@ export default function ServicesPage() {
                       <span 
                         className="badge px-3 py-2"
                         style={{ 
-                          backgroundColor: service.color, 
+                          backgroundColor: service.color || '#f97316', 
                           color: '#ffffff',
                           fontWeight: '600',
                         }}
@@ -174,7 +211,7 @@ export default function ServicesPage() {
                         className="small"
                         style={{ color: '#64748b' }}
                       >
-                        Service {service.id}
+                        {service.id ? `Service ${service.id}` : (service._id ? '' : '')}
                       </span>
                     </div>
 
@@ -188,7 +225,7 @@ export default function ServicesPage() {
 
                     {/* Tags */}
                     <div className="mb-3">
-                      {service.tags.map((tag, tagIndex) => (
+                      {(service.tags || []).map((tag: string, tagIndex: number) => (
                         <span 
                           key={tagIndex}
                           className="badge me-1 mb-1"
