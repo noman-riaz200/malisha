@@ -244,7 +244,7 @@ export default function NewServicePage() {
               
               <div className="mb-5">
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">Service Image</label>
-                <div className={`relative border-2 border-dashed rounded-xl transition-colors overflow-hidden ${form.image ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 hover:border-blue-400'}`}>
+                <div className={`relative border-2 border-dashed rounded-xl transition-colors overflow-hidden ${form.image ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 hover:border-blue-400'}`} style={{ position: 'relative' }}>
                   <input
                     type="file"
                     accept="image/*"
@@ -254,8 +254,8 @@ export default function NewServicePage() {
                   />
                   <label htmlFor="service-image" className="cursor-pointer block">
                     {form.image ? (
-                      <div className="relative aspect-video w-full">
-                        <Image src={form.image} alt="Preview" fill className="object-cover" />
+                      <div className="relative aspect-video w-full" style={{ position: 'relative' }}>
+                        <Image src={form.image} alt="Preview" width={400} height={225} className="object-contain" style={{ maxWidth: '100%', height: 'auto' }} />
                         <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                           <span className="text-white text-sm font-medium">Click to change</span>
                         </div>

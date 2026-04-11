@@ -30,6 +30,7 @@ const NAV_LINKS: NavLink[] = [
     href: '/services',
     hasDropdown: true,
     dropdown: [
+      { label: 'Our Services', href: '/services/our-services' },
       { label: 'Service Charges', href: '/services/service-charges' },
       { label: 'Admission Service', href: '/services/admission-service' },
       { label: 'Chinese Language and Foundation Course', href: '/services/chinese-language-foundation-course' },

@@ -57,7 +57,7 @@ export default async function AdminServicesPage() {
                         <div className="rounded-2 overflow-hidden d-flex align-items-center justify-content-center bg-light" 
                           style={{ width: '40px', height: '40px', minWidth: '40px' }}>
                           {service.image ? (
-                            <Image src={service.image} alt="" width={36} height={36} className="object-contain p-1" />
+                            <Image src={service.image} alt="" width={36} height={36} className="object-contain p-1" style={{ maxWidth: '100%' }} />
                           ) : (
                             <span className="fw-bold" style={{ fontSize: '1rem', color: '#dc2626' }}>{service.title[0]}</span>
                           )}
@@ -77,8 +77,8 @@ export default async function AdminServicesPage() {
                     {/* Image */}
                     <td className="px-4 py-3">
                       {service.image ? (
-                        <div className="rounded-2 overflow-hidden" style={{ width: '50px', height: '50px' }}>
-                          <Image src={service.image} alt="" fill className="object-cover" />
+                        <div className="rounded-2 overflow-hidden" style={{ width: '50px', height: '50px', position: 'relative' }}>
+                          <Image src={service.image} alt="" fill className="object-cover" style={{ maxWidth: '100%' }} />
                         </div>
                       ) : (
                         <span style={{ fontSize: '0.85rem', color: '#64748b' }}>—</span>
@@ -99,7 +99,7 @@ export default async function AdminServicesPage() {
                       </span>
                     </td>
                     {/* Actions */}
-                    <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                    <td className="px-4 py-3">
                       <div className="d-flex align-items-center gap-3">
                         <EditServiceButton id={service._id.toString()} name={service.title} />
                         <DeleteServiceButton id={service._id.toString()} name={service.title} />

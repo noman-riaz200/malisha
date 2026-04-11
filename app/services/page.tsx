@@ -265,6 +265,7 @@ export default function ServicesPage() {
           <h2 className="fw-bold text-center mb-4" style={{ color: '#1e293b' }}>Additional Services</h2>
           <div className="row g-4 justify-content-center">
             {[
+              { title: 'Our Services', href: '/services/our-services', icon: 'bi-list-check', color: '#0d9488', description: 'View all our comprehensive services' },
               { title: 'Service Charges', href: '/services/service-charges', icon: 'bi-currency-dollar', color: '#6b7280', description: 'View our transparent service pricing' },
               { title: 'Chinese Language Course', href: '/services/chinese-language-foundation-course', icon: 'bi-translate', color: '#ef4444', description: 'Learn Chinese language fundamentals' },
               { title: 'On Campus Service', href: '/services/on-campus-service', icon: 'bi-building', color: '#14b8a6', description: 'Comprehensive on-campus support services' },
